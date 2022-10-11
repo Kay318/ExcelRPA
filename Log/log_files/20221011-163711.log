@@ -1,0 +1,19 @@
+[2022-10-11 16:37:11.365][D][LogManager.py(Init):12] LogManager Init function called !!!
+[2022-10-11 16:37:11.376][I][AutoBaseFunction.py(wrapper):10] __main__ : setupUI_Language 실행 시작
+[2022-10-11 16:37:11.377][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:37:11.379][I][AutoBaseFunction.py(wrapper):10] __main__ : setLang_Button 실행 시작
+[2022-10-11 16:37:11.380][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:37:11.383][I][Setup_Language.py(setLang_Button):95] ['중국어', '한국어', '11'], ['D:/test/TestList_CSV/2022_skillup-master/img', 'D:/Skillup/new/img', '22'] 기준으로 창에 표시하기 시작
+[2022-10-11 16:37:11.644][I][Setup_Language.py(addLang_Button_clicked):145] 중국어, D:/test/TestList_CSV/2022_skillup-master/img 추가됨
+[2022-10-11 16:37:11.645][I][Setup_Language.py(addLang_Button_clicked):145] 한국어, D:/Skillup/new/img 추가됨
+[2022-10-11 16:37:11.646][I][Setup_Language.py(addLang_Button_clicked):145] 11, 22 추가됨
+[2022-10-11 16:37:11.646][I][Setup_Language.py(setLang_Button):99] ['중국어', '한국어', '11'], ['D:/test/TestList_CSV/2022_skillup-master/img', 'D:/Skillup/new/img', '22'] 기준으로 창에 표시 완료
+[2022-10-11 16:37:11.647][I][AutoBaseFunction.py(wrapper):17] __main__ : setLang_Button 실행 종료
+[2022-10-11 16:37:11.647][I][AutoBaseFunction.py(wrapper):10] __main__ : sl_set_slot 실행 시작
+[2022-10-11 16:37:11.647][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:37:11.648][I][AutoBaseFunction.py(wrapper):17] __main__ : sl_set_slot 실행 종료
+[2022-10-11 16:37:11.648][I][AutoBaseFunction.py(wrapper):17] __main__ : setupUI_Language 실행 종료
+[2022-10-11 16:37:18.411][I][Setup_Language.py(del_langList_button_clicked):164] - 삭제됨
+[2022-10-11 16:37:22.319][I][Setup_Language.py(del_langList_button_clicked):164] 한국어 삭제됨
+[2022-10-11 16:37:27.523][I][Setup_Language.py(del_langList_button_clicked):164] D:/Skillup/new/img 삭제됨
+[2022-10-11 16:37:37.394][I][Setup_Language.py(del_langList_button_clicked):164] ... 삭제됨

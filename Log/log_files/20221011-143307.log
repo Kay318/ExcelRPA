@@ -1,0 +1,13 @@
+[2022-10-11 14:33:07.046][D][LogManager.py(Init):12] LogManager Init function called !!!
+[2022-10-11 14:33:07.058][I][AutoBaseFunction.py(wrapper):10] __main__ : setupUI_Language 실행 시작
+[2022-10-11 14:33:07.059][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 14:33:07.063][I][AutoBaseFunction.py(wrapper):10] __main__ : setLang_Button 실행 시작
+[2022-10-11 14:33:07.063][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 14:33:07.355][I][AutoBaseFunction.py(wrapper):17] __main__ : setLang_Button 실행 종료
+[2022-10-11 14:33:07.356][I][AutoBaseFunction.py(wrapper):10] __main__ : sl_set_slot 실행 시작
+[2022-10-11 14:33:07.356][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 14:33:07.357][I][AutoBaseFunction.py(wrapper):17] __main__ : sl_set_slot 실행 종료
+[2022-10-11 14:33:07.358][I][AutoBaseFunction.py(wrapper):17] __main__ : setupUI_Language 실행 종료
+[2022-10-11 14:33:25.265][I][AutoBaseFunction.py(wrapper):10] __main__ : closeEvent 실행 시작
+[2022-10-11 14:33:25.265][I][AutoBaseFunction.py(wrapper):11] Parameter : <PyQt5.QtGui.QCloseEvent object at 0x0000020641D45438>
+[2022-10-11 14:33:27.084][I][AutoBaseFunction.py(wrapper):17] __main__ : closeEvent 실행 종료

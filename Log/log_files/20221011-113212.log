@@ -1,0 +1,10 @@
+[2022-10-11 11:32:12.859][D][LogManager.py(Init):12] LogManager Init function called !!!
+[2022-10-11 11:32:12.872][I][AutoBaseFunction.py(wrapper):10] __main__ : setupUI_Language 실행 시작
+[2022-10-11 11:32:12.872][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 11:32:12.874][I][AutoBaseFunction.py(wrapper):10] __main__ : setLang_Button 실행 시작
+[2022-10-11 11:32:12.875][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 11:32:13.148][I][AutoBaseFunction.py(wrapper):17] __main__ : setLang_Button 실행 종료
+[2022-10-11 11:32:13.148][I][AutoBaseFunction.py(wrapper):10] __main__ : sl_set_slot 실행 시작
+[2022-10-11 11:32:13.149][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 11:32:13.150][I][AutoBaseFunction.py(wrapper):17] __main__ : sl_set_slot 실행 종료
+[2022-10-11 11:32:13.150][I][AutoBaseFunction.py(wrapper):17] __main__ : setupUI_Language 실행 종료

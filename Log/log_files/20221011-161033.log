@@ -1,0 +1,16 @@
+[2022-10-11 16:10:33.286][D][LogManager.py(Init):12] LogManager Init function called !!!
+[2022-10-11 16:10:33.300][I][AutoBaseFunction.py(wrapper):10] __main__ : setupUI_Language 실행 시작
+[2022-10-11 16:10:33.300][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:10:33.302][I][AutoBaseFunction.py(wrapper):10] __main__ : setLang_Button 실행 시작
+[2022-10-11 16:10:33.302][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:10:33.557][I][AutoBaseFunction.py(wrapper):17] __main__ : setLang_Button 실행 종료
+[2022-10-11 16:10:33.558][I][AutoBaseFunction.py(wrapper):10] __main__ : sl_set_slot 실행 시작
+[2022-10-11 16:10:33.558][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:10:33.560][I][AutoBaseFunction.py(wrapper):17] __main__ : sl_set_slot 실행 종료
+[2022-10-11 16:10:33.560][I][AutoBaseFunction.py(wrapper):17] __main__ : setupUI_Language 실행 종료
+[2022-10-11 16:11:45.183][I][AutoBaseFunction.py(wrapper):10] __main__ : keyPressEvent 실행 시작
+[2022-10-11 16:11:45.184][I][AutoBaseFunction.py(wrapper):11] Parameter : <PyQt5.QtGui.QKeyEvent object at 0x0000026DD3535708>
+[2022-10-11 16:11:45.188][I][AutoBaseFunction.py(wrapper):17] __main__ : keyPressEvent 실행 종료
+[2022-10-11 16:11:50.587][I][AutoBaseFunction.py(wrapper):10] __main__ : keyPressEvent 실행 시작
+[2022-10-11 16:11:50.588][I][AutoBaseFunction.py(wrapper):11] Parameter : <PyQt5.QtGui.QKeyEvent object at 0x0000026DD3535708>
+[2022-10-11 16:11:50.590][I][AutoBaseFunction.py(wrapper):17] __main__ : keyPressEvent 실행 종료

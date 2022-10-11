@@ -1,0 +1,7 @@
+[2022-10-11 16:31:37.888][D][LogManager.py(Init):12] LogManager Init function called !!!
+[2022-10-11 16:31:37.906][I][AutoBaseFunction.py(wrapper):10] __main__ : setupUI_Language 실행 시작
+[2022-10-11 16:31:37.907][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:31:37.911][I][AutoBaseFunction.py(wrapper):10] __main__ : setLang_Button 실행 시작
+[2022-10-11 16:31:37.911][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:31:37.915][I][Setup_Language.py(setLang_Button):95] ['중국어', '한국어', '11'], ['D:/test/TestList_CSV/2022_skillup-master/img', 'D:/Skillup/new/img', '22'] 기준으로 창에 표시하기 시작
+[2022-10-11 16:31:38.963][I][Setup_Language.py(addLang_Button_clicked):146] 중국어, <PyQt5.QtWidgets.QLineEdit object at 0x000001DD7055C048> 추가됨

@@ -1,0 +1,32 @@
+[2022-10-11 16:55:12.126][D][LogManager.py(Init):12] LogManager Init function called !!!
+[2022-10-11 16:55:12.153][I][AutoBaseFunction.py(wrapper):10] __main__ : setupUi 실행 시작
+[2022-10-11 16:55:12.154][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:55:12.158][I][AutoBaseFunction.py(wrapper):10] __main__ : set_field_gridLayout 실행 시작
+[2022-10-11 16:55:12.158][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:55:12.188][I][AutoBaseFunction.py(wrapper):17] __main__ : set_field_gridLayout 실행 종료
+[2022-10-11 16:55:12.189][I][AutoBaseFunction.py(wrapper):10] __main__ : set_testList_hboxLayout 실행 시작
+[2022-10-11 16:55:12.189][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:55:12.192][I][AutoBaseFunction.py(wrapper):17] __main__ : set_testList_hboxLayout 실행 종료
+[2022-10-11 16:55:12.423][I][AutoBaseFunction.py(wrapper):17] __main__ : setupUi 실행 종료
+[2022-10-11 16:55:14.645][I][AutoBaseFunction.py(wrapper):10] __main__ : show_setup_Language 실행 시작
+[2022-10-11 16:55:14.645][I][AutoBaseFunction.py(wrapper):11] Parameter : False
+[2022-10-11 16:55:14.646][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_Language : setupUI_Language 실행 시작
+[2022-10-11 16:55:14.647][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:55:14.648][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_Language : setLang_Button 실행 시작
+[2022-10-11 16:55:14.648][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:55:14.650][I][Setup_Language.py(setLang_Button):95] ['중국어', '중국어어', 'sdf'], ['D:/Skillup/new/img', 'D:/Skillup/new/국내_표5', 'asdg'] 기준으로 창에 표시하기 시작
+[2022-10-11 16:55:14.652][I][Setup_Language.py(addLang_Button_clicked):145] 중국어, D:/Skillup/new/img 추가됨
+[2022-10-11 16:55:14.653][I][Setup_Language.py(addLang_Button_clicked):145] 중국어어, D:/Skillup/new/국내_표5 추가됨
+[2022-10-11 16:55:14.653][I][Setup_Language.py(addLang_Button_clicked):145] sdf, asdg 추가됨
+[2022-10-11 16:55:14.654][I][Setup_Language.py(setLang_Button):99] ['중국어', '중국어어', 'sdf'], ['D:/Skillup/new/img', 'D:/Skillup/new/국내_표5', 'asdg'] 기준으로 창에 표시 완료
+[2022-10-11 16:55:14.654][I][AutoBaseFunction.py(wrapper):17] SubWindow.Setup_Language : setLang_Button 실행 종료
+[2022-10-11 16:55:14.654][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_Language : sl_set_slot 실행 시작
+[2022-10-11 16:55:14.655][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 16:55:14.655][I][AutoBaseFunction.py(wrapper):17] SubWindow.Setup_Language : sl_set_slot 실행 종료
+[2022-10-11 16:55:14.656][I][AutoBaseFunction.py(wrapper):17] SubWindow.Setup_Language : setupUI_Language 실행 종료
+[2022-10-11 16:55:14.662][I][MainWindow.py(show_setup_Language):251] 언어 설정 팝업 열림
+[2022-10-11 16:55:14.662][I][AutoBaseFunction.py(wrapper):17] __main__ : show_setup_Language 실행 종료
+[2022-10-11 16:55:15.388][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_Language : keyPressEvent 실행 시작
+[2022-10-11 16:55:15.388][I][AutoBaseFunction.py(wrapper):11] Parameter : <PyQt5.QtGui.QKeyEvent object at 0x0000028D700A24C8>
+[2022-10-11 16:55:15.389][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_Language : closeEvent 실행 시작
+[2022-10-11 16:55:15.389][I][AutoBaseFunction.py(wrapper):11] Parameter : <PyQt5.QtGui.QCloseEvent object at 0x0000028D700A2558>

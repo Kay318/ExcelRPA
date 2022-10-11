@@ -1,0 +1,24 @@
+[2022-10-11 15:42:08.499][D][LogManager.py(Init):12] LogManager Init function called !!!
+[2022-10-11 15:42:08.525][I][AutoBaseFunction.py(wrapper):10] __main__ : setupUi 실행 시작
+[2022-10-11 15:42:08.526][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 15:42:08.533][I][AutoBaseFunction.py(wrapper):10] __main__ : set_field_gridLayout 실행 시작
+[2022-10-11 15:42:08.533][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 15:42:08.560][I][AutoBaseFunction.py(wrapper):17] __main__ : set_field_gridLayout 실행 종료
+[2022-10-11 15:42:08.561][I][AutoBaseFunction.py(wrapper):10] __main__ : set_testList_hboxLayout 실행 시작
+[2022-10-11 15:42:08.561][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 15:42:08.564][I][AutoBaseFunction.py(wrapper):17] __main__ : set_testList_hboxLayout 실행 종료
+[2022-10-11 15:42:08.795][I][AutoBaseFunction.py(wrapper):17] __main__ : setupUi 실행 종료
+[2022-10-11 15:42:11.363][I][AutoBaseFunction.py(wrapper):10] __main__ : show_setup_Language 실행 시작
+[2022-10-11 15:42:11.364][I][AutoBaseFunction.py(wrapper):11] Parameter : False
+[2022-10-11 15:42:11.364][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_Language : setupUI_Language 실행 시작
+[2022-10-11 15:42:11.365][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 15:42:11.366][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_Language : setLang_Button 실행 시작
+[2022-10-11 15:42:11.366][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 15:42:11.369][I][AutoBaseFunction.py(wrapper):17] SubWindow.Setup_Language : setLang_Button 실행 종료
+[2022-10-11 15:42:11.369][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_Language : sl_set_slot 실행 시작
+[2022-10-11 15:42:11.370][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 15:42:11.370][I][AutoBaseFunction.py(wrapper):17] SubWindow.Setup_Language : sl_set_slot 실행 종료
+[2022-10-11 15:42:11.370][I][AutoBaseFunction.py(wrapper):17] SubWindow.Setup_Language : setupUI_Language 실행 종료
+[2022-10-11 15:42:11.376][I][AutoBaseFunction.py(wrapper):17] __main__ : show_setup_Language 실행 종료
+[2022-10-11 15:42:14.482][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_Language : ok_Button_clicked 실행 시작
+[2022-10-11 15:42:14.483][I][AutoBaseFunction.py(wrapper):11] Parameter : False

@@ -1,0 +1,12 @@
+[2022-10-11 09:45:09.551][D][LogManager.py(Init):12] LogManager Init function called !!!
+[2022-10-11 09:45:09.605][I][AutoBaseFunction.py(wrapper):10] __main__ : setupUi 실행 시작
+[2022-10-11 09:45:09.605][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 09:45:09.610][I][AutoBaseFunction.py(wrapper):10] __main__ : set_field_gridLayout 실행 시작
+[2022-10-11 09:45:09.610][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 09:45:09.638][I][AutoBaseFunction.py(wrapper):17] __main__ : set_field_gridLayout 실행 종료
+[2022-10-11 09:45:09.639][I][AutoBaseFunction.py(wrapper):10] __main__ : set_testList_hboxLayout 실행 시작
+[2022-10-11 09:45:09.639][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-11 09:45:09.643][I][AutoBaseFunction.py(wrapper):17] __main__ : set_testList_hboxLayout 실행 종료
+[2022-10-11 09:45:09.882][I][AutoBaseFunction.py(wrapper):17] __main__ : setupUi 실행 종료
+[2022-10-11 09:45:12.523][I][AutoBaseFunction.py(wrapper):10] __main__ : show_setup_Language 실행 시작
+[2022-10-11 09:45:12.524][I][AutoBaseFunction.py(wrapper):11] Parameter : False
