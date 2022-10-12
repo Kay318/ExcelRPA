@@ -18,6 +18,7 @@ from pathlib import Path
 from Screen.ImageView import ImageViewer
 from SubWindow.Setup_Language import Setup_Language
 from SubWindow.Setup_Field import Setup_Field
+from SubWindow.Setup_TestList import Setup_TestList
 from Helper import *
 sys.path.append(str(Path(__file__).parents[1]))
 from Database.DB import DBManager
@@ -138,6 +139,7 @@ class MainWindow(QMainWindow, DBManager):
         self.testList_groupbox_layout = QHBoxLayout()
         self.testList_hboxLayout = QHBoxLayout(testList_groupbox)
         self.testList_hboxLayout.addWidget(testList_groupbox_scrollArea)
+        self.testList, _ = self.sp.read_setup(table = "Test_List")
         self.set_testList_hboxLayout()
         testList_groupbox_widget.setLayout(self.testList_groupbox_layout)
         testList_groupbox_scrollArea.setWidget(testList_groupbox_widget)
@@ -246,6 +248,7 @@ class MainWindow(QMainWindow, DBManager):
         self.setup.addAction(self.actionExcel_Setting)
         self.actionLanguage.triggered.connect(self.show_setup_Language)
         self.actionField.triggered.connect(self.show_setup_Field)
+        self.actionTest_List.triggered.connect(self.show_setup_TestList)
         
         # 상태바
         statusbar = QStatusBar()
@@ -268,6 +271,14 @@ class MainWindow(QMainWindow, DBManager):
         sf.signal.connect(self.sf_emit)
         sf.show()
         LogManager.HLOG.info("필드 설정 팝업 열림")
+    
+    @AutomationFunctionDecorator
+    def show_setup_TestList(self, litter):
+        self.setEnabled(False)
+        tl = Setup_TestList(self)
+        tl.signal.connect(self.tl_emit)
+        tl.show()
+        LogManager.HLOG.info("평가 목록 설정 팝업 열림")
 
     def sl_emit(self, langPath):
         if langPath != []:
@@ -292,6 +303,18 @@ class MainWindow(QMainWindow, DBManager):
                 LogManager.HLOG.info("필드리스트 갱신 완료")
         self.setEnabled(True)
         LogManager.HLOG.info("필드 설정 팝업 닫힘으로 메인창 활성화")
+
+    def tl_emit(self, testList):
+        if testList != []:
+            for i in range(self.testList_groupbox_layout.count()):
+                self.testList_groupbox_layout.itemAt(i).widget().deleteLater()
+            if testList != ["OK"]:
+                self.testList = testList
+                LogManager.HLOG.info("필드리스트 삭제")
+                self.set_testList_hboxLayout()
+                LogManager.HLOG.info("필드리스트 갱신 완료")
+        self.setEnabled(True)
+        LogManager.HLOG.info("평가 목록 설정 팝업 닫힘으로 메인창 활성화")
         
     @AutomationFunctionDecorator
     def __allPass_clicked(self, litter):
@@ -346,8 +369,6 @@ class MainWindow(QMainWindow, DBManager):
         self.na_RadioList.clear()
         self.nl_RadioList.clear()
         self.all_RadioList.clear()
-
-        self.testList, _ = self.sp.read_setup(table = "Test_List")
 
         for i,val in enumerate(self.testList):
             val = str(val)

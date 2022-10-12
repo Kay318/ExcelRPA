@@ -29,11 +29,6 @@ class Setup_Field(QDialog):
 
     @AutomationFunctionDecorator
     def setupUI_Field(self):
-        # 해상도 받아옴
-        screen = QDesktopWidget().screenGeometry()
-        minimum_width = screen.width() * 0.2
-
-        self.setMinimumWidth(minimum_width)
         self.setWindowTitle("엑셀필드 설정")
 
         # 전체 화면 배치
@@ -98,11 +93,12 @@ class Setup_Field(QDialog):
 
         self.sp.config["Field"] = {}
         for i in range(6):
-            self.sp.write_setup(table = "Field", 
-                                count=i, 
-                                val=globals()[f'lineEdit{i}'].text(),
-                                val2=None)
-            LogManager.HLOG.info(f"필드 설정 팝업에 {globals()[f'lineEdit{i}'].text()} 추가")
+            if globals()[f'lineEdit{i}'].text() != "":
+                self.sp.write_setup(table = "Field", 
+                                    count=i, 
+                                    val=globals()[f'lineEdit{i}'].text(),
+                                    val2=None)
+                LogManager.HLOG.info(f"{i+1}:필드 설정 팝업에 {globals()[f'lineEdit{i}'].text()} 추가")
         if fieldList == []:
             fieldList = ["OK"]
         self.signal.emit(fieldList)
@@ -112,7 +108,7 @@ class Setup_Field(QDialog):
     def closeEvent(self, event) -> None:
         LogManager.HLOG.info("필드 설정 팝업 취소 버튼 선택")
         setupList, _ = self.sp.read_setup("Field")
-        lineList = [globals()[f'lineEdit{i}'].text() for i in range(6)]
+        lineList = [globals()[f'lineEdit{i}'].text() for i in range(6) if globals()[f'lineEdit{i}'].text() != ""]
 
         if setupList != lineList:
             reply = QMessageBox.question(self, '알림', '변경사항이 있습니다.\n취소하시겠습니까?',
@@ -136,7 +132,6 @@ class Setup_Field(QDialog):
         KEY_SUB_ENTER = 16777221
         KEY_CLOSE = 16777216
 
-        print (f"a0.key() : {a0.key()}")
         if a0.key() == KEY_ENTER or a0.key() == KEY_SUB_ENTER:
             self.ok_Button_clicked(None)
         elif a0.key() == KEY_CLOSE:
