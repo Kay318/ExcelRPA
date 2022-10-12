@@ -419,78 +419,6 @@ class MainWindow(QMainWindow, DBManager):
         null_cnt = sum([int(null.isChecked()) for null in self.nl_RadioList])
         if null_cnt == 0 and self.idx < len(self.imgList) - 1 and self.nextImg_bool:
             self.qbuttons[self.idx+1].click()
-            
-    # @AutomationFunctionDecorator
-    # def update_open_menu(self):
-    #     self.menu.clear()
-    #     self.menuOpen = self.menu.addMenu("Open")
-
-    #     if (self.constraints()) :
-    #         self.menuOpen.setEnabled(True)
-    #         self.c.execute('SELECT * FROM Setup_Language')
-    #         langList = self.c.fetchall()
-        
-    #         for lang in langList:
-    #             subMenu = QAction(lang[0], self)
-    #             print(f"lang : {lang}")
-    #             subMenu.triggered.connect(partial(self.show_imgList, lang, True))
-                
-    #             subMenu.setCheckable(True)
-    #             print(f'self.clicked_lang : {self.clicked_lang}')
-    #             print(f'subMenu.text() : {subMenu.text()}')
-    #             if (self.clicked_lang == subMenu.text()):
-    #                 subMenu.setChecked(True)
-    #             else:
-    #                 subMenu.setChecked(False)
-
-    #             self.menuOpen.addAction(subMenu)
-    #     else:
-    #         self.show_imgList(None, False)
-    #         self.img_Label.clear()
-    #         self.menuOpen.setEnabled(False)
-
-    #     self.menu.addMenu(self.menuOpen)
-    #     self.actionSave = QAction("Save", self)
-    #     self.actionSave.setShortcut("Ctrl+S")
-    #     # if self.imgList == []:
-    #     #     self.actionSave.setEnable(False)
-    #     # else:
-    #     #     self.actionSave.setEnable(True)
-    #     self.actionSave.triggered.connect(self.save_result)
-
-    #     self.actionClose = QAction("Close", self)
-    #     self.menu.addAction(self.actionSave)
-    #     self.menu.addAction(self.actionCreateExcel)
-    #     self.menu.addAction(self.actionClose)
-    #     self.actionClose.triggered.connect(self.closeEvent) # close이벤트
-
-#     def save_result(self, litter):
-#         # self.result에 값 저장하고 기존 데이타 삭제하기
-#         """
-#         ini 관련해서 저장하고 기존 데이터 삭제하도록 수정 (필요)
-#         """
-#         result_data = self.insert_result()
-#         self.result[self.idx] = result_data
-
-#         query = f"CREATE TABLE IF NOT EXISTS '{self.clicked_lang}' ('이미지' TEXT,"
-#         for i, col in enumerate(self.setupList):
-#             query += f"'{col}' TEXT,"
-#         query += "'버전정보' TEXT)"
-        
-#         self.c.execute(query)
-
-#         self.c.execute(f"DELETE FROM {self.clicked_lang}")
-#         question_marks = ", ".join(['?' for _ in range(len(result_data.keys()))])
-#         print(type(question_marks))
-#         for i in self.result.values():
-#             try:
-#                 self.dbConn.execute(f"INSERT INTO {self.clicked_lang} VALUES ({question_marks})", 
-#                         (tuple(i.values())))
-#                 self.dbConn.commit()
-#             except RuntimeError:
-#                 continue
-
-#         print(self.result)
 
     def qbutton_clicked(self, idx, button, litter):
 
@@ -574,9 +502,7 @@ class MainWindow(QMainWindow, DBManager):
                 globals()[f'desc_LineEdit{i}'].setText(self.result[idx][data])
 
         set_color()
-        
         self.pre_idx = idx
-
 
     def insert_result(self, option=None):
         """dict에 평가결과 저장하는 함수
@@ -772,28 +698,6 @@ class MainWindow(QMainWindow, DBManager):
 
         self.img_Label.setPixmap(QPixmap(self.pixmap))
         self.img_Label.setAlignment(Qt.AlignCenter)
-
-    # def constraints(self):
-
-    #     result  = True
-    #     self.c.execute('SELECT * FROM Setup_Language')
-    #     setup_Language_db = self.c.fetchall()
-
-    #     self.c.execute(f"SELECT 평가목록 FROM Test_List")
-    #     testList_db = self.c.fetchall()
-
-    #     if len(setup_Language_db) == 0:
-    #         # QMessageBox.warning(self, "주의", "언어 설정이 비어있습니다.")
-    #         result = False
-    #     elif len(testList_db) == 0:
-    #         # QMessageBox.warning(self, "주의", "평가 목록이 비어있습니다.")
-    #         result = False
-    #     elif len(setup_Language_db) == 0 and len(testList_db) == 0:
-    #         # QMessageBox.warning(self, "주의", "언어 설정과 평가 목록이 비어있습니다.")
-    #         result = False
-
-
-    #     return result
 
 #     @AutomationFunctionDecorator
 #     def closeEvent(self, litter) -> None: # a0: QtGui.QCloseEvent
