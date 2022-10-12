@@ -16,7 +16,8 @@ import sys
 import os
 from pathlib import Path
 from Screen.ImageView import ImageViewer
-from SubWindow.Setup_Language import UI_Setup_Language
+from SubWindow.Setup_Language import Setup_Language
+from SubWindow.Setup_Field import Setup_Field
 from Helper import *
 sys.path.append(str(Path(__file__).parents[1]))
 from Database.DB import DBManager
@@ -34,13 +35,13 @@ class MainWindow(QMainWindow, DBManager):
         self.na_RadioList = []                   # 모든 N/A 버튼
         self.nl_RadioList = []                   # 모든 NULL 버튼
         self.imgList = []                        # 선택된 경로의 이미지 리스트
-        self.pre_idx = 0                         # 전에 선택했던 버튼 index
         self.idx = ""                            # 좌측 이미지 버튼 index
         self.button = ""                         # 좌측 이미지 버튼
         self.img_dir = ""                        # 이미지 경로
         self.setupList = []                      # 필드와 평가결과에 들어가는 모든 항목
         self.result = {}                         # 매 이미지에 대한 결과값 저장
-        self.clicked_lang = None                 # 선택된 언어
+        self.clicked_lang = ""                   # 선택된 언어
+        self.pre_lang = ""                       # 그전에 선택된 언어
         self.nextImg_bool = True                 # 다음 이미지로 넘어갈지 판단
         # self.loadingThread = LoadingThread()
         # self.loadingThread.loading_singnal.connect(self.start_loading)
@@ -64,6 +65,11 @@ class MainWindow(QMainWindow, DBManager):
         left_right_imgBtn_width = main_width / 20           # [<], [>] 버튼 넓이
         allButton_spacing = 9.45                            # all 버튼 간격
         bottom_groupbox_fixedHeight = 210                   # bottom 영역 높이값
+
+        if main_width > 1344:
+            main_width = 1344
+        if main_height > 756:
+            main_height = 756
 
         self.setMinimumSize(main_width, main_height)
         self.setGeometry(main_left, main_top, main_width, main_height)
@@ -118,6 +124,7 @@ class MainWindow(QMainWindow, DBManager):
 
         # 필드 세팅
         self.field_gridLayout = QGridLayout()
+        self.fieldList, _ = self.sp.read_setup(table = "Field")
         self.set_field_gridLayout()
         right_VBoxLayout.addLayout(self.field_gridLayout)
 
@@ -223,7 +230,6 @@ class MainWindow(QMainWindow, DBManager):
         self.menu.addAction(self.actionSave)
         self.menu.addAction(self.actionCreateExcel)
         self.menu.addAction(self.actionClose)
-        # self.menu.aboutToShow.connect(self.update_open_menu)
 
         self.setup = self.menubar.addMenu("Setup")
         self.actionLanguage = QAction("Language", self)
@@ -239,6 +245,7 @@ class MainWindow(QMainWindow, DBManager):
         self.setup.addAction(self.actionTest_List)
         self.setup.addAction(self.actionExcel_Setting)
         self.actionLanguage.triggered.connect(self.show_setup_Language)
+        self.actionField.triggered.connect(self.show_setup_Field)
         
         # 상태바
         statusbar = QStatusBar()
@@ -249,22 +256,43 @@ class MainWindow(QMainWindow, DBManager):
     @AutomationFunctionDecorator
     def show_setup_Language(self, litter):
         self.setEnabled(False)
-        sl = UI_Setup_Language(self)
+        sl = Setup_Language(self)
         sl.signal.connect(self.sl_emit)
         sl.show()
         LogManager.HLOG.info(f"언어 설정 팝업 열림")
 
+    @AutomationFunctionDecorator
+    def show_setup_Field(self, litter):
+        self.setEnabled(False)
+        sf = Setup_Field(self)
+        sf.signal.connect(self.sf_emit)
+        sf.show()
+        LogManager.HLOG.info("필드 설정 팝업 열림")
+
     def sl_emit(self, langPath):
         if langPath != []:
             self.menuOpen.clear()
-            LogManager.HLOG.info(f"퀵메뉴 clear")
+            LogManager.HLOG.info("퀵메뉴 clear")
             for lang, path in langPath:
                 subMenu = QAction(lang, self)
                 self.menuOpen.addAction(subMenu)
                 subMenu.triggered.connect(partial(self.show_imgList, lang, path))
-            LogManager.HLOG.info(f"퀵메뉴 갱신 완료")
+            LogManager.HLOG.info("퀵메뉴 갱신 완료")
         self.setEnabled(True)
+        LogManager.HLOG.info("언어 설정 팝업 닫힘으로 메인창 활성화")
 
+    def sf_emit(self, fieldList):
+        if fieldList != []:
+            for i in range(self.field_gridLayout.count()):
+                self.field_gridLayout.itemAt(i).widget().deleteLater()
+            if fieldList != ["OK"]:
+                self.fieldList = fieldList
+                LogManager.HLOG.info("필드리스트 삭제")
+                self.set_field_gridLayout()
+                LogManager.HLOG.info("필드리스트 갱신 완료")
+        self.setEnabled(True)
+        LogManager.HLOG.info("필드 설정 팝업 닫힘으로 메인창 활성화")
+        
     @AutomationFunctionDecorator
     def __allPass_clicked(self, litter):
         for idx, pass_radio in enumerate(self.pass_RadioList):
@@ -539,7 +567,10 @@ class MainWindow(QMainWindow, DBManager):
             result_data: 현재 화면에 입력되어 있는 데이터 반환
         """
         result_data = {}
-        result_data["이미지"] = self.result[self.pre_idx]["이미지"]
+        try:
+            result_data["이미지"] = self.result[self.pre_idx]["이미지"]
+        except:
+            LogManager.Interupt()
 
         for i,val in enumerate(self.testList):
             if globals()[f'gb{i}_pass'].isChecked():
@@ -580,71 +611,72 @@ class MainWindow(QMainWindow, DBManager):
         """
         
         # self.loadingThread.start()
-        
-        # 평가결과 기록 삭제
-        self.result.clear()
+        self.pre_idx = 0
+        if lang != self.pre_lang:
+            # 평가결과 기록 삭제
+            self.result.clear()
 
-        self.setupList = self.testList + self.fieldList
+            self.setupList = self.testList + self.fieldList
 
-        # 레이블 초기화
-        # for i,field in enumerate(self.fieldList):
-        #         field_data = {field[0]:globals()[f'desc_LineEdit{i}'].text()}
-        #         self.result[self.pre_idx].append(field_data)
-        #         globals()[f'desc_LineEdit{i}'].clear()
+            # 레이블 초기화
+            # for i,field in enumerate(self.fieldList):
+            #         field_data = {field[0]:globals()[f'desc_LineEdit{i}'].text()}
+            #         self.result[self.pre_idx].append(field_data)
+            #         globals()[f'desc_LineEdit{i}'].clear()
 
-        # 이미지 리스트 초기화
-        for i in range(self.img_VBoxLayout.count()):
-            self.img_VBoxLayout.itemAt(i).widget().deleteLater()
+            # 이미지 리스트 초기화
+            for i in range(self.img_VBoxLayout.count()):
+                self.img_VBoxLayout.itemAt(i).widget().deleteLater()
 
-        # 선택한 언어 기억
-        self.clicked_lang = lang
-        self.langPath = langPath
-        LogManager.HLOG.info(f"이미지 리스트 불러옴, 선택된 언어:{lang}, 경로:{langPath}")
+            # 선택한 언어 기억
+            self.langPath = langPath
+            LogManager.HLOG.info(f"이미지 리스트 불러옴, 선택된 언어:{lang}, 경로:{langPath}")
 
-        try:
-            self.imgList = [fn for fn in os.listdir(langPath)
-                    if (fn.endswith('.png') or fn.endswith('.jpg'))]
-        except FileNotFoundError:
-            QMessageBox.warning(self, "주의", "존재하지 않는 경로입니다.")
-            return
-        
-        # self.imgListThread.start()
-
-        if self.imgList == []:
-            QMessageBox.warning(self, "주의", "선택하신 경로에 이미지 파일이 없습니다.")
-        else:
-            # 이미지 버튼 추가
-            self.qbuttons = {}
-            self.icons = {}
-            for index, filename in enumerate(self.imgList):
-                # 평가결과를 저장할 dictionary: self.result 세팅
-                self.result[index] = {}
-                self.result[index]['이미지'] = langPath + '\\' + filename
-                for setupListName in self.setupList:
-                    self.result[index][setupListName] = ""
-                self.result[index]['버전 정보'] = ""
-
-                pixmap = QPixmap(langPath + '\\' + filename)
-                pixmap = pixmap.scaled(40, 40, Qt.IgnoreAspectRatio)
-                icon = QIcon()
-                icon.addPixmap(pixmap)
-                self.icons[index] = icon
-                
-                button = QPushButtonIcon()
-                button.setIcon(icon)
-                button.clicked.connect(partial(self.qbutton_clicked, index, button))
-                        
-                self.img_VBoxLayout.addWidget(button)
-                self.qbuttons[index] = button
-                QApplication.processEvents()
-
-            LogManager.HLOG.info(f"self.result:{self.result}")
-            self.qbuttons[0].click()
-            if len(self.imgList) > 1:
-                self.right_imgBtn.setEnabled(True)
-            LogManager.HLOG.info(f"이미지 불러온 후 첫번째 버튼 클릭")
+            try:
+                self.imgList = [fn for fn in os.listdir(langPath)
+                        if (fn.endswith('.png') or fn.endswith('.jpg'))]
+            except FileNotFoundError:
+                QMessageBox.warning(self, "주의", "존재하지 않는 경로입니다.")
+                return
             
-            self.setEnabled_bottom()
+            # self.imgListThread.start()
+
+            if self.imgList == []:
+                QMessageBox.warning(self, "주의", "선택하신 경로에 이미지 파일이 없습니다.")
+            else:
+                # 이미지 버튼 추가
+                self.qbuttons = {}
+                self.icons = {}
+                for index, filename in enumerate(self.imgList):
+                    # 평가결과를 저장할 dictionary: self.result 세팅
+                    self.result[index] = {}
+                    self.result[index]['이미지'] = langPath + '\\' + filename
+                    for setupListName in self.setupList:
+                        self.result[index][setupListName] = ""
+                    self.result[index]['버전 정보'] = ""
+
+                    pixmap = QPixmap(langPath + '\\' + filename)
+                    pixmap = pixmap.scaled(40, 40, Qt.IgnoreAspectRatio)
+                    icon = QIcon()
+                    icon.addPixmap(pixmap)
+                    self.icons[index] = icon
+                    
+                    button = QPushButtonIcon()
+                    button.setIcon(icon)
+                    button.clicked.connect(partial(self.qbutton_clicked, index, button))
+                            
+                    self.img_VBoxLayout.addWidget(button)
+                    self.qbuttons[index] = button
+                    QApplication.processEvents()
+
+                LogManager.HLOG.info(f"self.result:{self.result}")
+                self.qbuttons[0].click()
+                if len(self.imgList) > 1:
+                    self.right_imgBtn.setEnabled(True)
+                LogManager.HLOG.info(f"이미지 불러온 후 첫번째 버튼 클릭")
+                
+                self.setEnabled_bottom()
+                self.pre_lang = lang
             
             # self.loadingThread.terminate()
             
@@ -665,7 +697,6 @@ class MainWindow(QMainWindow, DBManager):
 
     @AutomationFunctionDecorator
     def set_field_gridLayout(self):
-        self.fieldList, _ = self.sp.read_setup(table = "Field")
 
         for i,field in enumerate(self.fieldList):
             globals()[f'field_Label{i}'] = QLabel(field)

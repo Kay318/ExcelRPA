@@ -12,15 +12,14 @@ def AutomationFunctionDecorator(func):
 
         # if False in args:
         #     args = ()
-        print(f"agrs : {args}")
-        func(self, *args)
-        LogManager.HLOG.info(f"{func.__module__} : {func.__name__} 실행 종료")
-        # try:
-        #     if False in args:
-        #         args = ()
-        #     func(self, *args)
-        #     LogManager.HLOG.info(f"{func.__module__} : {func.__name__} 실행 종료")
-        # except Exception:
-        #     LogManager.Interupt()
+        # print(f"agrs : {args}")
+        # func(self, *args)
+        # LogManager.HLOG.info(f"{func.__module__} : {func.__name__} 실행 종료")
+        try:
+            print(f"agrs : {args}")
+            func(self, *args)
+            LogManager.HLOG.info(f"{func.__module__} : {func.__name__} 실행 종료")
+        except Exception:
+            LogManager.Interupt()
 
     return wrapper

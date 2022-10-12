@@ -1,7 +1,0 @@
-[2022-10-11 16:32:44.393][D][LogManager.py(Init):12] LogManager Init function called !!!
-[2022-10-11 16:32:44.405][I][AutoBaseFunction.py(wrapper):10] __main__ : setupUI_Language 실행 시작
-[2022-10-11 16:32:44.405][I][AutoBaseFunction.py(wrapper):11] Parameter : 
-[2022-10-11 16:32:44.408][I][AutoBaseFunction.py(wrapper):10] __main__ : setLang_Button 실행 시작
-[2022-10-11 16:32:44.408][I][AutoBaseFunction.py(wrapper):11] Parameter : 
-[2022-10-11 16:32:44.411][I][Setup_Language.py(setLang_Button):95] ['중국어', '한국어', '11'], ['D:/test/TestList_CSV/2022_skillup-master/img', 'D:/Skillup/new/img', '22'] 기준으로 창에 표시하기 시작
-[2022-10-11 16:32:47.847][I][Setup_Language.py(addLang_Button_clicked):146] 중국어, D:/test/TestList_CSV/2022_skillup-master/img 추가됨

@@ -56,38 +56,38 @@ def __init_logger():
     HLOG.setLevel(logging.DEBUG)
 
 # Try Exception
-# class Interupt(Exception):
+class Interupt(Exception):
 
-#     @atexit.register
-#     def __init__(self):
+    @atexit.register
+    def __init__(self):
 
-#         self.msg = traceback.format_exc()
-#         print(self.msg)
+        self.msg = traceback.format_exc()
+        print(self.msg)
 
-#         if self.msg.count("RuntimeError") != 0:
-#             self.set_error()
-#         elif self.msg.count("RuntimeWarning") != 0:
-#             self.set_warning()
-#         else:
-#             self.set_warn()
+        if self.msg.count("RuntimeError") != 0:
+            self.set_error()
+        elif self.msg.count("RuntimeWarning") != 0:
+            self.set_warning()
+        else:
+            self.set_warn()
 
-#     @atexit.register
-#     def set_error(self):
-#         """
-#         예외를 발생시키지 않고 에러의 억제를 보고 (가령 장기 실행 서버 프로세스의 에러 처리기)
-#         """
-#         HLOG.error(f': {self.msg}')
+    @atexit.register
+    def set_error(self):
+        """
+        예외를 발생시키지 않고 에러의 억제를 보고 (가령 장기 실행 서버 프로세스의 에러 처리기)
+        """
+        HLOG.error(f': {self.msg}')
 
-#     @atexit.register
-#     def set_warn(self):
-#         """
-#         문제를 피할 수 있고 경고를 제거하기 위해 클라이언트 응용 프로그램이 수정되어야 하는 경우
-#         """
-#         HLOG.warn(f': {self.msg}')
+    @atexit.register
+    def set_warn(self):
+        """
+        문제를 피할 수 있고 경고를 제거하기 위해 클라이언트 응용 프로그램이 수정되어야 하는 경우
+        """
+        HLOG.warn(f': {self.msg}')
 
-#     @atexit.register
-#     def set_warning(self):
-#         """
-#         클라이언트 응용 프로그램이 할 수 있는 일이 없는 상황이지만 이벤트를 계속 주목해야 하는 경우
-#         """
-#         HLOG.warning(f': {self.msg}')
+    @atexit.register
+    def set_warning(self):
+        """
+        클라이언트 응용 프로그램이 할 수 있는 일이 없는 상황이지만 이벤트를 계속 주목해야 하는 경우
+        """
+        HLOG.warning(f': {self.msg}')
