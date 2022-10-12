@@ -131,19 +131,8 @@ class MainWindow(QMainWindow, DBManager):
 
         # 평가 목록, all pass, fail      
         self.bottom_gridLayout = QGridLayout()
-        # testList_groupbox = QGroupBox("평가 목록")
-        # testList_groupbox.setFixedHeight(bottom_groupbox_fixedHeight)
-        
-        # testList_groupbox_scrollArea = QScrollArea()
-        # testList_groupbox_widget = QWidget()
-        # self.testList_groupbox_layout = QHBoxLayout()
-        # self.testList_hboxLayout = QHBoxLayout(testList_groupbox)
-        # self.testList_hboxLayout.addWidget(testList_groupbox_scrollArea)
         self.testList, _ = self.sp.read_setup(table = "Test_List")
         self.set_testList_hboxLayout()
-        # testList_groupbox_widget.setLayout(self.testList_groupbox_layout)
-        # testList_groupbox_scrollArea.setWidget(testList_groupbox_widget)
-        # self.bottom_gridLayout.addWidget(testList_groupbox, 0, 0, 1, 4)
         
         # ALL PASS, ALL FAIL, ALL N/T, ALL N/A
         all_groupbox = QGroupBox("ALL")
