@@ -15,7 +15,7 @@ from PIL import Image
 import sys
 import os
 from pathlib import Path
-from Screen.ImageView import ImageViewer
+from SubWindow.ImageView import ImageViewer
 from SubWindow.Setup_Language import Setup_Language
 from SubWindow.Setup_Field import Setup_Field
 from SubWindow.Setup_TestList import Setup_TestList
