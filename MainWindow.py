@@ -65,7 +65,7 @@ class MainWindow(QMainWindow, DBManager):
         img_scrollArea_width = main_width / 15              # 좌측 이미지 스크롤 영역 넓이
         left_right_imgBtn_width = main_width / 20           # [<], [>] 버튼 넓이
         allButton_spacing = 9.45                            # all 버튼 간격
-        bottom_groupbox_fixedHeight = 210                   # bottom 영역 높이값
+        self.bottom_groupbox_fixedHeight = 210                   # bottom 영역 높이값
 
         if main_width > 1344:
             main_width = 1344
@@ -131,23 +131,23 @@ class MainWindow(QMainWindow, DBManager):
 
         # 평가 목록, all pass, fail      
         self.bottom_gridLayout = QGridLayout()
-        testList_groupbox = QGroupBox("평가 목록")
-        testList_groupbox.setFixedHeight(bottom_groupbox_fixedHeight)
+        # testList_groupbox = QGroupBox("평가 목록")
+        # testList_groupbox.setFixedHeight(bottom_groupbox_fixedHeight)
         
-        testList_groupbox_scrollArea = QScrollArea()
-        testList_groupbox_widget = QWidget()
-        self.testList_groupbox_layout = QHBoxLayout()
-        self.testList_hboxLayout = QHBoxLayout(testList_groupbox)
-        self.testList_hboxLayout.addWidget(testList_groupbox_scrollArea)
+        # testList_groupbox_scrollArea = QScrollArea()
+        # testList_groupbox_widget = QWidget()
+        # self.testList_groupbox_layout = QHBoxLayout()
+        # self.testList_hboxLayout = QHBoxLayout(testList_groupbox)
+        # self.testList_hboxLayout.addWidget(testList_groupbox_scrollArea)
         self.testList, _ = self.sp.read_setup(table = "Test_List")
         self.set_testList_hboxLayout()
-        testList_groupbox_widget.setLayout(self.testList_groupbox_layout)
-        testList_groupbox_scrollArea.setWidget(testList_groupbox_widget)
-        self.bottom_gridLayout.addWidget(testList_groupbox, 0, 0, 1, 4)
+        # testList_groupbox_widget.setLayout(self.testList_groupbox_layout)
+        # testList_groupbox_scrollArea.setWidget(testList_groupbox_widget)
+        # self.bottom_gridLayout.addWidget(testList_groupbox, 0, 0, 1, 4)
         
         # ALL PASS, ALL FAIL, ALL N/T, ALL N/A
         all_groupbox = QGroupBox("ALL")
-        all_groupbox.setFixedHeight(bottom_groupbox_fixedHeight)
+        all_groupbox.setFixedHeight(self.bottom_groupbox_fixedHeight)
                 
         testAll_VBoxLayout = QVBoxLayout()
         self.allPass_RadioButton = QPushButton("ALL PASS")
@@ -185,7 +185,7 @@ class MainWindow(QMainWindow, DBManager):
 
         # 버전 정보
         version_groupbox = QGroupBox("버전 정보")
-        version_groupbox.setFixedHeight(bottom_groupbox_fixedHeight)
+        version_groupbox.setFixedHeight(self.bottom_groupbox_fixedHeight)
         version_VBoxLayout = QVBoxLayout()
         self.version_textEdit = QTextEdit()
         self.version_textEdit.setEnabled(False)
@@ -195,7 +195,7 @@ class MainWindow(QMainWindow, DBManager):
 
         # 진행 상황
         result_groupbox = QGroupBox("진행 상황")
-        result_groupbox.setFixedHeight(bottom_groupbox_fixedHeight)
+        result_groupbox.setFixedHeight(self.bottom_groupbox_fixedHeight)
         result_Layout = QVBoxLayout()
         self.null_lbl = QLabel("미평가:")
         self.pass_lbl = QLabel("PASS:")
@@ -369,6 +369,15 @@ class MainWindow(QMainWindow, DBManager):
         self.na_RadioList.clear()
         self.nl_RadioList.clear()
         self.all_RadioList.clear()
+        
+        testList_groupbox = QGroupBox("평가 목록")
+        testList_groupbox.setFixedHeight(self.bottom_groupbox_fixedHeight)
+        
+        testList_groupbox_scrollArea = QScrollArea()
+        testList_groupbox_widget = QWidget()
+        self.testList_groupbox_layout = QHBoxLayout()
+        self.testList_hboxLayout = QHBoxLayout(testList_groupbox)
+        self.testList_hboxLayout.addWidget(testList_groupbox_scrollArea)
 
         for i,val in enumerate(self.testList):
             val = str(val)
@@ -382,12 +391,6 @@ class MainWindow(QMainWindow, DBManager):
             globals()[f'gb{i}_na'] = QRadioButton("N/A")
             globals()[f'gb{i}_nl'] = QRadioButton("NULL")
             globals()[f'gb{i}_nl'].setChecked(True)
-            
-            globals()[f'gb{i}_pass'].setEnabled(False)
-            globals()[f'gb{i}_fail'].setEnabled(False)
-            globals()[f'gb{i}_nt'].setEnabled(False)
-            globals()[f'gb{i}_na'].setEnabled(False)
-            globals()[f'gb{i}_nl'].setEnabled(False)
             
             globals()[f'gb{i}_pass'].clicked.connect(self.radioButton_clicked)
             globals()[f'gb{i}_fail'].clicked.connect(self.radioButton_clicked)
@@ -408,10 +411,21 @@ class MainWindow(QMainWindow, DBManager):
             testList_vboxLayout.addWidget(globals()[f'gb{i}_nt'])
             testList_vboxLayout.addWidget(globals()[f'gb{i}_na'])
             testList_vboxLayout.addWidget(globals()[f'gb{i}_nl'])
+            
+            if self.imgList == []:
+                globals()[f'gb{i}_pass'].setEnabled(False)
+                globals()[f'gb{i}_fail'].setEnabled(False)
+                globals()[f'gb{i}_nt'].setEnabled(False)
+                globals()[f'gb{i}_na'].setEnabled(False)
+                globals()[f'gb{i}_nl'].setEnabled(False)
 
             globals()[f'testList_groupbox_{i}'].setLayout(testList_vboxLayout)
 
             self.testList_groupbox_layout.addWidget(globals()[f'testList_groupbox_{i}'])
+            
+        testList_groupbox_widget.setLayout(self.testList_groupbox_layout)
+        testList_groupbox_scrollArea.setWidget(testList_groupbox_widget)
+        self.bottom_gridLayout.addWidget(testList_groupbox, 0, 0, 1, 4)
             
     def radioButton_clicked(self):
         """라디오 버튼 클릭 시, NULL 갯수 확인하여 NULL이 없으면 다음 이미지로 넘어감

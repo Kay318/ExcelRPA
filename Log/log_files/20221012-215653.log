@@ -1,0 +1,116 @@
+[2022-10-12 21:56:53.851][D][LogManager.py(Init):12] LogManager Init function called !!!
+[2022-10-12 21:56:53.935][I][AutoBaseFunction.py(wrapper):10] __main__ : setupUi 실행 시작
+[2022-10-12 21:56:53.936][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:56:53.944][I][AutoBaseFunction.py(wrapper):10] __main__ : set_field_gridLayout 실행 시작
+[2022-10-12 21:56:53.944][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:56:53.967][I][AutoBaseFunction.py(wrapper):15] __main__ : set_field_gridLayout 실행 종료
+[2022-10-12 21:56:53.969][I][AutoBaseFunction.py(wrapper):10] __main__ : set_testList_hboxLayout 실행 시작
+[2022-10-12 21:56:53.970][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:56:53.972][I][AutoBaseFunction.py(wrapper):15] __main__ : set_testList_hboxLayout 실행 종료
+[2022-10-12 21:56:54.341][I][AutoBaseFunction.py(wrapper):15] __main__ : setupUi 실행 종료
+[2022-10-12 21:56:59.661][I][AutoBaseFunction.py(wrapper):10] __main__ : show_imgList 실행 시작
+[2022-10-12 21:56:59.661][I][AutoBaseFunction.py(wrapper):11] Parameter : 독일어, D:/new, False
+[2022-10-12 21:56:59.662][I][MainWindow.py(show_imgList):581] 이미지 리스트 불러옴, 선택된 언어:독일어, 경로:D:/new
+[2022-10-12 21:56:59.716][I][MainWindow.py(show_imgList):620] self.result:{0: {'이미지': 'D:/new\\111.png', '이미지 깨짐': '', 'asdg': '', 'gsa': '', 'fdsa': '', '11': '', '22': '', '44': '', '1': '', '3': '', '5': '', '4': '', '버전 정보': ''}, 1: {'이미지': 'D:/new\\cat.jpg', '이미지 깨짐': '', 'asdg': '', 'gsa': '', 'fdsa': '', '11': '', '22': '', '44': '', '1': '', '3': '', '5': '', '4': '', '버전 정보': ''}, 2: {'이미지': 'D:/new\\dog.jpg', '이미지 깨짐': '', 'asdg': '', 'gsa': '', 'fdsa': '', '11': '', '22': '', '44': '', '1': '', '3': '', '5': '', '4': '', '버전 정보': ''}, 3: {'이미지': 'D:/new\\elephant.jpg', '이미지 깨짐': '', 'asdg': '', 'gsa': '', 'fdsa': '', '11': '', '22': '', '44': '', '1': '', '3': '', '5': '', '4': '', '버전 정보': ''}, 4: {'이미지': 'D:/new\\fox.jpg', '이미지 깨짐': '', 'asdg': '', 'gsa': '', 'fdsa': '', '11': '', '22': '', '44': '', '1': '', '3': '', '5': '', '4': '', '버전 정보': ''}, 5: {'이미지': 'D:/new\\icon.png', '이미지 깨짐': '', 'asdg': '', 'gsa': '', 'fdsa': '', '11': '', '22': '', '44': '', '1': '', '3': '', '5': '', '4': '', '버전 정보': ''}, 6: {'이미지': 'D:/new\\modim1.png', '이미지 깨짐': '', 'asdg': '', 'gsa': '', 'fdsa': '', '11': '', '22': '', '44': '', '1': '', '3': '', '5': '', '4': '', '버전 정보': ''}, 7: {'이미지': 'D:/new\\rabbit.jpg', '이미지 깨짐': '', 'asdg': '', 'gsa': '', 'fdsa': '', '11': '', '22': '', '44': '', '1': '', '3': '', '5': '', '4': '', '버전 정보': ''}, 8: {'이미지': 'D:/new\\tiger.jpg', '이미지 깨짐': '', 'asdg': '', 'gsa': '', 'fdsa': '', '11': '', '22': '', '44': '', '1': '', '3': '', '5': '', '4': '', '버전 정보': ''}}
+[2022-10-12 21:56:59.717][I][MainWindow.py(qbutton_clicked):471] statusbar에 이미지명 표시111.png
+[2022-10-12 21:56:59.769][I][MainWindow.py(qbutton_clicked):478] 우측에 이미지 표시:D:/new\111.png
+[2022-10-12 21:56:59.770][I][MainWindow.py(set_color):432] 이전 버튼 색상 초기화:rgb(225, 225, 225)
+[2022-10-12 21:56:59.770][I][MainWindow.py(set_color):434] 현재 버튼 색상: 보라색,rgb(147, 112, 219)
+[2022-10-12 21:56:59.770][I][MainWindow.py(set_color):444] 색상처리를 위한 변수 result_count:{'pre_idx': ['', '', '', '', '', '', ''], 'idx': ['', '', '', '', '', '', '']}, pre_idx:0, idx:0
+[2022-10-12 21:56:59.771][I][MainWindow.py(set_color):463] 이전 버튼에 대한 색상 처리 완료
+[2022-10-12 21:56:59.771][I][MainWindow.py(show_imgList):624] 이미지 불러온 후 첫번째 버튼 클릭
+[2022-10-12 21:56:59.772][I][AutoBaseFunction.py(wrapper):15] __main__ : show_imgList 실행 종료
+[2022-10-12 21:57:01.629][I][AutoBaseFunction.py(wrapper):10] __main__ : show_setup_TestList 실행 시작
+[2022-10-12 21:57:01.630][I][AutoBaseFunction.py(wrapper):11] Parameter : False
+[2022-10-12 21:57:01.631][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_TestList : setupUI_TestList 실행 시작
+[2022-10-12 21:57:01.631][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:57:01.635][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_TestList : tl_set_slot 실행 시작
+[2022-10-12 21:57:01.635][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:57:01.636][I][AutoBaseFunction.py(wrapper):15] SubWindow.Setup_TestList : tl_set_slot 실행 종료
+[2022-10-12 21:57:01.636][I][AutoBaseFunction.py(wrapper):15] SubWindow.Setup_TestList : setupUI_TestList 실행 종료
+[2022-10-12 21:57:01.643][I][MainWindow.py(show_setup_TestList):281] 평가 목록 설정 팝업 열림
+[2022-10-12 21:57:01.644][I][AutoBaseFunction.py(wrapper):15] __main__ : show_setup_TestList 실행 종료
+[2022-10-12 21:57:03.495][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_TestList : ok_Button_clicked 실행 시작
+[2022-10-12 21:57:03.496][I][AutoBaseFunction.py(wrapper):11] Parameter : False
+[2022-10-12 21:57:03.496][I][Setup_TestList.py(ok_Button_clicked):71] 평가 목록 설정 팝업 확인 버튼 선택
+[2022-10-12 21:57:03.497][I][Setup_TestList.py(ok_Button_clicked):91] 1:평가 목록 팝업에 이미지 깨짐 추가
+[2022-10-12 21:57:03.498][I][Setup_TestList.py(ok_Button_clicked):91] 2:평가 목록 팝업에 asdg 추가
+[2022-10-12 21:57:03.499][I][Setup_TestList.py(ok_Button_clicked):91] 3:평가 목록 팝업에 gsa 추가
+[2022-10-12 21:57:03.500][I][Setup_TestList.py(ok_Button_clicked):91] 4:평가 목록 팝업에 fdsa 추가
+[2022-10-12 21:57:03.500][I][Setup_TestList.py(ok_Button_clicked):91] 5:평가 목록 팝업에 11 추가
+[2022-10-12 21:57:03.501][I][Setup_TestList.py(ok_Button_clicked):91] 6:평가 목록 팝업에 22 추가
+[2022-10-12 21:57:03.502][I][MainWindow.py(tl_emit):313] 필드리스트 삭제
+[2022-10-12 21:57:03.502][I][AutoBaseFunction.py(wrapper):10] __main__ : set_testList_hboxLayout 실행 시작
+[2022-10-12 21:57:03.503][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:57:03.504][I][AutoBaseFunction.py(wrapper):15] __main__ : set_testList_hboxLayout 실행 종료
+[2022-10-12 21:57:03.505][I][MainWindow.py(tl_emit):315] 필드리스트 갱신 완료
+[2022-10-12 21:57:03.506][I][MainWindow.py(tl_emit):317] 평가 목록 설정 팝업 닫힘으로 메인창 활성화
+[2022-10-12 21:57:03.509][I][AutoBaseFunction.py(wrapper):15] SubWindow.Setup_TestList : ok_Button_clicked 실행 종료
+[2022-10-12 21:57:05.027][I][AutoBaseFunction.py(wrapper):10] __main__ : show_setup_TestList 실행 시작
+[2022-10-12 21:57:05.027][I][AutoBaseFunction.py(wrapper):11] Parameter : False
+[2022-10-12 21:57:05.028][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_TestList : setupUI_TestList 실행 시작
+[2022-10-12 21:57:05.028][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:57:05.031][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_TestList : tl_set_slot 실행 시작
+[2022-10-12 21:57:05.031][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:57:05.032][I][AutoBaseFunction.py(wrapper):15] SubWindow.Setup_TestList : tl_set_slot 실행 종료
+[2022-10-12 21:57:05.032][I][AutoBaseFunction.py(wrapper):15] SubWindow.Setup_TestList : setupUI_TestList 실행 종료
+[2022-10-12 21:57:05.038][I][MainWindow.py(show_setup_TestList):281] 평가 목록 설정 팝업 열림
+[2022-10-12 21:57:05.039][I][AutoBaseFunction.py(wrapper):15] __main__ : show_setup_TestList 실행 종료
+[2022-10-12 21:57:08.164][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_TestList : ok_Button_clicked 실행 시작
+[2022-10-12 21:57:08.164][I][AutoBaseFunction.py(wrapper):11] Parameter : False
+[2022-10-12 21:57:08.164][I][Setup_TestList.py(ok_Button_clicked):71] 평가 목록 설정 팝업 확인 버튼 선택
+[2022-10-12 21:57:08.165][I][Setup_TestList.py(ok_Button_clicked):91] 1:평가 목록 팝업에 이미지 깨짐 추가
+[2022-10-12 21:57:08.166][I][Setup_TestList.py(ok_Button_clicked):91] 2:평가 목록 팝업에 asdg 추가
+[2022-10-12 21:57:08.167][I][Setup_TestList.py(ok_Button_clicked):91] 3:평가 목록 팝업에 gsa 추가
+[2022-10-12 21:57:08.168][I][Setup_TestList.py(ok_Button_clicked):91] 4:평가 목록 팝업에 fdsa 추가
+[2022-10-12 21:57:08.168][I][MainWindow.py(tl_emit):313] 필드리스트 삭제
+[2022-10-12 21:57:08.168][I][AutoBaseFunction.py(wrapper):10] __main__ : set_testList_hboxLayout 실행 시작
+[2022-10-12 21:57:08.169][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:57:08.170][I][AutoBaseFunction.py(wrapper):15] __main__ : set_testList_hboxLayout 실행 종료
+[2022-10-12 21:57:08.171][I][MainWindow.py(tl_emit):315] 필드리스트 갱신 완료
+[2022-10-12 21:57:08.171][I][MainWindow.py(tl_emit):317] 평가 목록 설정 팝업 닫힘으로 메인창 활성화
+[2022-10-12 21:57:08.174][I][AutoBaseFunction.py(wrapper):15] SubWindow.Setup_TestList : ok_Button_clicked 실행 종료
+[2022-10-12 21:57:10.659][I][AutoBaseFunction.py(wrapper):10] __main__ : show_setup_TestList 실행 시작
+[2022-10-12 21:57:10.661][I][AutoBaseFunction.py(wrapper):11] Parameter : False
+[2022-10-12 21:57:10.664][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_TestList : setupUI_TestList 실행 시작
+[2022-10-12 21:57:10.665][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:57:10.670][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_TestList : tl_set_slot 실행 시작
+[2022-10-12 21:57:10.670][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:57:10.671][I][AutoBaseFunction.py(wrapper):15] SubWindow.Setup_TestList : tl_set_slot 실행 종료
+[2022-10-12 21:57:10.671][I][AutoBaseFunction.py(wrapper):15] SubWindow.Setup_TestList : setupUI_TestList 실행 종료
+[2022-10-12 21:57:10.678][I][MainWindow.py(show_setup_TestList):281] 평가 목록 설정 팝업 열림
+[2022-10-12 21:57:10.678][I][AutoBaseFunction.py(wrapper):15] __main__ : show_setup_TestList 실행 종료
+[2022-10-12 21:57:12.927][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_TestList : ok_Button_clicked 실행 시작
+[2022-10-12 21:57:12.927][I][AutoBaseFunction.py(wrapper):11] Parameter : False
+[2022-10-12 21:57:12.927][I][Setup_TestList.py(ok_Button_clicked):71] 평가 목록 설정 팝업 확인 버튼 선택
+[2022-10-12 21:57:12.928][I][Setup_TestList.py(ok_Button_clicked):91] 1:평가 목록 팝업에 이미지 깨짐 추가
+[2022-10-12 21:57:12.929][I][Setup_TestList.py(ok_Button_clicked):91] 2:평가 목록 팝업에 asdg 추가
+[2022-10-12 21:57:12.929][I][Setup_TestList.py(ok_Button_clicked):91] 3:평가 목록 팝업에 gsa 추가
+[2022-10-12 21:57:12.930][I][MainWindow.py(tl_emit):313] 필드리스트 삭제
+[2022-10-12 21:57:12.930][I][AutoBaseFunction.py(wrapper):10] __main__ : set_testList_hboxLayout 실행 시작
+[2022-10-12 21:57:12.930][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:57:12.932][I][AutoBaseFunction.py(wrapper):15] __main__ : set_testList_hboxLayout 실행 종료
+[2022-10-12 21:57:12.932][I][MainWindow.py(tl_emit):315] 필드리스트 갱신 완료
+[2022-10-12 21:57:12.933][I][MainWindow.py(tl_emit):317] 평가 목록 설정 팝업 닫힘으로 메인창 활성화
+[2022-10-12 21:57:12.935][I][AutoBaseFunction.py(wrapper):15] SubWindow.Setup_TestList : ok_Button_clicked 실행 종료
+[2022-10-12 21:57:20.490][I][AutoBaseFunction.py(wrapper):10] __main__ : show_setup_TestList 실행 시작
+[2022-10-12 21:57:20.491][I][AutoBaseFunction.py(wrapper):11] Parameter : False
+[2022-10-12 21:57:20.491][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_TestList : setupUI_TestList 실행 시작
+[2022-10-12 21:57:20.492][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:57:20.494][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_TestList : tl_set_slot 실행 시작
+[2022-10-12 21:57:20.494][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:57:20.495][I][AutoBaseFunction.py(wrapper):15] SubWindow.Setup_TestList : tl_set_slot 실행 종료
+[2022-10-12 21:57:20.495][I][AutoBaseFunction.py(wrapper):15] SubWindow.Setup_TestList : setupUI_TestList 실행 종료
+[2022-10-12 21:57:20.502][I][MainWindow.py(show_setup_TestList):281] 평가 목록 설정 팝업 열림
+[2022-10-12 21:57:20.502][I][AutoBaseFunction.py(wrapper):15] __main__ : show_setup_TestList 실행 종료
+[2022-10-12 21:57:23.563][I][AutoBaseFunction.py(wrapper):10] SubWindow.Setup_TestList : ok_Button_clicked 실행 시작
+[2022-10-12 21:57:23.564][I][AutoBaseFunction.py(wrapper):11] Parameter : False
+[2022-10-12 21:57:23.564][I][Setup_TestList.py(ok_Button_clicked):71] 평가 목록 설정 팝업 확인 버튼 선택
+[2022-10-12 21:57:23.565][I][Setup_TestList.py(ok_Button_clicked):91] 1:평가 목록 팝업에 이미지 깨짐 추가
+[2022-10-12 21:57:23.565][I][MainWindow.py(tl_emit):313] 필드리스트 삭제
+[2022-10-12 21:57:23.565][I][AutoBaseFunction.py(wrapper):10] __main__ : set_testList_hboxLayout 실행 시작
+[2022-10-12 21:57:23.566][I][AutoBaseFunction.py(wrapper):11] Parameter : 
+[2022-10-12 21:57:23.566][I][AutoBaseFunction.py(wrapper):15] __main__ : set_testList_hboxLayout 실행 종료
+[2022-10-12 21:57:23.567][I][MainWindow.py(tl_emit):315] 필드리스트 갱신 완료
+[2022-10-12 21:57:23.567][I][MainWindow.py(tl_emit):317] 평가 목록 설정 팝업 닫힘으로 메인창 활성화
+[2022-10-12 21:57:23.570][I][AutoBaseFunction.py(wrapper):15] SubWindow.Setup_TestList : ok_Button_clicked 실행 종료
