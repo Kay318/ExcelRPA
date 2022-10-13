@@ -623,6 +623,7 @@ class MainWindow(QMainWindow, DBManager):
                     QApplication.processEvents()
 
                 LogManager.HLOG.info(f"self.result:{self.result}")
+                self.setEnabled(True)
                 self.qbuttons[0].click()
                 if len(self.imgList) > 1:
                     self.right_imgBtn.setEnabled(True)
@@ -631,7 +632,6 @@ class MainWindow(QMainWindow, DBManager):
                 self.setEnabled_bottom()
                 self.pre_lang = lang
                 self.pre_subMenu = subMenu
-                self.setEnabled(True)
 
         else:
             subMenu.setChecked(True)
@@ -658,6 +658,7 @@ class MainWindow(QMainWindow, DBManager):
 
     @AutomationFunctionDecorator
     def set_field_gridLayout(self):
+        self.field_lineEdit.clear()
 
         for i,field in enumerate(self.fieldList):
             globals()[f'field_Label{i}'] = QLabel(field)
