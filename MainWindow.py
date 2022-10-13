@@ -43,6 +43,7 @@ class MainWindow(QMainWindow, DBManager):
         self.result = {}                         # 매 이미지에 대한 결과값 저장
         self.clicked_lang = ""                   # 선택된 언어
         self.pre_lang = ""                       # 그전에 선택된 언어
+        self.pre_subMenu = None                  # 메뉴바에서 그전에 선택된 언어 subMenu
         self.nextImg_bool = True                 # 다음 이미지로 넘어갈지 판단
         # self.loadingThread = LoadingThread()
         # self.loadingThread.loading_singnal.connect(self.start_loading)
@@ -205,13 +206,14 @@ class MainWindow(QMainWindow, DBManager):
 
         # 메뉴바
         self.menubar = self.menuBar()
-        self.menu = self.menubar.addMenu("Menu")
+        self.menu = self.menubar.addMenu("&Menu")
         self.menuOpen = self.menu.addMenu("Open")
         langList, langPath = self.sp.read_setup(table = "Language")
         for lang, path in zip(langList, langPath):
             subMenu = QAction(lang, self)
             self.menuOpen.addAction(subMenu)
-            subMenu.triggered.connect(partial(self.show_imgList, lang, path))
+            subMenu.setCheckable(True)
+            subMenu.triggered.connect(partial(self.show_imgList, lang, path, subMenu))
             
         self.actionSave = QAction("Save", self)
         self.actionSave.setShortcut("Ctrl+S")
@@ -222,7 +224,7 @@ class MainWindow(QMainWindow, DBManager):
         self.menu.addAction(self.actionCreateExcel)
         self.menu.addAction(self.actionClose)
 
-        self.setup = self.menubar.addMenu("Setup")
+        self.setup = self.menubar.addMenu("&Setup")
         self.actionLanguage = QAction("Language", self)
         self.actionField = QAction("Field", self)
         self.actionTest_List = QAction("Test List", self)
@@ -469,7 +471,7 @@ class MainWindow(QMainWindow, DBManager):
         
         self.set_left_right_button_state()
 
-        self.statusbar_label.setText(self.imgList[idx])
+        self.statusbar_label.setText(self.clicked_lang + " - " + self.imgList[idx])
         LogManager.HLOG.info(f"statusbar에 이미지명 표시{self.imgList[idx]}")
 
         self.img_dir = self.langPath + '\\' + self.imgList[idx]
@@ -478,8 +480,6 @@ class MainWindow(QMainWindow, DBManager):
 
         self.resize_right_img()
         LogManager.HLOG.info(f"우측에 이미지 표시:{self.img_dir}")
-
-        self.img_Label.mouseDoubleClickEvent = partial(self.double_click_img, self.img_dir)
 
         # 다른 이미지 버튼 누를 때 액션
         if self.pre_idx != idx:
@@ -553,7 +553,7 @@ class MainWindow(QMainWindow, DBManager):
         LogManager.HLOG.info(f"이미지 더블클릭:{img_dir}")
 
     @AutomationFunctionDecorator
-    def show_imgList(self, lang, langPath, litter):
+    def show_imgList(self, lang, langPath, subMenu="", litter=None):
         """좌측에 표출할 이미지버튼들을 세팅할 함수
 
         Args:
@@ -563,24 +563,12 @@ class MainWindow(QMainWindow, DBManager):
         # self.loadingThread.start()
         self.pre_idx = 0
         if lang != self.pre_lang:
-            # 평가결과 기록 삭제
-            self.result.clear()
-
-            self.setupList = self.testList + self.fieldList
 
             # 레이블 초기화
             # for i,field in enumerate(self.fieldList):
             #         field_data = {field[0]:globals()[f'desc_LineEdit{i}'].text()}
             #         self.result[self.pre_idx].append(field_data)
             #         globals()[f'desc_LineEdit{i}'].clear()
-
-            # 이미지 리스트 초기화
-            for i in range(self.img_VBoxLayout.count()):
-                self.img_VBoxLayout.itemAt(i).widget().deleteLater()
-
-            # 선택한 언어 기억
-            self.langPath = langPath
-            LogManager.HLOG.info(f"이미지 리스트 불러옴, 선택된 언어:{lang}, 경로:{langPath}")
 
             try:
                 self.imgList = [fn for fn in os.listdir(langPath)
@@ -594,6 +582,22 @@ class MainWindow(QMainWindow, DBManager):
             if self.imgList == []:
                 QMessageBox.warning(self, "주의", "선택하신 경로에 이미지 파일이 없습니다.")
             else:
+                if self.pre_subMenu is not None:
+                    self.pre_subMenu.setChecked(False)
+                subMenu.setChecked(True)
+                # 평가결과 기록 삭제
+                self.result.clear()
+                self.clicked_lang = lang
+                self.setupList = self.testList + self.fieldList
+
+                # 이미지 리스트 초기화
+                for i in range(self.img_VBoxLayout.count()):
+                    self.img_VBoxLayout.itemAt(i).widget().deleteLater()
+
+                # 선택한 언어 기억
+                self.langPath = langPath
+                LogManager.HLOG.info(f"이미지 리스트 불러옴, 선택된 언어:{lang}, 경로:{langPath}")
+
                 # 이미지 버튼 추가
                 self.qbuttons = {}
                 self.icons = {}
@@ -627,6 +631,10 @@ class MainWindow(QMainWindow, DBManager):
                 
                 self.setEnabled_bottom()
                 self.pre_lang = lang
+                self.pre_subMenu = subMenu
+
+        else:
+            subMenu.setChecked(True)
             
             # self.loadingThread.terminate()
             
@@ -701,6 +709,7 @@ class MainWindow(QMainWindow, DBManager):
 
         self.img_Label.setPixmap(QPixmap(self.pixmap))
         self.img_Label.setAlignment(Qt.AlignCenter)
+        self.img_Label.mouseDoubleClickEvent = partial(self.double_click_img, self.img_dir)
 
 #     @AutomationFunctionDecorator
 #     def closeEvent(self, litter) -> None: # a0: QtGui.QCloseEvent

@@ -70,8 +70,12 @@ class Settings:
         if (val2 != None):
             self.config[table].setdefault(f'{key2}_{count + 1}', val2)
 
-        self.save_ini(self.config) 
+        self.save_ini() 
 
-    def save_ini(self, save_key : configparser.ConfigParser()):
+    def clear_table(self, table):
+        self.config[table].clear()
+        self.save_ini()
+
+    def save_ini(self):
         with open("./Settings/Setup.ini", "w", encoding="utf-8") as f:
-            save_key.write(f)
+            self.config.write(f)

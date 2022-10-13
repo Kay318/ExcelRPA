@@ -101,8 +101,10 @@ class Setup_Field(QDialog):
                 LogManager.HLOG.info(f"{i+1}:필드 설정 팝업에 {globals()[f'lineEdit{i}'].text()} 추가")
         if fieldList == []:
             fieldList = ["OK"]
+            self.sp.clear_table("Field")
         self.signal.emit(fieldList)
         self.destroy()
+        QCoreApplication.instance().quit()
         
     @AutomationFunctionDecorator
     def closeEvent(self, event) -> None:

@@ -91,8 +91,10 @@ class Setup_TestList(QDialog):
                 LogManager.HLOG.info(f"{i+1}:평가 목록 팝업에 {globals()[f'lineEdit{i}'].text()} 추가")
         if testList == []:
             testList = ["OK"]
+            self.sp.clear_table("Test_List")
         self.signal.emit(testList)
         self.destroy()
+        QCoreApplication.instance().quit()
         
     @AutomationFunctionDecorator
     def closeEvent(self, event) -> None:
