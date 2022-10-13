@@ -26,6 +26,7 @@ class Setup_Field(QDialog):
         super().__init__(parent)
         self.sp = sp.Settings()
         self.setupUI_Field()
+        self.testList = parent.testList
 
     @AutomationFunctionDecorator
     def setupUI_Field(self):
@@ -89,6 +90,12 @@ class Setup_Field(QDialog):
                 else:
                     QMessageBox.about(self, '주의', '중복 라인이 있습니다.')
                     LogManager.HLOG.info("필드 설정 팝업에서 중복 라인 알림 표시")
+                    return
+
+            if globals()[f'lineEdit{i}'].text() in self.testList:
+                    x = globals()[f'lineEdit{i}'].text()
+                    QMessageBox.warning(self, '주의', f'"{x}"는 필드에도 있습니다.')
+                    LogManager.HLOG.info(f'필드 설정 팝업과 평가 목록 팝업에서 "{x}" 겹침 알림 표시')
                     return
 
         self.sp.config["Field"] = {}

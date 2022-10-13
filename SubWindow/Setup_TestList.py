@@ -14,6 +14,7 @@ class Setup_TestList(QDialog):
     signal = pyqtSignal(list)
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.fieldList = parent.fieldList
         self.sp = sp.Settings()
         self.setupUI_TestList()
 
@@ -77,8 +78,14 @@ class Setup_TestList(QDialog):
                 if globals()[f'lineEdit{i}'].text() not in testList:
                     testList.append(globals()[f'lineEdit{i}'].text())
                 else:
-                    QMessageBox.about(self, '주의', '중복 라인이 있습니다.')
+                    QMessageBox.warning(self, '주의', '중복 라인이 있습니다.')
                     LogManager.HLOG.info("평가 목록 팝업에서 중복 라인 알림 표시")
+                    return
+
+                if globals()[f'lineEdit{i}'].text() in self.fieldList:
+                    x = globals()[f'lineEdit{i}'].text()
+                    QMessageBox.warning(self, '주의', f'"{x}"는 필드에도 있습니다.')
+                    LogManager.HLOG.info(f'평가 목록 팝업과 필드 설정 팝업에서 "{x}" 겹침 알림 표시')
                     return
 
         self.sp.config["Test_List"] = {}
