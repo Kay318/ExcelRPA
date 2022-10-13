@@ -232,7 +232,7 @@ class Setup_Language(QDialog):
 
         self.signal.emit(langPath)
         self.destroy()
-        QCoreApplication.instance().quit()
+        # QCoreApplication.instance().quit()
 
     @AutomationFunctionDecorator
     def closeEvent(self, event) -> None:

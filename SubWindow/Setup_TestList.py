@@ -94,7 +94,7 @@ class Setup_TestList(QDialog):
             self.sp.clear_table("Test_List")
         self.signal.emit(testList)
         self.destroy()
-        QCoreApplication.instance().quit()
+        # QCoreApplication.instance().quit()
         
     @AutomationFunctionDecorator
     def closeEvent(self, event) -> None:

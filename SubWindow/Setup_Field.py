@@ -104,7 +104,7 @@ class Setup_Field(QDialog):
             self.sp.clear_table("Field")
         self.signal.emit(fieldList)
         self.destroy()
-        QCoreApplication.instance().quit()
+        # QCoreApplication.instance().quit()
         
     @AutomationFunctionDecorator
     def closeEvent(self, event) -> None:

@@ -223,6 +223,7 @@ class MainWindow(QMainWindow, DBManager):
         self.menu.addAction(self.actionSave)
         self.menu.addAction(self.actionCreateExcel)
         self.menu.addAction(self.actionClose)
+        self.actionSave.triggered.connect(self.save_result)
 
         self.setup = self.menubar.addMenu("&Setup")
         self.actionLanguage = QAction("Language", self)
@@ -289,7 +290,7 @@ class MainWindow(QMainWindow, DBManager):
                 self.field_gridLayout.itemAt(i).widget().deleteLater()
             if fieldList != ["OK"]:
                 self.fieldList = fieldList
-                LogManager.HLOG.info("필드리스트 삭제")
+                LogManager.HLOG.info("기존 필드리스트 삭제")
                 self.set_field_gridLayout()
                 LogManager.HLOG.info("필드리스트 갱신 완료")
         self.setEnabled(True)
@@ -301,9 +302,9 @@ class MainWindow(QMainWindow, DBManager):
                 self.testList_groupbox_layout.itemAt(i).widget().deleteLater()
             if testList != ["OK"]:
                 self.testList = testList
-                LogManager.HLOG.info("필드리스트 삭제")
+                LogManager.HLOG.info("기존 평가 목록 삭제")
                 self.set_testList_hboxLayout()
-                LogManager.HLOG.info("필드리스트 갱신 완료")
+                LogManager.HLOG.info("평가 목록 갱신 완료")
         self.setEnabled(True)
         LogManager.HLOG.info("평가 목록 설정 팝업 닫힘으로 메인창 활성화")
         
@@ -710,6 +711,31 @@ class MainWindow(QMainWindow, DBManager):
         self.img_Label.setPixmap(QPixmap(self.pixmap))
         self.img_Label.setAlignment(Qt.AlignCenter)
         self.img_Label.mouseDoubleClickEvent = partial(self.double_click_img, self.img_dir)
+
+    def save_result(self, litter):
+        """
+        결과값을 DB에 저장
+        """
+        result_data = self.insert_result()
+        self.result[self.idx] = result_data
+
+        query = f"CREATE TABLE IF NOT EXISTS '{self.clicked_lang}' ('이미지' TEXT,"
+        for i, col in enumerate(self.setupList):
+            query += f"'{col}' TEXT,"
+        query += "'버전정보' TEXT)"
+        
+        self.c.execute(query)
+
+        self.c.execute(f"DELETE FROM {self.clicked_lang}")
+        question_marks = ", ".join(['?' for _ in range(len(result_data.keys()))])
+        print(type(question_marks))
+        for i in self.result.values():
+            try:
+                self.dbConn.execute(f"INSERT INTO {self.clicked_lang} VALUES ({question_marks})", 
+                        (tuple(i.values())))
+                self.dbConn.commit()
+            except RuntimeError:
+                continue
 
 #     @AutomationFunctionDecorator
 #     def closeEvent(self, litter) -> None: # a0: QtGui.QCloseEvent

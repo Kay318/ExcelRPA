@@ -3,7 +3,7 @@ import sqlite3
 
 class DBManager:
     def __init__(self):
-        self.dbpath = f"{os.getcwd()}\\ExcelRPA.db"
+        self.dbpath = f"{os.getcwd()}\\Database\\ExcelRPA.db"
         self.dbConn = sqlite3.connect(self.dbpath)
         self.c = self.dbConn.cursor()
         self.__create_table()
