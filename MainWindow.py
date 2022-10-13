@@ -29,6 +29,7 @@ class MainWindow(QMainWindow, DBManager):
     
     def __init__(self):
         super().__init__()
+        self.field_lineEdit = []                 # 모든 필드
         self.all_RadioList = []                  # 모든 라디오 버튼
         self.pass_RadioList = []                 # 모든 pass 버튼
         self.fail_RadioList = []                 # 모든 fail 버튼
@@ -560,16 +561,12 @@ class MainWindow(QMainWindow, DBManager):
         Args:
             lang : 현재 선택된 언어
         """
-        
+        # if self.result != {}:
+        #     reply = QMessageBox.question(self, '알림', '지금 언어를 변경하면 현재까지의 진행\n취소하시겠습니까?',
+        #                             QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         # self.loadingThread.start()
         self.pre_idx = 0
         if lang != self.pre_lang:
-
-            # 레이블 초기화
-            # for i,field in enumerate(self.fieldList):
-            #         field_data = {field[0]:globals()[f'desc_LineEdit{i}'].text()}
-            #         self.result[self.pre_idx].append(field_data)
-            #         globals()[f'desc_LineEdit{i}'].clear()
 
             try:
                 self.imgList = [fn for fn in os.listdir(langPath)
@@ -586,6 +583,7 @@ class MainWindow(QMainWindow, DBManager):
                 if self.pre_subMenu is not None:
                     self.pre_subMenu.setChecked(False)
                 subMenu.setChecked(True)
+                self.setEnabled(False)
                 # 평가결과 기록 삭제
                 self.result.clear()
                 self.clicked_lang = lang
@@ -633,6 +631,7 @@ class MainWindow(QMainWindow, DBManager):
                 self.setEnabled_bottom()
                 self.pre_lang = lang
                 self.pre_subMenu = subMenu
+                self.setEnabled(True)
 
         else:
             subMenu.setChecked(True)
@@ -640,8 +639,11 @@ class MainWindow(QMainWindow, DBManager):
             # self.loadingThread.terminate()
             
     def setEnabled_bottom(self):
+        for field in self.field_lineEdit:
+            field.setEnabled(True)
         for radio_button in self.all_RadioList:
             radio_button.setEnabled(True)
+
         self.allPass_RadioButton.setEnabled(True)
         self.allFail_RadioButton.setEnabled(True)
         self.allNT_RadioButton.setEnabled(True)
@@ -666,6 +668,12 @@ class MainWindow(QMainWindow, DBManager):
             else:
                 self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 1,i-1)
                 self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 1,i)
+            
+            self.field_lineEdit.append(globals()[f'desc_LineEdit{i}'])
+
+            if self.imgList == []:
+                globals()[f'desc_LineEdit{i}'].setEnabled(False)
+            
     
     @AutomationFunctionDecorator
     def btn_onClicked(self, litter):
@@ -728,7 +736,6 @@ class MainWindow(QMainWindow, DBManager):
 
         self.c.execute(f"DELETE FROM {self.clicked_lang}")
         question_marks = ", ".join(['?' for _ in range(len(result_data.keys()))])
-        print(type(question_marks))
         for i in self.result.values():
             try:
                 self.dbConn.execute(f"INSERT INTO {self.clicked_lang} VALUES ({question_marks})", 
@@ -737,9 +744,9 @@ class MainWindow(QMainWindow, DBManager):
             except RuntimeError:
                 continue
 
-#     @AutomationFunctionDecorator
-#     def closeEvent(self, litter) -> None: # a0: QtGui.QCloseEvent
-#         sys.exit()
+    @AutomationFunctionDecorator
+    def closeEvent(self, litter) -> None: # a0: QtGui.QCloseEvent
+        sys.exit()
 
 #     # # 0728
 #     # # 키보드 설정
