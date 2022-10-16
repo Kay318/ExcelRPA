@@ -735,8 +735,17 @@ class MainWindow(QMainWindow, DBManager):
         """
         결과값을 DB에 저장
         """
+        # 현재 이미지에 대한 결과 저장
         result_data = self.insert_result()
         self.result[self.idx] = result_data
+        
+        # SQLite에 현재 언어 table이 있으면 삭제
+        self.c.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        sql_tables = self.c.fetchall()
+        sql_tables_list = [table[0] for table in sql_tables]
+        if self.clicked_lang in sql_tables_list:
+            self.c.execute(f"DROP TABLE {self.clicked_lang}")
+        LogManager.HLOG.info(f"{self.clicked_lang} 테이블 삭제")
 
         query = f"CREATE TABLE IF NOT EXISTS '{self.clicked_lang}' ('이미지' TEXT,"
         for i, col in enumerate(self.setupList):
@@ -746,8 +755,6 @@ class MainWindow(QMainWindow, DBManager):
         
         self.c.execute(query)
 
-        self.c.execute(f"DELETE FROM {self.clicked_lang}")
-        LogManager.HLOG.info(f"{self.clicked_lang} 테이블 내용 삭제")
         question_marks = ", ".join(['?' for _ in range(len(result_data.keys()))])
         LogManager.HLOG.info(f"저장할 평가결과:{self.result}")
         
