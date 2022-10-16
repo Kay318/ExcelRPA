@@ -1,7 +1,6 @@
 import configparser
-from doctest import Example
-from operator import index
-from Log import LogManager as lm
+import traceback
+from Log import LogManager
 
 class Settings:
     def __init__(self):
@@ -38,7 +37,8 @@ class Settings:
                     print(f'key2 : {key}')
                     val2_List.append(data[key])
         except Exception as e:
-            lm.Interupt()
+            msg = traceback.format_exc()
+            LogManager.HLOG.error(msg)
 
         return val1_List, val2_List
         

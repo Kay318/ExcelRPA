@@ -105,7 +105,7 @@ class Setup_TestList(QDialog):
         
     @AutomationFunctionDecorator
     def closeEvent(self, event) -> None:
-        LogManager.HLOG.info("필드 설정 팝업 취소 버튼 선택")
+        LogManager.HLOG.info("평가 목록 설정 팝업 취소 버튼 선택")
         setupList, _ = self.sp.read_setup("Test_List")
         lineList = [globals()[f'lineEdit{i}'].text() for i in range(8) if globals()[f'lineEdit{i}'].text() != ""]
 

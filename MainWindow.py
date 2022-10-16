@@ -11,6 +11,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from functools import partial
+import traceback
 from PIL import Image
 import sys
 import os
@@ -60,13 +61,13 @@ class MainWindow(QMainWindow, DBManager):
         screen = QDesktopWidget().screenGeometry()
 
         # 해상도에 따라 창 크기 설정
-        main_width = screen.width() * 0.7                   # 메인창 넓이
-        main_height = screen.height() * 0.7                 # 메인창 높이
-        main_left = (screen.width() - main_width) / 2       # 메인창 x좌표
-        main_top = (screen.height() - main_height) / 2      # 메인창 y좌표
-        img_scrollArea_width = main_width / 15              # 좌측 이미지 스크롤 영역 넓이
-        left_right_imgBtn_width = main_width / 20           # [<], [>] 버튼 넓이
-        allButton_spacing = 9.45                            # all 버튼 간격
+        main_width = round(screen.width() * 0.7)                   # 메인창 넓이
+        main_height = round(screen.height() * 0.7)                 # 메인창 높이
+        main_left = round((screen.width() - main_width) / 2)       # 메인창 x좌표
+        main_top = round((screen.height() - main_height) / 2)      # 메인창 y좌표
+        img_scrollArea_width = round(main_width / 15)              # 좌측 이미지 스크롤 영역 넓이
+        left_right_imgBtn_width = round(main_width / 20)           # [<], [>] 버튼 넓이
+        allButton_spacing = 10                              # all 버튼 간격
         self.bottom_groupbox_fixedHeight = 210                   # bottom 영역 높이값
 
         if main_width > 1344:
@@ -225,6 +226,7 @@ class MainWindow(QMainWindow, DBManager):
         self.menu.addAction(self.actionCreateExcel)
         self.menu.addAction(self.actionClose)
         self.actionSave.triggered.connect(self.save_result)
+        self.actionSave.setEnabled(False)
 
         self.setup = self.menubar.addMenu("&Setup")
         self.actionLanguage = QAction("Language", self)
@@ -280,7 +282,7 @@ class MainWindow(QMainWindow, DBManager):
             for lang, path in langPath:
                 subMenu = QAction(lang, self)
                 self.menuOpen.addAction(subMenu)
-                subMenu.triggered.connect(partial(self.show_imgList, lang, path))
+                subMenu.triggered.connect(partial(self.show_imgList, lang, path, subMenu))
             LogManager.HLOG.info("퀵메뉴 갱신 완료")
         self.setEnabled(True)
         LogManager.HLOG.info("언어 설정 팝업 닫힘으로 메인창 활성화")
@@ -293,6 +295,10 @@ class MainWindow(QMainWindow, DBManager):
                 self.fieldList = fieldList
                 LogManager.HLOG.info("기존 필드리스트 삭제")
                 self.set_field_gridLayout()
+                
+                # if self.result != {}:
+                #     for val in self.result.values():
+                        
                 LogManager.HLOG.info("필드리스트 갱신 완료")
         self.setEnabled(True)
         LogManager.HLOG.info("필드 설정 팝업 닫힘으로 메인창 활성화")
@@ -522,7 +528,8 @@ class MainWindow(QMainWindow, DBManager):
         try:
             result_data["이미지"] = self.result[self.pre_idx]["이미지"]
         except:
-            LogManager.Interupt()
+            msg = traceback.format_exc()
+            LogManager.HLOG.error(msg)
 
         for i,val in enumerate(self.testList):
             if globals()[f'gb{i}_pass'].isChecked():
@@ -573,13 +580,16 @@ class MainWindow(QMainWindow, DBManager):
                         if (fn.endswith('.png') or fn.endswith('.jpg'))]
             except FileNotFoundError:
                 QMessageBox.warning(self, "주의", "존재하지 않는 경로입니다.")
+                subMenu.setChecked(False)
                 return
             
             # self.imgListThread.start()
 
             if self.imgList == []:
                 QMessageBox.warning(self, "주의", "선택하신 경로에 이미지 파일이 없습니다.")
+                subMenu.setChecked(False)
             else:
+                self.actionSave.setEnabled(True)
                 if self.pre_subMenu is not None:
                     self.pre_subMenu.setChecked(False)
                 subMenu.setChecked(True)
@@ -721,7 +731,7 @@ class MainWindow(QMainWindow, DBManager):
         self.img_Label.setAlignment(Qt.AlignCenter)
         self.img_Label.mouseDoubleClickEvent = partial(self.double_click_img, self.img_dir)
 
-    def save_result(self, litter):
+    def save_result(self):
         """
         결과값을 DB에 저장
         """
@@ -732,11 +742,15 @@ class MainWindow(QMainWindow, DBManager):
         for i, col in enumerate(self.setupList):
             query += f"'{col}' TEXT,"
         query += "'버전정보' TEXT)"
+        LogManager.HLOG.info(f"평가결과 저장 query:{query}")
         
         self.c.execute(query)
 
         self.c.execute(f"DELETE FROM {self.clicked_lang}")
+        LogManager.HLOG.info(f"{self.clicked_lang} 테이블 내용 삭제")
         question_marks = ", ".join(['?' for _ in range(len(result_data.keys()))])
+        LogManager.HLOG.info(f"저장할 평가결과:{self.result}")
+        
         for i in self.result.values():
             try:
                 self.dbConn.execute(f"INSERT INTO {self.clicked_lang} VALUES ({question_marks})", 
@@ -746,8 +760,28 @@ class MainWindow(QMainWindow, DBManager):
                 continue
 
     @AutomationFunctionDecorator
-    def closeEvent(self, litter) -> None: # a0: QtGui.QCloseEvent
-        sys.exit()
+    def closeEvent(self, e) -> None:
+        try:
+            self.c.execute(f"SELECT * FROM {self.clicked_lang}")
+            sql_result = self.c.fetchall()
+        except:
+            sql_result = []
+        result_list = []
+        
+        for vals in self.result.values():
+            result = []
+            for val in vals.values():
+                result.append(val)
+            result_list.append(tuple(result))
+        
+        if sql_result != result_list:
+            reply = QMessageBox.question(self, '알림', '평가결과가 저장되지 않았습니다.\n저장하고 끄겠습니까?',
+                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                self.save_result()
+        
+        e.accept()
+        
 
 #     # # 0728
 #     # # 키보드 설정

@@ -1,5 +1,6 @@
 from functools import wraps
 from Log import LogManager
+import traceback
 
 def AutomationFunctionDecorator(func):
     """
@@ -14,6 +15,7 @@ def AutomationFunctionDecorator(func):
             func(self, *args)
             LogManager.HLOG.info(f"{func.__module__} : {func.__name__} 실행 종료")
         except Exception:
-            LogManager.Interupt()
+            msg = traceback.format_exc()
+            LogManager.HLOG.error(msg)
 
     return wrapper
