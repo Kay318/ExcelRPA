@@ -111,9 +111,9 @@ class Setup_TestList(QDialog):
 
         if setupList != lineList:
             reply = QMessageBox.question(self, '알림', '변경사항이 있습니다.\n취소하시겠습니까?',
-                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                                    QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
 
-            if reply == QMessageBox.Yes:
+            if reply == QMessageBox.Ok:
                 LogManager.HLOG.info("필드 설정 팝업 > 취소 > 변경사항 알림에서 예 선택")
                 event.accept()
                 self.signal.emit([])

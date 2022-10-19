@@ -295,10 +295,6 @@ class MainWindow(QMainWindow, DBManager):
                 self.fieldList = fieldList
                 LogManager.HLOG.info("기존 필드리스트 삭제")
                 self.set_field_gridLayout()
-                
-                # if self.result != {}:
-                #     for val in self.result.values():
-                        
                 LogManager.HLOG.info("필드리스트 갱신 완료")
         self.setEnabled(True)
         LogManager.HLOG.info("필드 설정 팝업 닫힘으로 메인창 활성화")
@@ -570,7 +566,7 @@ class MainWindow(QMainWindow, DBManager):
         """
         # if self.result != {}:
         #     reply = QMessageBox.question(self, '알림', '지금 언어를 변경하면 현재까지의 진행\n취소하시겠습니까?',
-        #                             QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        #                             QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
         # self.loadingThread.start()
         self.pre_idx = 0
         if lang != self.pre_lang:
@@ -783,8 +779,8 @@ class MainWindow(QMainWindow, DBManager):
         
         if sql_result != result_list:
             reply = QMessageBox.question(self, '알림', '평가결과가 저장되지 않았습니다.\n저장하고 끄겠습니까?',
-                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-            if reply == QMessageBox.Yes:
+                                    QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
+            if reply == QMessageBox.Ok:
                 self.save_result()
         
         e.accept()

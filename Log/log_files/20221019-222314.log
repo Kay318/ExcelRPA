@@ -1,0 +1,32 @@
+[2022-10-19 22:23:14.483][D][LogManager.py(Init):12] LogManager Init function called !!!
+[2022-10-19 22:23:14.568][I][AutoBaseFunction.py(wrapper):11] __main__ : setupUi 실행 시작
+[2022-10-19 22:23:14.569][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-10-19 22:23:14.574][I][AutoBaseFunction.py(wrapper):11] __main__ : set_field_gridLayout 실행 시작
+[2022-10-19 22:23:14.574][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-10-19 22:23:14.604][I][AutoBaseFunction.py(wrapper):16] __main__ : set_field_gridLayout 실행 종료
+[2022-10-19 22:23:14.606][I][AutoBaseFunction.py(wrapper):11] __main__ : set_testList_hboxLayout 실행 시작
+[2022-10-19 22:23:14.607][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-10-19 22:23:14.969][I][AutoBaseFunction.py(wrapper):16] __main__ : set_testList_hboxLayout 실행 종료
+[2022-10-19 22:23:14.974][I][AutoBaseFunction.py(wrapper):16] __main__ : setupUi 실행 종료
+[2022-10-19 22:23:16.886][I][AutoBaseFunction.py(wrapper):11] __main__ : show_setup_Field 실행 시작
+[2022-10-19 22:23:16.886][I][AutoBaseFunction.py(wrapper):12] Parameter : False
+[2022-10-19 22:23:16.887][I][AutoBaseFunction.py(wrapper):11] SubWindow.Setup_Field : setupUI_Field 실행 시작
+[2022-10-19 22:23:16.888][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-10-19 22:23:16.890][I][AutoBaseFunction.py(wrapper):11] SubWindow.Setup_Field : sl_set_slot 실행 시작
+[2022-10-19 22:23:16.890][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-10-19 22:23:16.890][I][AutoBaseFunction.py(wrapper):16] SubWindow.Setup_Field : sl_set_slot 실행 종료
+[2022-10-19 22:23:16.891][I][AutoBaseFunction.py(wrapper):16] SubWindow.Setup_Field : setupUI_Field 실행 종료
+[2022-10-19 22:23:16.898][I][MainWindow.py(show_setup_Field):268] 필드 설정 팝업 열림
+[2022-10-19 22:23:16.898][I][AutoBaseFunction.py(wrapper):16] __main__ : show_setup_Field 실행 종료
+[2022-10-19 22:23:19.007][I][AutoBaseFunction.py(wrapper):11] SubWindow.Setup_Field : keyPressEvent 실행 시작
+[2022-10-19 22:23:19.008][I][AutoBaseFunction.py(wrapper):12] Parameter : <PyQt5.QtGui.QKeyEvent object at 0x000001894B0BE1F0>
+[2022-10-19 22:23:19.009][I][AutoBaseFunction.py(wrapper):11] SubWindow.Setup_Field : ok_Button_clicked 실행 시작
+[2022-10-19 22:23:19.009][I][AutoBaseFunction.py(wrapper):12] Parameter : None
+[2022-10-19 22:23:19.010][I][Setup_Field.py(ok_Button_clicked):83] 필드 설정 팝업 확인 버튼 선택
+[2022-10-19 22:23:19.428][I][AutoBaseFunction.py(wrapper):16] SubWindow.Setup_Field : ok_Button_clicked 실행 종료
+[2022-10-19 22:23:19.428][I][AutoBaseFunction.py(wrapper):16] SubWindow.Setup_Field : keyPressEvent 실행 종료
+[2022-10-19 22:23:20.608][I][AutoBaseFunction.py(wrapper):11] SubWindow.Setup_Field : keyPressEvent 실행 시작
+[2022-10-19 22:23:20.608][I][AutoBaseFunction.py(wrapper):12] Parameter : <PyQt5.QtGui.QKeyEvent object at 0x000001894B0BE1F0>
+[2022-10-19 22:23:20.609][I][AutoBaseFunction.py(wrapper):11] SubWindow.Setup_Field : ok_Button_clicked 실행 시작
+[2022-10-19 22:23:20.609][I][AutoBaseFunction.py(wrapper):12] Parameter : None
+[2022-10-19 22:23:20.610][I][Setup_Field.py(ok_Button_clicked):83] 필드 설정 팝업 확인 버튼 선택

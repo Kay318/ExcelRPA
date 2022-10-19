@@ -1,0 +1,26 @@
+[2022-10-19 23:10:53.886][D][LogManager.py(Init):12] LogManager Init function called !!!
+[2022-10-19 23:10:53.970][I][AutoBaseFunction.py(wrapper):11] __main__ : setupUi 실행 시작
+[2022-10-19 23:10:53.970][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-10-19 23:10:53.976][I][AutoBaseFunction.py(wrapper):11] __main__ : set_field_gridLayout 실행 시작
+[2022-10-19 23:10:53.977][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-10-19 23:10:54.001][I][AutoBaseFunction.py(wrapper):16] __main__ : set_field_gridLayout 실행 종료
+[2022-10-19 23:10:54.003][I][AutoBaseFunction.py(wrapper):11] __main__ : set_testList_hboxLayout 실행 시작
+[2022-10-19 23:10:54.003][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-10-19 23:10:54.361][I][AutoBaseFunction.py(wrapper):16] __main__ : set_testList_hboxLayout 실행 종료
+[2022-10-19 23:10:54.366][I][AutoBaseFunction.py(wrapper):16] __main__ : setupUi 실행 종료
+[2022-10-19 23:10:56.346][I][AutoBaseFunction.py(wrapper):11] __main__ : show_setup_Field 실행 시작
+[2022-10-19 23:10:56.347][I][AutoBaseFunction.py(wrapper):12] Parameter : False
+[2022-10-19 23:10:56.348][I][AutoBaseFunction.py(wrapper):11] SubWindow.Setup_Field : setupUI_Field 실행 시작
+[2022-10-19 23:10:56.348][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-10-19 23:10:56.350][I][AutoBaseFunction.py(wrapper):11] SubWindow.Setup_Field : sl_set_slot 실행 시작
+[2022-10-19 23:10:56.351][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-10-19 23:10:56.351][I][AutoBaseFunction.py(wrapper):16] SubWindow.Setup_Field : sl_set_slot 실행 종료
+[2022-10-19 23:10:56.351][I][AutoBaseFunction.py(wrapper):16] SubWindow.Setup_Field : setupUI_Field 실행 종료
+[2022-10-19 23:10:56.360][I][MainWindow.py(show_setup_Field):268] 필드 설정 팝업 열림
+[2022-10-19 23:10:56.360][I][AutoBaseFunction.py(wrapper):16] __main__ : show_setup_Field 실행 종료
+[2022-10-19 23:10:57.824][I][AutoBaseFunction.py(wrapper):11] SubWindow.Setup_Field : keyPressEvent 실행 시작
+[2022-10-19 23:10:57.825][I][AutoBaseFunction.py(wrapper):12] Parameter : <PyQt5.QtGui.QKeyEvent object at 0x00000165E1C801F0>
+[2022-10-19 23:10:57.825][I][AutoBaseFunction.py(wrapper):11] SubWindow.Setup_Field : ok_Button_clicked 실행 시작
+[2022-10-19 23:10:57.826][I][AutoBaseFunction.py(wrapper):12] Parameter : None
+[2022-10-19 23:10:57.826][I][Setup_Field.py(ok_Button_clicked):83] 필드 설정 팝업 확인 버튼 선택
+[2022-10-19 23:10:58.800][I][Setup_Field.py(ok_Button_clicked):126] 평가결과 저장 query:CREATE TABLE 'BACKUP' ('이미지' TEXT,'sdga' TEXT,'3gdsaas' TEXT,'gads' TEXT,'sdgagdsa' TEXT,'aaa' TEXT,'11' TEXT,'1' TEXT,'2' TEXT,'3' TEXT,'버전정보' TEXT)
