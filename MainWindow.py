@@ -287,7 +287,7 @@ class MainWindow(QMainWindow, DBManager):
         self.setEnabled(True)
         LogManager.HLOG.info("언어 설정 팝업 닫힘으로 메인창 활성화")
 
-    def sf_emit(self, fieldList):
+    def sf_emit(self, fieldList, newColumns):
         if fieldList != []:
             for i in range(self.field_gridLayout.count()):
                 self.field_gridLayout.itemAt(i).widget().deleteLater()
@@ -296,6 +296,18 @@ class MainWindow(QMainWindow, DBManager):
                 LogManager.HLOG.info("기존 필드리스트 삭제")
                 self.set_field_gridLayout()
                 LogManager.HLOG.info("필드리스트 갱신 완료")
+        
+        # self.reuslt의 값을 변경된 필드에 맞게 변경
+        new_result = {}
+        for i, val in self.result.items():
+            new_result[i] = {}
+            for key in newColumns:
+                try:
+                    new_result[i][key] = val[key]
+                except KeyError:
+                    new_result[i][key] = ""
+        self.result = new_result
+            
         self.setEnabled(True)
         LogManager.HLOG.info("필드 설정 팝업 닫힘으로 메인창 활성화")
 
@@ -754,10 +766,10 @@ class MainWindow(QMainWindow, DBManager):
         question_marks = ", ".join(['?' for _ in range(len(result_data.keys()))])
         LogManager.HLOG.info(f"저장할 평가결과:{self.result}")
         
-        for i in self.result.values():
+        for val in self.result.values():
             try:
                 self.dbConn.execute(f"INSERT INTO {self.clicked_lang} VALUES ({question_marks})", 
-                        (tuple(i.values())))
+                        (tuple(val.values())))
                 self.dbConn.commit()
             except RuntimeError:
                 continue

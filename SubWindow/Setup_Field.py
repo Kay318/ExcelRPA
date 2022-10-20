@@ -21,7 +21,7 @@ from Database.DB import DBManager
 from Settings import Setup as sp
         
 class Setup_Field(QDialog, DBManager):
-    signal = pyqtSignal(list)
+    signal = pyqtSignal(list, list)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -102,44 +102,48 @@ class Setup_Field(QDialog, DBManager):
         if self.check_changedData():
             reply = QMessageBox.question(self, '알림', '모든 언어에서 필드값이 변경됩니다.\n계속하시겠습니까?',
                                         QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
-            if reply == QMessageBox.Ok:                
-                setupList = self.testList + fieldList
-                # setup_str = ",".join(setupList)
-                setupTuple = tuple(setupList)
+            if reply == QMessageBox.Ok:
+                newColumns = []
+                newColumns.append("이미지")
+                newColumns = newColumns + self.testList + fieldList
+                newColumns.append("버전정보")
+                newColumnsSet = set(newColumns)
                 self.c.execute("SELECT name FROM sqlite_master WHERE type='table';")
                 sql_tables = self.c.fetchall()
                 sql_tables_list = [table[0] for table in sql_tables]
                 for sql_table in sql_tables_list:
                     self.c.execute(f"SELECT * FROM ({sql_table})")
-                    col_name_list = [col_tuple[0] for col_tuple in self.c.description][len(self.testList)+1:-1]
+                    sql_col_set = set([col_tuple[0] for col_tuple in self.c.description])
+                    col_intersection = tuple(sql_col_set & newColumnsSet)
                     
-                    # 컬럼 삭제(BACKUP 테이블 만듬 > 기존 테이블 내용을 BACKUP에 옮김 > BACKUP 테이블명 변경)
+                    # 컬럼 편집(BACKUP 테이블 만듬 > 기존 테이블 내용을 BACKUP에 옮김 > BACKUP 테이블명 변경)
                     try:
                         self.c.execute("DROP TABLE BACKUP")
                     except:
                         pass
                     
-                    query = f"CREATE TABLE 'BACKUP' ('이미지' TEXT,"
-                    for i, col in enumerate(setupList):
-                        query += f"'{col}' TEXT,"
-                    query += "'버전정보' TEXT)"
+                    query = f"CREATE TABLE 'BACKUP' ("
+                    for i, col in enumerate(newColumns):
+                        if i != len(newColumns) - 1:
+                            query += f"'{col}' TEXT,"
+                        else:
+                            query += f"'{col}' TEXT)"
                     LogManager.HLOG.info(f"평가결과 저장 query:{query}")
         
                     self.c.execute(query)
-                    query_insert = f"INSERT INTO BACKUP {setupTuple} SELECT "
-                    for col in setupList:
-                        query_insert += f"{col},"
+                    query_insert = f"INSERT INTO BACKUP {col_intersection} SELECT "
+                    for col in col_intersection:
+                        if " " in col:
+                            col_noSpace = col.replace(" ","")
+                            query_insert += f'"{col}" as "{col_noSpace}",'
+                            continue
+                        query_insert += f'"{col}",'
                     query_insert = f"{query_insert[:-1]} FROM {sql_table}"
-                    print(query_insert)
+                    LogManager.HLOG.info(query_insert)
                     self.c.execute(query_insert)
+                    self.dbConn.commit()
                     self.c.execute(f"DROP TABLE {sql_table}")
                     self.c.execute(f"ALTER TABLE BACKUP RENAME TO {sql_table}")
-                    
-                    # 컬럼 추가
-                    adding_columns = list(set(col_name_list).difference(fieldList))
-                    
-                    for col in adding_columns:
-                        self.c.execute(f"ALTER TABLE {sql_table} ADD COLUMN {col} TEXT")
                     
             else:
                 return
@@ -155,7 +159,7 @@ class Setup_Field(QDialog, DBManager):
         if fieldList == []:
             fieldList = ["OK"]
             self.sp.clear_table("Field")
-        self.signal.emit(fieldList)
+        self.signal.emit(fieldList, newColumns)
         self.destroy()
         # QCoreApplication.instance().quit()
         
@@ -170,12 +174,12 @@ class Setup_Field(QDialog, DBManager):
             if reply == QMessageBox.Ok:
                 LogManager.HLOG.info("필드 설정 팝업 > 취소 > 변경사항 알림에서 예 선택")
                 event.accept()
-                self.signal.emit([])
+                self.signal.emit([], [])
             else:
                 LogManager.HLOG.info("필드 설정 팝업 > 취소 > 변경사항 알림에서 취소 선택")
                 event.ignore()
         else:
-            self.signal.emit([])
+            self.signal.emit([], [])
             
     def check_changedData(self):
         """변경사항이 있는지 체크하는 함수
