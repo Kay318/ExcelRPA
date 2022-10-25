@@ -2,16 +2,16 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from functools import partial
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parents[1]))
 from Helper import *
 from Log import LogManager
+from Database.DB import DBManager
 from Settings import Setup as sp
 
-class Setup_TestList(QDialog):
-    signal = pyqtSignal(list)
+class Setup_TestList(QDialog, DBManager):
+    signal = pyqtSignal(list, list)
     def __init__(self, parent=None):
         super().__init__(parent)
         self.fieldList = parent.fieldList
@@ -88,6 +88,55 @@ class Setup_TestList(QDialog):
                     LogManager.HLOG.info(f'평가 목록 팝업과 필드 설정 팝업에서 "{x}" 겹침 알림 표시')
                     return
 
+        if self.check_changedData():
+            reply = QMessageBox.question(self, '알림', '모든 언어에서 평가 목록이 변경됩니다.\n계속하시겠습니까?',
+                                        QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
+            if reply == QMessageBox.Ok:
+                newColumns = []
+                newColumns.append("이미지")
+                newColumns = newColumns + testList + self.fieldList
+                newColumns.append("버전정보")
+                newColumnsSet = set(newColumns)
+                self.c.execute("SELECT name FROM sqlite_master WHERE type='table';")
+                sql_tables = self.c.fetchall()
+                sql_tables_list = [table[0] for table in sql_tables]
+                for sql_table in sql_tables_list:
+                    self.c.execute(f"SELECT * FROM ({sql_table})")
+                    sql_col_set = set([col_tuple[0] for col_tuple in self.c.description])
+                    col_intersection = tuple(sql_col_set & newColumnsSet)
+                    
+                    # 컬럼 편집(BACKUP 테이블 만듬 > 기존 테이블 내용을 BACKUP에 옮김 > BACKUP 테이블명 변경)
+                    try:
+                        self.c.execute("DROP TABLE BACKUP")
+                    except:
+                        pass
+                    
+                    query = f"CREATE TABLE 'BACKUP' ("
+                    for i, col in enumerate(newColumns):
+                        if i != len(newColumns) - 1:
+                            query += f"'{col}' TEXT,"
+                        else:
+                            query += f"'{col}' TEXT)"
+                    LogManager.HLOG.info(f"평가결과 저장 query:{query}")
+        
+                    self.c.execute(query)
+                    query_insert = f"INSERT INTO BACKUP {col_intersection} SELECT "
+                    for col in col_intersection:
+                        if " " in col:
+                            col_noSpace = col.replace(" ","")
+                            query_insert += f'"{col}" as "{col_noSpace}",'
+                            continue
+                        query_insert += f'"{col}",'
+                    query_insert = f"{query_insert[:-1]} FROM {sql_table}"
+                    LogManager.HLOG.info(query_insert)
+                    self.c.execute(query_insert)
+                    self.dbConn.commit()
+                    self.c.execute(f"DROP TABLE {sql_table}")
+                    self.c.execute(f"ALTER TABLE BACKUP RENAME TO {sql_table}")
+                    
+            else:
+                return
+
         self.sp.config["Test_List"] = {}
         for i in range(8):
             if globals()[f'lineEdit{i}'].text() != "":
@@ -99,29 +148,41 @@ class Setup_TestList(QDialog):
         if testList == []:
             testList = ["OK"]
             self.sp.clear_table("Test_List")
-        self.signal.emit(testList)
+        self.signal.emit(testList, newColumns)
         self.destroy()
         # QCoreApplication.instance().quit()
+
+    def check_changedData(self):
+        """변경사항이 있는지 체크하는 함수
+
+        Returns:
+            _type_: 변경사항이 있으면 True, 없으면 False
+        """
+        setupList, _ = self.sp.read_setup("Test_List")
+        lineList = [globals()[f'lineEdit{i}'].text() for i in range(8) if globals()[f'lineEdit{i}'].text() != ""]
+        
+        if setupList != lineList:
+            return True
+        else:
+            return False
         
     @AutomationFunctionDecorator
     def closeEvent(self, event) -> None:
         LogManager.HLOG.info("평가 목록 설정 팝업 취소 버튼 선택")
-        setupList, _ = self.sp.read_setup("Test_List")
-        lineList = [globals()[f'lineEdit{i}'].text() for i in range(8) if globals()[f'lineEdit{i}'].text() != ""]
 
-        if setupList != lineList:
+        if self.check_changedData():
             reply = QMessageBox.question(self, '알림', '변경사항이 있습니다.\n취소하시겠습니까?',
                                     QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
 
             if reply == QMessageBox.Ok:
                 LogManager.HLOG.info("필드 설정 팝업 > 취소 > 변경사항 알림에서 예 선택")
                 event.accept()
-                self.signal.emit([])
+                self.signal.emit([], [])
             else:
                 LogManager.HLOG.info("필드 설정 팝업 > 취소 > 변경사항 알림에서 취소 선택")
                 event.ignore()
         else:
-            self.signal.emit([])
+            self.signal.emit([], [])
 
                 
     @AutomationFunctionDecorator

@@ -311,7 +311,7 @@ class MainWindow(QMainWindow, DBManager):
         self.setEnabled(True)
         LogManager.HLOG.info("필드 설정 팝업 닫힘으로 메인창 활성화")
 
-    def tl_emit(self, testList):
+    def tl_emit(self, testList, newColumns):
         if testList != []:
             for i in range(self.testList_groupbox_layout.count()):
                 self.testList_groupbox_layout.itemAt(i).widget().deleteLater()
@@ -320,6 +320,18 @@ class MainWindow(QMainWindow, DBManager):
                 LogManager.HLOG.info("기존 평가 목록 삭제")
                 self.set_testList_hboxLayout()
                 LogManager.HLOG.info("평가 목록 갱신 완료")
+
+        # self.reuslt의 값을 변경된 평가 목록에 맞게 변경
+        new_result = {}
+        for i, val in self.result.items():
+            new_result[i] = {}
+            for key in newColumns:
+                try:
+                    new_result[i][key] = val[key]
+                except KeyError:
+                    new_result[i][key] = ""
+        self.result = new_result
+
         self.setEnabled(True)
         LogManager.HLOG.info("평가 목록 설정 팝업 닫힘으로 메인창 활성화")
         
@@ -791,11 +803,14 @@ class MainWindow(QMainWindow, DBManager):
         
         if sql_result != result_list:
             reply = QMessageBox.question(self, '알림', '평가결과가 저장되지 않았습니다.\n저장하고 끄겠습니까?',
-                                    QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
+                                    QMessageBox.Ok | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Ok)
             if reply == QMessageBox.Ok:
                 self.save_result()
-        
-        e.accept()
+                e.accept()
+            elif reply == QMessageBox.No:
+                e.accept()
+            else:
+                e.ignore()
         
 
 #     # # 0728

@@ -11,7 +11,6 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from functools import partial
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parents[1]))
@@ -75,7 +74,7 @@ class Setup_Field(QDialog, DBManager):
 
     @AutomationFunctionDecorator
     def sl_set_slot(self):
-        self.ok_Button.clicked.connect(partial(self.ok_Button_clicked))
+        self.ok_Button.clicked.connect(self.ok_Button_clicked)
         self.cancel_Button.clicked.connect(self.close)
 
     @AutomationFunctionDecorator
