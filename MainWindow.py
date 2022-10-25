@@ -593,7 +593,18 @@ class MainWindow(QMainWindow, DBManager):
         #                             QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
         # self.loadingThread.start()
         self.pre_idx = 0
+        
         if lang != self.pre_lang:
+            if self.check_result() and self.pre_lang != "":
+                reply = QMessageBox.question(self, '알림', '평가결과가 저장되지 않았습니다.\n평가결과를 저장하시겠습니까?',
+                                    QMessageBox.Ok | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Ok)
+                if reply == QMessageBox.Ok:
+                    self.save_result()
+                elif reply == QMessageBox.No:
+                    pass
+                else:
+                    subMenu.setChecked(False)
+                    return
 
             try:
                 self.imgList = [fn for fn in os.listdir(langPath)
@@ -609,6 +620,14 @@ class MainWindow(QMainWindow, DBManager):
                 QMessageBox.warning(self, "주의", "선택하신 경로에 이미지 파일이 없습니다.")
                 subMenu.setChecked(False)
             else:
+                if self.check_sql_result():
+                    reply = QMessageBox.question(self, '알림', '이전에 저장된 결과를 불러오시겠습니까?',
+                                    QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
+                    if reply == QMessageBox.Ok:
+                        pass
+                    else:
+                        pass
+
                 self.actionSave.setEnabled(True)
                 if self.pre_subMenu is not None:
                     self.pre_subMenu.setChecked(False)
@@ -686,6 +705,9 @@ class MainWindow(QMainWindow, DBManager):
     #     loading = LoadingMask(self, './image/loading.gif')
     #     loading.show()
 
+    def check_sql_result(self):
+        pass
+
     @AutomationFunctionDecorator
     def set_field_gridLayout(self):
         self.field_lineEdit.clear()
@@ -755,6 +777,7 @@ class MainWindow(QMainWindow, DBManager):
         """
         결과값을 DB에 저장
         """
+        self.setEnabled(False)
         # 현재 이미지에 대한 결과 저장
         result_data = self.insert_result()
         self.result[self.idx] = result_data
@@ -785,9 +808,23 @@ class MainWindow(QMainWindow, DBManager):
                 self.dbConn.commit()
             except RuntimeError:
                 continue
+        
+        self.setEnabled(True)
 
     @AutomationFunctionDecorator
     def closeEvent(self, e) -> None:
+        if self.check_result():
+            reply = QMessageBox.question(self, '알림', '평가결과가 저장되지 않았습니다.\n평가결과를 저장하시겠습니까?',
+                                    QMessageBox.Ok | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Ok)
+            if reply == QMessageBox.Ok:
+                self.save_result()
+                e.accept()
+            elif reply == QMessageBox.No:
+                e.accept()
+            else:
+                e.ignore()
+        
+    def check_result(self):
         try:
             self.c.execute(f"SELECT * FROM {self.clicked_lang}")
             sql_result = self.c.fetchall()
@@ -800,17 +837,11 @@ class MainWindow(QMainWindow, DBManager):
             for val in vals.values():
                 result.append(val)
             result_list.append(tuple(result))
-        
+
         if sql_result != result_list:
-            reply = QMessageBox.question(self, '알림', '평가결과가 저장되지 않았습니다.\n저장하고 끄겠습니까?',
-                                    QMessageBox.Ok | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Ok)
-            if reply == QMessageBox.Ok:
-                self.save_result()
-                e.accept()
-            elif reply == QMessageBox.No:
-                e.accept()
-            else:
-                e.ignore()
+            return True
+        else:
+            return False
         
 
 #     # # 0728

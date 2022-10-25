@@ -254,7 +254,7 @@ class Setup_Language(QDialog):
 
         if setupList != lineList:
             reply = QMessageBox.question(self, '알림', '변경사항이 있습니다.\n취소하시겠습니까?',
-                                    QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
+                                    QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
 
             if reply == QMessageBox.Ok:
                 LogManager.HLOG.info("언어 설정 팝업 > 취소 > 변경사항 알림에서 예 선택")

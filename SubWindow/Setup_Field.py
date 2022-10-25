@@ -100,7 +100,7 @@ class Setup_Field(QDialog, DBManager):
                 
         if self.check_changedData():
             reply = QMessageBox.question(self, '알림', '모든 언어에서 필드값이 변경됩니다.\n계속하시겠습니까?',
-                                        QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
+                                        QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
             if reply == QMessageBox.Ok:
                 newColumns = []
                 newColumns.append("이미지")
@@ -168,7 +168,7 @@ class Setup_Field(QDialog, DBManager):
 
         if self.check_changedData():
             reply = QMessageBox.question(self, '알림', '변경사항이 있습니다.\n취소하시겠습니까?',
-                                    QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
+                                    QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
 
             if reply == QMessageBox.Ok:
                 LogManager.HLOG.info("필드 설정 팝업 > 취소 > 변경사항 알림에서 예 선택")

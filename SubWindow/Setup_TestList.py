@@ -90,7 +90,7 @@ class Setup_TestList(QDialog, DBManager):
 
         if self.check_changedData():
             reply = QMessageBox.question(self, '알림', '모든 언어에서 평가 목록이 변경됩니다.\n계속하시겠습니까?',
-                                        QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
+                                        QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
             if reply == QMessageBox.Ok:
                 newColumns = []
                 newColumns.append("이미지")
