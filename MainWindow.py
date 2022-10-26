@@ -621,7 +621,7 @@ class MainWindow(QMainWindow, DBManager):
                 subMenu.setChecked(False)
             else:
                 if self.check_sql_result():
-                    reply = QMessageBox.question(self, '알림', '이전에 저장된 결과를 불러오시겠습니까?',
+                    reply = QMessageBox.question(self, '알림', '이전에 저장된 결과가 있습니다.\n불러오시겠습니까?',
                                     QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
                     if reply == QMessageBox.Ok:
                         pass
@@ -704,9 +704,6 @@ class MainWindow(QMainWindow, DBManager):
     # def start_loading(self):
     #     loading = LoadingMask(self, './image/loading.gif')
     #     loading.show()
-
-    def check_sql_result(self):
-        pass
 
     @AutomationFunctionDecorator
     def set_field_gridLayout(self):
@@ -843,6 +840,12 @@ class MainWindow(QMainWindow, DBManager):
         else:
             return False
         
+    def check_sql_result(self):
+        try:
+            self.c.execute(f"SELECT * FROM {self.clicked_lang}")
+            return True
+        except:
+            return False
 
 #     # # 0728
 #     # # 키보드 설정
