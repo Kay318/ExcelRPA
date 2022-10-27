@@ -47,6 +47,7 @@ class MainWindow(QMainWindow, DBManager):
         self.pre_lang = ""                       # 그전에 선택된 언어
         self.pre_subMenu = None                  # 메뉴바에서 그전에 선택된 언어 subMenu
         self.nextImg_bool = True                 # 다음 이미지로 넘어갈지 판단
+        self.first_index_in_sql = None           # DB에 첫번째 이미지 결과가 있는지 판단
         # self.loadingThread = LoadingThread()
         # self.loadingThread.loading_singnal.connect(self.start_loading)
         self.sp = sp.Settings()
@@ -510,11 +511,12 @@ class MainWindow(QMainWindow, DBManager):
         LogManager.HLOG.info(f"우측에 이미지 표시:{self.img_dir}")
 
         # 다른 이미지 버튼 누를 때 액션
-        if self.pre_idx != idx:
-            # self.result에 값 저장하고 기존 데이타 삭제하기
-            result_data = self.insert_result(option=True)
-            self.result[self.pre_idx] = result_data
-            LogManager.HLOG.info(f"다른 이미지 클릭으로 이전 이미지 결과 저장함, self.result:{self.result}")
+        if self.pre_idx != idx or self.first_index_in_sql:
+            if not self.first_index_in_sql:
+                # self.result에 값 저장하고 기존 데이타 삭제하기
+                result_data = self.insert_result(option=True)
+                self.result[self.pre_idx] = result_data
+                LogManager.HLOG.info(f"다른 이미지 클릭으로 이전 이미지 결과 저장함, self.result:{self.result}")
             
             # self.result에 기존 평가 data로 세팅
             for i,data in enumerate(self.testList):
@@ -531,6 +533,8 @@ class MainWindow(QMainWindow, DBManager):
 
             for i,data in enumerate(self.fieldList):
                 globals()[f'desc_LineEdit{i}'].setText(self.result[idx][data])
+
+            self.first_index_in_sql = False
 
         set_color()
         self.pre_idx = idx
@@ -568,7 +572,6 @@ class MainWindow(QMainWindow, DBManager):
 
         for i,field in enumerate(self.fieldList):
             result_data[field] = globals()[f'desc_LineEdit{i}'].text()
-            # result_data.append(field_data)
             if option is True:
                 globals()[f'desc_LineEdit{i}'].clear()
 
@@ -613,18 +616,19 @@ class MainWindow(QMainWindow, DBManager):
                 QMessageBox.warning(self, "주의", "존재하지 않는 경로입니다.")
                 subMenu.setChecked(False)
                 return
-            
-            # self.imgListThread.start()
 
             if self.imgList == []:
                 QMessageBox.warning(self, "주의", "선택하신 경로에 이미지 파일이 없습니다.")
                 subMenu.setChecked(False)
             else:
+                self.clicked_lang = lang
                 if self.check_sql_result():
                     reply = QMessageBox.question(self, '알림', '이전에 저장된 결과가 있습니다.\n불러오시겠습니까?',
                                     QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
                     if reply == QMessageBox.Ok:
-                        pass
+                        self.c.execute(f"SELECT * FROM {self.clicked_lang}")
+                        sql_all = self.c.fetchall()
+                        sql_img = [str(file[0]) for file in sql_all]
                     else:
                         pass
 
@@ -633,9 +637,9 @@ class MainWindow(QMainWindow, DBManager):
                     self.pre_subMenu.setChecked(False)
                 subMenu.setChecked(True)
                 self.setEnabled(False)
+
                 # 평가결과 기록 삭제
                 self.result.clear()
-                self.clicked_lang = lang
                 self.setupList = self.testList + self.fieldList
 
                 # 이미지 리스트 초기화
@@ -650,12 +654,26 @@ class MainWindow(QMainWindow, DBManager):
                 self.qbuttons = {}
                 self.icons = {}
                 for index, filename in enumerate(self.imgList):
+                    sql_testList = []
                     # 평가결과를 저장할 dictionary: self.result 세팅
                     self.result[index] = {}
                     self.result[index]['이미지'] = langPath + '\\' + filename
-                    for setupListName in self.setupList:
-                        self.result[index][setupListName] = ""
-                    self.result[index]['버전 정보'] = ""
+
+                    try:
+                        i = sql_img.index(self.result[index]['이미지'])
+                        # if i == 0:
+                        self.first_index_in_sql = True
+                        for j, setupListName in enumerate(self.setupList):
+                            self.result[index][setupListName] = sql_all[i][j+1]
+                            if setupListName in self.testList:
+                                sql_testList.append(sql_all[i][j+1])
+
+                        self.result[index]['버전 정보'] = sql_all[i][-1]
+
+                    except:
+                        for setupListName in self.setupList:
+                            self.result[index][setupListName] = ""
+                        self.result[index]['버전 정보'] = ""
 
                     pixmap = QPixmap(langPath + '\\' + filename)
                     pixmap = pixmap.scaled(40, 40, Qt.IgnoreAspectRatio)
@@ -665,6 +683,18 @@ class MainWindow(QMainWindow, DBManager):
                     
                     button = QPushButtonIcon()
                     button.setIcon(icon)
+                    if len(self.testList) == sql_testList.count("PASS"):
+                        button.setStyleSheet("background-color: rgb(62,74,193);") # 블루
+
+                    elif len(self.testList) == sql_testList.count('FAIL'):
+                        button.setStyleSheet("background-color: rgb(211,44,98);") # 레드
+
+                    elif len(self.testList) == sql_testList.count('N/A'):
+                        button.setStyleSheet("background-color: rgb(64,128,128)") # 그레이
+
+                    elif len(self.testList) == sql_testList.count('N/T'):
+                        button.setStyleSheet("background-color: rgb(56,199,81)") # 민트
+
                     button.clicked.connect(partial(self.qbutton_clicked, index, button))
                             
                     self.img_VBoxLayout.addWidget(button)
