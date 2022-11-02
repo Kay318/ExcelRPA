@@ -292,9 +292,9 @@ class MainWindow(QMainWindow, DBManager):
         if fieldList != []:
             for i in range(self.field_gridLayout.count()):
                 self.field_gridLayout.itemAt(i).widget().deleteLater()
+            LogManager.HLOG.info("기존 필드리스트 삭제")
             if fieldList != ["OK"]:
                 self.fieldList = fieldList
-                LogManager.HLOG.info("기존 필드리스트 삭제")
                 self.set_field_gridLayout()
                 LogManager.HLOG.info("필드리스트 갱신 완료")
         
@@ -307,8 +307,8 @@ class MainWindow(QMainWindow, DBManager):
                     new_result[i][key] = val[key]
                 except KeyError:
                     new_result[i][key] = ""
+        
         self.result = new_result
-            
         self.setEnabled(True)
         LogManager.HLOG.info("필드 설정 팝업 닫힘으로 메인창 활성화")
 
@@ -629,8 +629,6 @@ class MainWindow(QMainWindow, DBManager):
                         self.c.execute(f"SELECT * FROM {self.clicked_lang}")
                         sql_all = self.c.fetchall()
                         sql_img = [str(file[0]) for file in sql_all]
-                    else:
-                        pass
 
                 self.actionSave.setEnabled(True)
                 if self.pre_subMenu is not None:
@@ -714,8 +712,6 @@ class MainWindow(QMainWindow, DBManager):
 
         else:
             subMenu.setChecked(True)
-            
-            # self.loadingThread.terminate()
             
     def setEnabled_bottom(self):
         for field in self.field_lineEdit:
@@ -840,6 +836,9 @@ class MainWindow(QMainWindow, DBManager):
 
     @AutomationFunctionDecorator
     def closeEvent(self, e) -> None:
+        result_data = self.insert_result()
+        self.result[self.idx] = result_data
+
         if self.check_result():
             reply = QMessageBox.question(self, '알림', '평가결과가 저장되지 않았습니다.\n평가결과를 저장하시겠습니까?',
                                     QMessageBox.Ok | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Ok)
@@ -876,21 +875,6 @@ class MainWindow(QMainWindow, DBManager):
             return True
         except:
             return False
-
-#     # # 0728
-#     # # 키보드 설정
-#     # 
-#     @AutomationFunctionDecorator
-#     def keyReleaseEvent(self, a0: QKeyEvent) -> None:
-
-#         VERVUAL_NATIVE_LEFTKEY = 37
-#         VERVUAL_NATIVE_RIGHTKEY = 39
-
-#         if a0.nativeVirtualKey() == VERVUAL_NATIVE_LEFTKEY:
-#                 self.btn_onClicked(False)
-            
-#         elif a0.nativeVirtualKey() == VERVUAL_NATIVE_RIGHTKEY:
-#             self.btn_onClicked(True)
                 
 class QPushButtonIcon(QPushButton):
     

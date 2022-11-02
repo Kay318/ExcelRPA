@@ -98,11 +98,11 @@ class Setup_Field(QDialog, DBManager):
                     LogManager.HLOG.info(f'필드 설정 팝업과 평가 목록 팝업에서 "{x}" 겹침 알림 표시')
                     return
                 
+        newColumns = []
         if self.check_changedData():
             reply = QMessageBox.question(self, '알림', '모든 언어에서 필드값이 변경됩니다.\n계속하시겠습니까?',
                                         QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
             if reply == QMessageBox.Ok:
-                newColumns = []
                 newColumns.append("이미지")
                 newColumns = newColumns + self.testList + fieldList
                 newColumns.append("버전정보")
@@ -146,6 +146,8 @@ class Setup_Field(QDialog, DBManager):
                     
             else:
                 return
+        else:
+            return
                 
         self.sp.config["Field"] = {}
         for i in range(6):
