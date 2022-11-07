@@ -136,6 +136,8 @@ class Setup_TestList(QDialog, DBManager):
                     
             else:
                 return
+        else:
+            return
 
         self.sp.config["Test_List"] = {}
         for i in range(8):

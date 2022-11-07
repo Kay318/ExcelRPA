@@ -21,7 +21,7 @@ from SubWindow.Setup_Language import Setup_Language
 from SubWindow.Setup_Field import Setup_Field
 from SubWindow.Setup_TestList import Setup_TestList
 from Helper import *
-sys.path.append(str(Path(__file__).parents[1]))
+sys.path.append(str(Path(__file__).parent))
 from Database.DB import DBManager
 from Log import LogManager
 from Settings import Setup as sp
@@ -410,7 +410,6 @@ class MainWindow(QMainWindow, DBManager):
             globals()[f'gb{i}_nt'] = QRadioButton("N/T")
             globals()[f'gb{i}_na'] = QRadioButton("N/A")
             globals()[f'gb{i}_nl'] = QRadioButton("NULL")
-            globals()[f'gb{i}_nl'].setChecked(True)
             
             globals()[f'gb{i}_pass'].clicked.connect(self.radioButton_clicked)
             globals()[f'gb{i}_fail'].clicked.connect(self.radioButton_clicked)
@@ -438,6 +437,18 @@ class MainWindow(QMainWindow, DBManager):
                 globals()[f'gb{i}_nt'].setEnabled(False)
                 globals()[f'gb{i}_na'].setEnabled(False)
                 globals()[f'gb{i}_nl'].setEnabled(False)
+
+            try:
+                if self.result[self.idx][val] == 'PASS':
+                    globals()[f'gb{i}_pass'].setChecked(True)
+                elif self.result[self.idx][val] == 'FAIL':
+                    globals()[f'gb{i}_fail'].setChecked(True)
+                elif self.result[self.idx][val] == 'N/T':
+                    globals()[f'gb{i}_nt'].setChecked(True)
+                elif self.result[self.idx][val] == 'N/A':
+                    globals()[f'gb{i}_na'].setChecked(True)
+            except KeyError:
+                globals()[f'gb{i}_nl'].setChecked(True)
 
             globals()[f'testList_groupbox_{i}'].setLayout(testList_vboxLayout)
 
@@ -812,6 +823,8 @@ class MainWindow(QMainWindow, DBManager):
         if self.clicked_lang in sql_tables_list:
             self.c.execute(f"DROP TABLE {self.clicked_lang}")
         LogManager.HLOG.info(f"{self.clicked_lang} 테이블 삭제")
+
+        self.setupList = self.testList + self.fieldList
 
         query = f"CREATE TABLE IF NOT EXISTS '{self.clicked_lang}' ('이미지' TEXT,"
         for i, col in enumerate(self.setupList):
