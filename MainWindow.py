@@ -24,8 +24,7 @@ from Database.DB import DBManager
 from Log import LogManager
 from Settings import Setup as sp
 
-class MainWindow(QMainWindow, DBManager):
-    
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.field_lineEdit = []                 # 모든 필드
@@ -49,11 +48,11 @@ class MainWindow(QMainWindow, DBManager):
         # self.loadingThread = LoadingThread()
         # self.loadingThread.loading_singnal.connect(self.start_loading)
         self.sp = sp.Settings()
+        self.db = DBManager()
         self.setupUi()
         
     @AutomationFunctionDecorator
     def setupUi(self):
-        
         widget = QWidget()
 
         # 해상도 받아옴
@@ -261,6 +260,7 @@ class MainWindow(QMainWindow, DBManager):
     @AutomationFunctionDecorator
     def show_setup_Field(self, litter):
         self.setEnabled(False)
+        self.db.close()
         sf = Setup_Field(self)
         sf.signal.connect(self.sf_emit)
         sf.show()
@@ -269,6 +269,7 @@ class MainWindow(QMainWindow, DBManager):
     @AutomationFunctionDecorator
     def show_setup_TestList(self, litter):
         self.setEnabled(False)
+        self.db.close()
         tl = Setup_TestList(self)
         tl.signal.connect(self.tl_emit)
         tl.show()
@@ -288,9 +289,13 @@ class MainWindow(QMainWindow, DBManager):
 
     def sf_emit(self, fieldList, newColumns):
         if fieldList != []:
+            result_data = self.insert_result()
+            self.result[self.idx] = result_data
+
             for i in range(self.field_gridLayout.count()):
                 self.field_gridLayout.itemAt(i).widget().deleteLater()
             LogManager.HLOG.info("기존 필드리스트 삭제")
+
             if fieldList != ["OK"]:
                 self.fieldList = fieldList
                 self.set_field_gridLayout()
@@ -306,12 +311,15 @@ class MainWindow(QMainWindow, DBManager):
                     except KeyError:
                         new_result[i][key] = ""
         
-        self.result = new_result
+            self.result = new_result
         self.setEnabled(True)
         LogManager.HLOG.info("필드 설정 팝업 닫힘으로 메인창 활성화")
 
     def tl_emit(self, testList, newColumns):
         if testList != []:
+            result_data = self.insert_result()
+            self.result[self.idx] = result_data
+
             for i in range(self.testList_groupbox_layout.count()):
                 self.testList_groupbox_layout.itemAt(i).widget().deleteLater()
             if testList != ["OK"]:
@@ -320,7 +328,7 @@ class MainWindow(QMainWindow, DBManager):
                 self.set_testList_hboxLayout()
                 LogManager.HLOG.info("평가 목록 갱신 완료")
 
-                        # self.reuslt의 값을 변경된 평가 목록에 맞게 변경
+            # self.reuslt의 값을 변경된 평가 목록에 맞게 변경
             new_result = {}
             for i, val in self.result.items():
                 cnt_result = []
@@ -463,6 +471,8 @@ class MainWindow(QMainWindow, DBManager):
                     globals()[f'gb{i}_nt'].setChecked(True)
                 elif self.result[self.idx][val] == 'N/A':
                     globals()[f'gb{i}_na'].setChecked(True)
+                else:
+                    globals()[f'gb{i}_nl'].setChecked(True)
             except KeyError:
                 globals()[f'gb{i}_nl'].setChecked(True)
 
@@ -655,8 +665,8 @@ class MainWindow(QMainWindow, DBManager):
                     reply = QMessageBox.question(self, '알림', '이전에 저장된 결과가 있습니다.\n불러오시겠습니까?',
                                     QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
                     if reply == QMessageBox.Ok:
-                        self.c.execute(f"SELECT * FROM {self.clicked_lang}")
-                        sql_all = self.c.fetchall()
+                        self.db.c.execute(f"SELECT * FROM {self.clicked_lang}")
+                        sql_all = self.db.c.fetchall()
                         sql_img = [str(file[0]) for file in sql_all]
 
                 self.actionSave.setEnabled(True)
@@ -771,6 +781,13 @@ class MainWindow(QMainWindow, DBManager):
         for i,field in enumerate(self.fieldList):
             globals()[f'field_Label{i}'] = QLabel(field)
             globals()[f'desc_LineEdit{i}'] = QLineEdit()
+
+            try:
+                if field in self.result[self.idx].keys():
+                    globals()[f'desc_LineEdit{i}'].setText(self.result[self.idx][field])
+            except:
+                pass
+
             if i%2==0:
                 self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 0,i)
                 self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 0,i+1)
@@ -839,11 +856,12 @@ class MainWindow(QMainWindow, DBManager):
         self.result[self.idx] = result_data
         
         # SQLite에 현재 언어 table이 있으면 삭제
-        self.c.execute("SELECT name FROM sqlite_master WHERE type='table';")
-        sql_tables = self.c.fetchall()
+        self.db = DBManager()
+        self.db.c.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        sql_tables = self.db.c.fetchall()
         sql_tables_list = [table[0] for table in sql_tables]
         if self.clicked_lang in sql_tables_list:
-            self.c.execute(f"DROP TABLE {self.clicked_lang}")
+            self.db.c.execute(f"DROP TABLE {self.clicked_lang}")
         LogManager.HLOG.info(f"{self.clicked_lang} 테이블 삭제")
 
         self.setupList = self.testList + self.fieldList
@@ -854,16 +872,16 @@ class MainWindow(QMainWindow, DBManager):
         query += "'버전정보' TEXT)"
         LogManager.HLOG.info(f"평가결과 저장 query:{query}")
         
-        self.c.execute(query)
+        self.db.c.execute(query)
 
         question_marks = ", ".join(['?' for _ in range(len(result_data.keys()))])
         LogManager.HLOG.info(f"저장할 평가결과:{self.result}")
         
         for val in self.result.values():
             try:
-                self.dbConn.execute(f"INSERT INTO {self.clicked_lang} VALUES ({question_marks})", 
+                self.db.dbConn.execute(f"INSERT INTO {self.clicked_lang} VALUES ({question_marks})", 
                         (tuple(val.values())))
-                self.dbConn.commit()
+                self.db.dbConn.commit()
             except RuntimeError:
                 continue
         
@@ -888,8 +906,9 @@ class MainWindow(QMainWindow, DBManager):
         
     def check_result(self):
         try:
-            self.c.execute(f"SELECT * FROM {self.clicked_lang}")
-            sql_result = self.c.fetchall()
+            self.db = DBManager()
+            self.db.c.execute(f"SELECT * FROM {self.clicked_lang}")
+            sql_result = self.db.c.fetchall()
         except:
             sql_result = []
         result_list = []
@@ -907,7 +926,7 @@ class MainWindow(QMainWindow, DBManager):
         
     def check_sql_result(self):
         try:
-            self.c.execute(f"SELECT * FROM {self.clicked_lang}")
+            self.db.c.execute(f"SELECT * FROM {self.clicked_lang}")
             return True
         except:
             return False

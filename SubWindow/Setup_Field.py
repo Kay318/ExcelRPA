@@ -19,11 +19,12 @@ from Log import LogManager
 from Database.DB import DBManager
 from Settings import Setup as sp
         
-class Setup_Field(QDialog, DBManager):
+class Setup_Field(QDialog):
     signal = pyqtSignal(list, list)
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.db = DBManager()
         self.sp = sp.Settings()
         self.setupUI_Field()
         self.testList = parent.testList
@@ -107,17 +108,17 @@ class Setup_Field(QDialog, DBManager):
                 newColumns = newColumns + self.testList + fieldList
                 newColumns.append("버전정보")
                 newColumnsSet = set(newColumns)
-                self.c.execute("SELECT name FROM sqlite_master WHERE type='table';")
-                sql_tables = self.c.fetchall()
+                self.db.c.execute("SELECT name FROM sqlite_master WHERE type='table';")
+                sql_tables = self.db.c.fetchall()
                 sql_tables_list = [table[0] for table in sql_tables]
                 for sql_table in sql_tables_list:
-                    self.c.execute(f"SELECT * FROM ({sql_table})")
-                    sql_col_set = set([col_tuple[0] for col_tuple in self.c.description])
+                    self.db.c.execute(f"SELECT * FROM ({sql_table})")
+                    sql_col_set = set([col_tuple[0] for col_tuple in self.db.c.description])
                     col_intersection = tuple(sql_col_set & newColumnsSet)
                     
                     # 컬럼 편집(BACKUP 테이블 만듬 > 기존 테이블 내용을 BACKUP에 옮김 > BACKUP 테이블명 변경)
                     try:
-                        self.c.execute("DROP TABLE BACKUP")
+                        self.db.c.execute("DROP TABLE BACKUP")
                     except:
                         pass
                     
@@ -129,7 +130,7 @@ class Setup_Field(QDialog, DBManager):
                             query += f"'{col}' TEXT)"
                     LogManager.HLOG.info(f"평가결과 저장 query:{query}")
         
-                    self.c.execute(query)
+                    self.db.c.execute(query)
                     query_insert = f"INSERT INTO BACKUP {col_intersection} SELECT "
                     for col in col_intersection:
                         if " " in col:
@@ -139,15 +140,16 @@ class Setup_Field(QDialog, DBManager):
                         query_insert += f'"{col}",'
                     query_insert = f"{query_insert[:-1]} FROM {sql_table}"
                     LogManager.HLOG.info(query_insert)
-                    self.c.execute(query_insert)
-                    self.dbConn.commit()
-                    self.c.execute(f"DROP TABLE {sql_table}")
-                    self.c.execute(f"ALTER TABLE BACKUP RENAME TO {sql_table}")
+                    self.db.c.execute(query_insert)
+                    self.db.dbConn.commit()
+                    self.db.c.execute(f"DROP TABLE {sql_table}")
+                    self.db.c.execute(f"ALTER TABLE BACKUP RENAME TO {sql_table}")
                     
             else:
                 return
         else:
-            return
+            self.signal.emit([], [])
+            self.destroy()
                 
         self.sp.config["Field"] = {}
         for i in range(6):
