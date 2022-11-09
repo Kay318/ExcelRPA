@@ -250,7 +250,7 @@ class MainWindow(QMainWindow):
         statusbar.addPermanentWidget(self.statusbar_label)
 
     @AutomationFunctionDecorator
-    def show_setup_Language(self, litter):
+    def show_setup_Language(self, litter=None):
         self.setEnabled(False)
         sl = Setup_Language(self)
         sl.signal.connect(self.sl_emit)
@@ -279,10 +279,13 @@ class MainWindow(QMainWindow):
         if langPath != []:
             self.menuOpen.clear()
             LogManager.HLOG.info("퀵메뉴 clear")
-            for lang, path in langPath:
+            langList, langPath = self.sp.read_setup(table = "Language")
+            for lang, path in zip(langList, langPath):
                 subMenu = QAction(lang, self)
                 self.menuOpen.addAction(subMenu)
+                subMenu.setCheckable(True)
                 subMenu.triggered.connect(partial(self.show_imgList, lang, path, subMenu))
+                
             LogManager.HLOG.info("퀵메뉴 갱신 완료")
         self.setEnabled(True)
         LogManager.HLOG.info("언어 설정 팝업 닫힘으로 메인창 활성화")
@@ -368,6 +371,10 @@ class MainWindow(QMainWindow):
             else:
                 self.nextImg_bool = True
             pass_radio.click()
+        try:
+            self.qbuttons[self.idx+1].click()
+        except KeyError:
+            pass
 
     @AutomationFunctionDecorator
     def __allFail_clicked(self, litter):
@@ -377,6 +384,10 @@ class MainWindow(QMainWindow):
             else:
                 self.nextImg_bool = True
             fail_radio.click()
+        try:
+            self.qbuttons[self.idx+1].click()
+        except KeyError:
+            pass
 
     @AutomationFunctionDecorator
     def __allNT_clicked(self, litter):
@@ -386,6 +397,10 @@ class MainWindow(QMainWindow):
             else:
                 self.nextImg_bool = True
             nt_radio.click()
+        try:
+            self.qbuttons[self.idx+1].click()
+        except KeyError:
+            pass
 
     @AutomationFunctionDecorator
     def __allNA_clicked(self, litter):
@@ -395,6 +410,10 @@ class MainWindow(QMainWindow):
             else:
                 self.nextImg_bool = True
             na_Radio.click()
+        try:
+            self.qbuttons[self.idx+1].click()
+        except KeyError:
+            pass
 
     @AutomationFunctionDecorator
     def __allNull_clicked(self, litter):
@@ -404,6 +423,10 @@ class MainWindow(QMainWindow):
             else:
                 self.nextImg_bool = True
             nl_radio.click()
+        try:
+            self.qbuttons[self.idx+1].click()
+        except KeyError:
+            pass
 
     @AutomationFunctionDecorator
     def set_testList_hboxLayout(self):
@@ -435,10 +458,10 @@ class MainWindow(QMainWindow):
             globals()[f'gb{i}_na'] = QRadioButton("N/A")
             globals()[f'gb{i}_nl'] = QRadioButton("NULL")
             
-            globals()[f'gb{i}_pass'].clicked.connect(self.radioButton_clicked)
-            globals()[f'gb{i}_fail'].clicked.connect(self.radioButton_clicked)
-            globals()[f'gb{i}_nt'].clicked.connect(self.radioButton_clicked)
-            globals()[f'gb{i}_na'].clicked.connect(self.radioButton_clicked)
+            # globals()[f'gb{i}_pass'].clicked.connect(self.radioButton_clicked)
+            # globals()[f'gb{i}_fail'].clicked.connect(self.radioButton_clicked)
+            # globals()[f'gb{i}_nt'].clicked.connect(self.radioButton_clicked)
+            # globals()[f'gb{i}_na'].clicked.connect(self.radioButton_clicked)
             
             self.pass_RadioList.append(globals()[f'gb{i}_pass'])
             self.fail_RadioList.append(globals()[f'gb{i}_fail'])
@@ -484,12 +507,12 @@ class MainWindow(QMainWindow):
         testList_groupbox_scrollArea.setWidget(testList_groupbox_widget)
         self.bottom_gridLayout.addWidget(testList_groupbox, 0, 0, 1, 4)
             
-    def radioButton_clicked(self):
-        """라디오 버튼 클릭 시, NULL 갯수 확인하여 NULL이 없으면 다음 이미지로 넘어감
-        """
-        null_cnt = sum([int(null.isChecked()) for null in self.nl_RadioList])
-        if null_cnt == 0 and self.idx < len(self.imgList) - 1 and self.nextImg_bool:
-            self.qbuttons[self.idx+1].click()
+    # def radioButton_clicked(self):
+    #     """라디오 버튼 클릭 시, NULL 갯수 확인하여 NULL이 없으면 다음 이미지로 넘어감
+    #     """
+    #     null_cnt = sum([int(null.isChecked()) for null in self.nl_RadioList])
+    #     if null_cnt == 0 and self.idx < len(self.imgList) - 1 and self.nextImg_bool:
+    #         self.qbuttons[self.idx+1].click()
 
     def qbutton_clicked(self, idx, button, litter):
 
@@ -652,7 +675,8 @@ class MainWindow(QMainWindow):
                 self.imgList = [fn for fn in os.listdir(langPath)
                         if (fn.endswith('.png') or fn.endswith('.jpg'))]
             except FileNotFoundError:
-                QMessageBox.warning(self, "주의", "존재하지 않는 경로입니다.")
+                QMessageBox.warning(self, "주의", "존재하지 않는 경로입니다.\n경로를 다시 설정해 주세요.")
+                self.show_setup_Language()
                 subMenu.setChecked(False)
                 return
 
@@ -698,7 +722,6 @@ class MainWindow(QMainWindow):
 
                     try:
                         i = sql_img.index(self.result[index]['이미지'])
-                        # if i == 0:
                         self.first_index_in_sql = True
                         for j, setupListName in enumerate(self.setupList):
                             self.result[index][setupListName] = sql_all[i][j+1]
@@ -720,6 +743,8 @@ class MainWindow(QMainWindow):
                     
                     button = QPushButtonIcon()
                     button.setIcon(icon)
+                    button.setToolTip(str(index+1))
+                    
                     if len(self.testList) == sql_testList.count("PASS"):
                         button.setStyleSheet("background-color: rgb(62,74,193);") # 블루
 
@@ -787,6 +812,13 @@ class MainWindow(QMainWindow):
                     globals()[f'desc_LineEdit{i}'].setText(self.result[self.idx][field])
             except:
                 pass
+            
+            # if i < 3:
+            #     self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 0,i*2)
+            #     self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 0,i*2+1)
+            # else:
+            #     self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 1,(i-2)*2)
+            #     self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 1,(i-2)*2+1)
 
             if i%2==0:
                 self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 0,i)
@@ -800,7 +832,6 @@ class MainWindow(QMainWindow):
             if self.imgList == []:
                 globals()[f'desc_LineEdit{i}'].setEnabled(False)
             
-    
     @AutomationFunctionDecorator
     def btn_onClicked(self, litter):
         btn = self.sender()
