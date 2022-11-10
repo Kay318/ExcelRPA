@@ -141,16 +141,16 @@ class MainWindow(QMainWindow):
                 
         testAll_VBoxLayout = QVBoxLayout()
         self.allPass_RadioButton = QPushButton("ALL PASS")
-        self.allPass_RadioButton.setStyleSheet("background-color: rgb(62,74,193); color:white;")
+        self.allPass_RadioButton.setStyleSheet("background-color: #0072b2; color:white;")
         self.allPass_RadioButton.setEnabled(False)
         self.allFail_RadioButton = QPushButton("ALL FAIL")
         self.allFail_RadioButton.setStyleSheet("background-color: rgb(211,44,98); color:white;")
         self.allFail_RadioButton.setEnabled(False)
         self.allNT_RadioButton = QPushButton("ALL N/T")
-        self.allNT_RadioButton.setStyleSheet("background-color: rgb(56,199,81); color:white;")
+        self.allNT_RadioButton.setStyleSheet("background-color: #009e73; color:white;")
         self.allNT_RadioButton.setEnabled(False)
         self.allNA_RadioButton = QPushButton("ALL N/A")
-        self.allNA_RadioButton.setStyleSheet("background-color: rgb(64,128,128); color:white;")
+        self.allNA_RadioButton.setStyleSheet("background-color: #e69f00; color:white;")
         self.allNA_RadioButton.setEnabled(False)
         self.allNull_RadioButton = QPushButton("ALL NULL")
         self.allNull_RadioButton.setEnabled(False)
@@ -346,19 +346,19 @@ class MainWindow(QMainWindow):
                         cnt_result.append(new_result[i][key])
                         
                 if len(self.testList) == cnt_result.count("PASS"):
-                    self.qbuttons[i].setStyleSheet("background-color: rgb(62,74,193);") # 블루
+                    self.qbuttons[i].setStyleSheet("background-color: #0072b2") # 블루
                 elif len(self.testList) == cnt_result.count('FAIL'):
                     self.qbuttons[i].setStyleSheet("background-color: rgb(211,44,98);") # 레드
                 elif len(self.testList) == cnt_result.count('N/A'):
-                    self.qbuttons[i].setStyleSheet("background-color: rgb(64,128,128)") # 그레이
+                    self.qbuttons[i].setStyleSheet("background-color: #e69f00") # 그레이
                 elif len(self.testList) == cnt_result.count('N/T'):
-                    self.qbuttons[i].setStyleSheet("background-color: rgb(56,199,81)") # 민트
+                    self.qbuttons[i].setStyleSheet("background-color: #009e73") # 민트
                 elif cnt_result.count("PASS") > 0 or cnt_result.count('FAIL') > 0 or\
                     cnt_result.count('N/A') > 0 or cnt_result.count('N/T') > 0:
-                    self.qbuttons[i].setStyleSheet("background-color: #FFFF00") # 노랑 
+                    self.qbuttons[i].setStyleSheet("background-color: #f0e442") # 노랑 
             
             self.result = new_result
-            self.qbuttons[self.idx].setStyleSheet("background-color:rgb(147, 112, 219);")  # 보라색
+            self.qbuttons[self.idx].setStyleSheet("background-color:#cc79a7;")  # 보라색
 
         self.setEnabled(True)
         LogManager.HLOG.info("평가 목록 설정 팝업 닫힘으로 메인창 활성화")
@@ -519,12 +519,12 @@ class MainWindow(QMainWindow):
         def set_color():            
             clear_result_color = "background-color:rgb(225, 225, 225);"
                 
-            result_color = "background-color:rgb(147, 112, 219);"       # 보라색
+            result_color = "background-color:#cc79a7;"       # 보라색
 
             self.qbuttons[self.pre_idx].setStyleSheet(clear_result_color)
             LogManager.HLOG.info(f"이전 버튼 색상 초기화:rgb(225, 225, 225)")
             button.setStyleSheet(result_color)    
-            LogManager.HLOG.info(f"현재 버튼 색상: 보라색,rgb(147, 112, 219)")
+            LogManager.HLOG.info(f"현재 버튼 색상: 보라색,#cc79a7")
 
             if self.pre_idx != self.idx:
                 result_count = {
@@ -538,23 +538,23 @@ class MainWindow(QMainWindow):
                 LogManager.HLOG.info(f"색상처리를 위한 변수 result_count:{result_count}, pre_idx:{self.pre_idx}, idx:{self.idx}")
 
                 if len(self.testList) == result_count['pre_idx'].count('PASS'):
-                    self.qbuttons[self.pre_idx].setStyleSheet("background-color: rgb(62,74,193);") # 블루
+                    self.qbuttons[self.pre_idx].setStyleSheet("background-color: #0072b2") # 블루
 
                 elif len(self.testList) == result_count['pre_idx'].count('FAIL'):
                     self.qbuttons[self.pre_idx].setStyleSheet("background-color: rgb(211,44,98);") # 레드
 
                 elif len(self.testList) == result_count['pre_idx'].count('N/A'):
-                    self.qbuttons[self.pre_idx].setStyleSheet("background-color: rgb(64,128,128)") # 그레이
+                    self.qbuttons[self.pre_idx].setStyleSheet("background-color: #e69f00") # 오렌지
 
                 elif len(self.testList) == result_count['pre_idx'].count('N/T'):
-                    self.qbuttons[self.pre_idx].setStyleSheet("background-color: rgb(56,199,81)") # 민트
+                    self.qbuttons[self.pre_idx].setStyleSheet("background-color: #009e73") # 민트
 
                 elif len(self.testList) == str(self.result[self.pre_idx]).count('NULL'):
                     self.qbuttons[self.pre_idx].setStyleSheet("") # 초기화
 
                 elif result_count['pre_idx'].count('PASS') > 0 or result_count['pre_idx'].count('FAIL') > 0\
                     or result_count['pre_idx'].count('N/T') > 0 or result_count['pre_idx'].count('N/A') > 0:
-                    self.qbuttons[self.pre_idx].setStyleSheet("background-color: #FFFF00") # 노랑
+                    self.qbuttons[self.pre_idx].setStyleSheet("background-color: #f0e442") # 노랑
                 LogManager.HLOG.info("이전 버튼에 대한 색상 처리 완료")
 
         self.idx = idx
@@ -746,20 +746,20 @@ class MainWindow(QMainWindow):
                     button.setToolTip(str(index+1))
                     
                     if len(self.testList) == sql_testList.count("PASS"):
-                        button.setStyleSheet("background-color: rgb(62,74,193);") # 블루
+                        button.setStyleSheet("background-color: #0072b2") # 블루
 
                     elif len(self.testList) == sql_testList.count('FAIL'):
                         button.setStyleSheet("background-color: rgb(211,44,98);") # 레드
 
                     elif len(self.testList) == sql_testList.count('N/A'):
-                        button.setStyleSheet("background-color: rgb(64,128,128)") # 그레이
+                        button.setStyleSheet("background-color: #e69f00") # 그레이
 
                     elif len(self.testList) == sql_testList.count('N/T'):
-                        button.setStyleSheet("background-color: rgb(56,199,81)") # 민트
+                        button.setStyleSheet("background-color: #009e73") # 민트
 
                     elif sql_testList.count('PASS') > 0 or sql_testList.count('FAIL') > 0 \
                         or sql_testList.count('N/T') > 0 or sql_testList.count('N/A') > 0:
-                        button.setStyleSheet("background-color: #FFFF00") # 노랑 
+                        button.setStyleSheet("background-color: #f0e442") # 노랑 
 
                     button.clicked.connect(partial(self.qbutton_clicked, index, button))
                             
@@ -813,19 +813,27 @@ class MainWindow(QMainWindow):
             except:
                 pass
             
-            # if i < 3:
-            #     self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 0,i*2)
-            #     self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 0,i*2+1)
-            # else:
-            #     self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 1,(i-2)*2)
-            #     self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 1,(i-2)*2+1)
-
-            if i%2==0:
-                self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 0,i)
-                self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 0,i+1)
+            if len(self.fieldList) == 4:
+                if i < 2:
+                    self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 0,i*2)
+                    self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 0,i*2+1)
+                else:
+                    self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 1,(i-2)*2)
+                    self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 1,(i-2)*2+1)
             else:
-                self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 1,i-1)
-                self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 1,i)
+                if i < 3:
+                    self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 0,i*2)
+                    self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 0,i*2+1)
+                else:
+                    self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 1,(i-3)*2)
+                    self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 1,(i-3)*2+1)
+
+            # if i%2==0:
+            #     self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 0,i)
+            #     self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 0,i+1)
+            # else:
+            #     self.field_gridLayout.addWidget(globals()[f'field_Label{i}'], 1,i-1)
+            #     self.field_gridLayout.addWidget(globals()[f'desc_LineEdit{i}'], 1,i)
             
             self.field_lineEdit.append(globals()[f'desc_LineEdit{i}'])
 
