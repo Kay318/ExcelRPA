@@ -76,6 +76,16 @@ class Setup_TestList(QDialog):
         # 중복 체크
         for i in range(8):
             if globals()[f'lineEdit{i}'].text() != "":
+                if globals()[f'lineEdit{i}'].text() in ["%", "'", "{", "}", ":", ";"]:
+                    QMessageBox.warning(self, '주의', '["%", "\'", "\{", "\}", ":", ";"] 특수문자는 사용할 수 없습니다.')
+                    LogManager.HLOG.info(f'평가목록 설정 팝업에서 특수문자 알림 표시')
+                    return
+
+                if len(globals()[f'lineEdit{i}'].text()) > 25:
+                    QMessageBox.warning(self, '주의', '최대 길이는 25자입니다.')
+                    LogManager.HLOG.info(f'평가목록 설정 팝업에서 최대 길이 알림 표시')
+                    return
+
                 if globals()[f'lineEdit{i}'].text() not in testList:
                     testList.append(globals()[f'lineEdit{i}'].text())
                 else:

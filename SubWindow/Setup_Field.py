@@ -83,8 +83,18 @@ class Setup_Field(QDialog):
         LogManager.HLOG.info("필드 설정 팝업 확인 버튼 선택")
         fieldList = []
 
-        # 중복 체크
+        # 중복 및 특수문자 체크
         for i in range(6):
+            if globals()[f'lineEdit{i}'].text() in ["%", "'", "{", "}", ":", ";"]:
+                QMessageBox.warning(self, '주의', '["%", "\'", "\{", "\}", ":", ";"] 특수문자는 사용할 수 없습니다.')
+                LogManager.HLOG.info(f'필드 설정 팝업에서 특수문자 알림 표시')
+                return
+
+            if len(globals()[f'lineEdit{i}'].text()) > 25:
+                QMessageBox.warning(self, '주의', '최대 길이는 25자입니다.')
+                LogManager.HLOG.info(f'필드 설정 팝업에서 최대 길이 알림 표시')
+                return
+
             if globals()[f'lineEdit{i}'].text() != "":
                 if globals()[f'lineEdit{i}'].text() not in fieldList:
                     fieldList.append(globals()[f'lineEdit{i}'].text())

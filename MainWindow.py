@@ -285,6 +285,9 @@ class MainWindow(QMainWindow):
                 self.menuOpen.addAction(subMenu)
                 subMenu.setCheckable(True)
                 subMenu.triggered.connect(partial(self.show_imgList, lang, path, subMenu))
+                if subMenu.text() == self.clicked_lang:
+                    subMenu.setChecked(True)
+                    self.pre_subMenu = subMenu
                 
             LogManager.HLOG.info("퀵메뉴 갱신 완료")
         self.setEnabled(True)
@@ -292,8 +295,9 @@ class MainWindow(QMainWindow):
 
     def sf_emit(self, fieldList, newColumns):
         if fieldList != []:
-            result_data = self.insert_result()
-            self.result[self.idx] = result_data
+            if self.result != {}:
+                result_data = self.insert_result()
+                self.result[self.idx] = result_data
 
             for i in range(self.field_gridLayout.count()):
                 self.field_gridLayout.itemAt(i).widget().deleteLater()
@@ -305,23 +309,25 @@ class MainWindow(QMainWindow):
                 LogManager.HLOG.info("필드리스트 갱신 완료")
         
             # self.reuslt의 값을 변경된 필드에 맞게 변경
-            new_result = {}
-            for i, val in self.result.items():
-                new_result[i] = {}
-                for key in newColumns:
-                    try:
-                        new_result[i][key] = val[key]
-                    except KeyError:
-                        new_result[i][key] = ""
-        
-            self.result = new_result
+            if self.result != {}:
+                new_result = {}
+                for i, val in self.result.items():
+                    new_result[i] = {}
+                    for key in newColumns:
+                        try:
+                            new_result[i][key] = val[key]
+                        except KeyError:
+                            new_result[i][key] = ""
+            
+                self.result = new_result
         self.setEnabled(True)
         LogManager.HLOG.info("필드 설정 팝업 닫힘으로 메인창 활성화")
 
     def tl_emit(self, testList, newColumns):
         if testList != []:
-            result_data = self.insert_result()
-            self.result[self.idx] = result_data
+            if self.result != {}:
+                result_data = self.insert_result()
+                self.result[self.idx] = result_data
 
             for i in range(self.testList_groupbox_layout.count()):
                 self.testList_groupbox_layout.itemAt(i).widget().deleteLater()
@@ -332,33 +338,34 @@ class MainWindow(QMainWindow):
                 LogManager.HLOG.info("평가 목록 갱신 완료")
 
             # self.reuslt의 값을 변경된 평가 목록에 맞게 변경
-            new_result = {}
-            for i, val in self.result.items():
-                cnt_result = []
-                new_result[i] = {}
-                for key in newColumns:
-                    try:
-                        new_result[i][key] = val[key]
-                    except KeyError:
-                        new_result[i][key] = ""
-                    
-                    if key in self.testList:
-                        cnt_result.append(new_result[i][key])
+            if self.result != {}:
+                new_result = {}
+                for i, val in self.result.items():
+                    cnt_result = []
+                    new_result[i] = {}
+                    for key in newColumns:
+                        try:
+                            new_result[i][key] = val[key]
+                        except KeyError:
+                            new_result[i][key] = ""
                         
-                if len(self.testList) == cnt_result.count("PASS"):
-                    self.qbuttons[i].setStyleSheet("background-color: #0072b2") # 블루
-                elif len(self.testList) == cnt_result.count('FAIL'):
-                    self.qbuttons[i].setStyleSheet("background-color: rgb(211,44,98);") # 레드
-                elif len(self.testList) == cnt_result.count('N/A'):
-                    self.qbuttons[i].setStyleSheet("background-color: #e69f00") # 그레이
-                elif len(self.testList) == cnt_result.count('N/T'):
-                    self.qbuttons[i].setStyleSheet("background-color: #009e73") # 민트
-                elif cnt_result.count("PASS") > 0 or cnt_result.count('FAIL') > 0 or\
-                    cnt_result.count('N/A') > 0 or cnt_result.count('N/T') > 0:
-                    self.qbuttons[i].setStyleSheet("background-color: #f0e442") # 노랑 
+                        if key in self.testList:
+                            cnt_result.append(new_result[i][key])
+                            
+                    if len(self.testList) == cnt_result.count("PASS"):
+                        self.qbuttons[i].setStyleSheet("background-color: #0072b2") # 블루
+                    elif len(self.testList) == cnt_result.count('FAIL'):
+                        self.qbuttons[i].setStyleSheet("background-color: rgb(211,44,98);") # 레드
+                    elif len(self.testList) == cnt_result.count('N/A'):
+                        self.qbuttons[i].setStyleSheet("background-color: #e69f00") # 그레이
+                    elif len(self.testList) == cnt_result.count('N/T'):
+                        self.qbuttons[i].setStyleSheet("background-color: #009e73") # 민트
+                    elif cnt_result.count("PASS") > 0 or cnt_result.count('FAIL') > 0 or\
+                        cnt_result.count('N/A') > 0 or cnt_result.count('N/T') > 0:
+                        self.qbuttons[i].setStyleSheet("background-color: #f0e442") # 노랑 
             
-            self.result = new_result
-            self.qbuttons[self.idx].setStyleSheet("background-color:#cc79a7;")  # 보라색
+                self.result = new_result
+                self.qbuttons[self.idx].setStyleSheet("background-color:#cc79a7;")  # 보라색
 
         self.setEnabled(True)
         LogManager.HLOG.info("평가 목록 설정 팝업 닫힘으로 메인창 활성화")

@@ -195,6 +195,16 @@ class Setup_Language(QDialog):
         # 빈칸 및 중복 언어 체크
         for i in range(self.cnt):
             try:
+                if globals()[f'lang_lineEdit{i}'].text() in ["%", "'", "{", "}", ":", ";"]:
+                    QMessageBox.warning(self, '주의', '["%", "\'", "\{", "\}", ":", ";"] 특수문자는 사용할 수 없습니다.')
+                    LogManager.HLOG.info(f'언어 설정 팝업에서 특수문자 알림 표시')
+                    return
+
+                if len(globals()[f'lang_lineEdit{i}'].text()) > 10:
+                    QMessageBox.warning(self, '주의', '언어명 최대 길이는 25자입니다.')
+                    LogManager.HLOG.info(f'언어 설정 팝업에서 최대 길이 알림 표시')
+                    return
+
                 if globals()[f'lang_lineEdit{i}'].text() == "" or globals()[f'dir_lineEdit{i}'].text() == "":
                     QMessageBox.warning(self, '주의', '빈칸이 있습니다. \n 확인해 주세요.')
                     LogManager.HLOG.info("언어 설정 팝업에서 빈칸 알림 표시")
