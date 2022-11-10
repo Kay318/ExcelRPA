@@ -12,8 +12,8 @@ class Settings:
             self.config.write(f)
 
     def read_setup(self, table):
+        self.config[table] = {}
         self.config.read('./Settings/Setup.ini', encoding='utf-8')
-
         key1 = None
         key2 = None
         val1_List = []
@@ -31,10 +31,8 @@ class Settings:
             
             for key in data.keys():
                 if key.find(key1) != -1:
-                    print(f'key1 : {key}')
                     val1_List.append(data[key])
                 elif key.find(key2) != -1:
-                    print(f'key2 : {key}')
                     val2_List.append(data[key])
         except Exception as e:
             msg = traceback.format_exc()
@@ -70,7 +68,7 @@ class Settings:
         if (val2 != None):
             self.config[table].setdefault(f'{key2}_{count + 1}', val2)
 
-        self.save_ini() 
+        self.save_ini()
 
     def clear_table(self, table):
         self.config[table].clear()
