@@ -34,10 +34,10 @@ class Setup_Language(QDialog):
         screen = QDesktopWidget().screenGeometry()
 
         # 해상도에 따라 창 크기 설정
-        main_width = screen.width() * 0.5                   # 메인창 넓이
-        main_height = screen.height() * 0.5                 # 메인창 높이
-        main_left = (screen.width() - main_width) / 2       # 메인창 x좌표
-        main_top = (screen.height() - main_height) / 2      # 메인창 y좌표
+        main_width = round(screen.width() * 0.5)                   # 메인창 넓이
+        main_height = round(screen.height() * 0.5)                 # 메인창 높이
+        main_left = round((screen.width() - main_width) / 2)       # 메인창 x좌표
+        main_top = round((screen.height() - main_height) / 2)      # 메인창 y좌표
 
         if main_width > 960:
             main_width = 960
@@ -201,7 +201,7 @@ class Setup_Language(QDialog):
                     return
 
                 if len(globals()[f'lang_lineEdit{i}'].text()) > 10:
-                    QMessageBox.warning(self, '주의', '언어명 최대 길이는 25자입니다.')
+                    QMessageBox.warning(self, '주의', '언어명 최대 길이는 10자입니다.')
                     LogManager.HLOG.info(f'언어 설정 팝업에서 최대 길이 알림 표시')
                     return
 
