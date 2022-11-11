@@ -186,19 +186,31 @@ class MainWindow(QMainWindow):
         # 진행 상황
         result_groupbox = QGroupBox("진행 상황")
         result_groupbox.setFixedHeight(self.bottom_groupbox_fixedHeight)
-        result_Layout = QVBoxLayout()
+        result_Layout = QGridLayout()
         self.null_lbl = QLabel("미평가:")
+        self.null_lbl_cnt = QLabel("0건")
         self.pass_lbl = QLabel("ALL PASS:")
+        self.pass_lbl_cnt = QLabel("0건")
         self.fail_lbl = QLabel("ALL FAIL:")
+        self.fail_lbl_cnt = QLabel("0건")
         self.nt_lbl = QLabel("ALL N/T:")
+        self.nt_lbl_cnt = QLabel("0건")
         self.na_lbl = QLabel("ALL N/A:")
+        self.na_lbl_cnt = QLabel("0건")
         self.other_lbl = QLabel("Other:")
-        result_Layout.addWidget(self.null_lbl)
+        self.other_lbl_cnt = QLabel("0건")
+        result_Layout.addWidget(self.null_lbl, 0, 0)
+        result_Layout.addWidget(self.null_lbl_cnt, 0, 1)
         result_Layout.addWidget(self.pass_lbl)
+        result_Layout.addWidget(self.pass_lbl_cnt)
         result_Layout.addWidget(self.fail_lbl)
+        result_Layout.addWidget(self.fail_lbl_cnt)
         result_Layout.addWidget(self.nt_lbl)
+        result_Layout.addWidget(self.nt_lbl_cnt)
         result_Layout.addWidget(self.na_lbl)
+        result_Layout.addWidget(self.na_lbl_cnt)
         result_Layout.addWidget(self.other_lbl)
+        result_Layout.addWidget(self.other_lbl_cnt)
         result_groupbox.setLayout(result_Layout)
 
         self.bottom_gridLayout.addWidget(result_groupbox, 0, 8, 1, 1)
@@ -548,22 +560,34 @@ class MainWindow(QMainWindow):
 
                 if len(self.testList) == result_count['pre_idx'].count('PASS'):
                     self.qbuttons[self.pre_idx].setStyleSheet("background-color: #0072b2") # 블루
+                    pass_cnt = int(self.pass_lbl_cnt.text().replace("건", "")) + 1
+                    self.pass_lbl_cnt.setText(f"{str(pass_cnt)}건")
 
                 elif len(self.testList) == result_count['pre_idx'].count('FAIL'):
                     self.qbuttons[self.pre_idx].setStyleSheet("background-color: rgb(211,44,98);") # 레드
+                    fail_cnt = int(self.fail_lbl_cnt.text().replace("건", "")) + 1
+                    self.fail_lbl_cnt.setText(f"{str(fail_cnt)}건")
 
                 elif len(self.testList) == result_count['pre_idx'].count('N/A'):
                     self.qbuttons[self.pre_idx].setStyleSheet("background-color: #e69f00") # 오렌지
+                    na_cnt = int(self.na_lbl_cnt.text().replace("건", "")) + 1
+                    self.na_lbl_cnt.setText(f"{str(na_cnt)}건")
 
                 elif len(self.testList) == result_count['pre_idx'].count('N/T'):
                     self.qbuttons[self.pre_idx].setStyleSheet("background-color: #009e73") # 민트
+                    nt_cnt = int(self.nt_lbl_cnt.text().replace("건", "")) + 1
+                    self.nt_lbl_cnt.setText(f"{str(nt_cnt)}건")
 
-                elif len(self.testList) == str(self.result[self.pre_idx]).count('NULL'):
+                elif len(self.testList) == str(self.result[self.pre_idx]).count(''):
                     self.qbuttons[self.pre_idx].setStyleSheet("") # 초기화
 
-                elif result_count['pre_idx'].count('PASS') > 0 or result_count['pre_idx'].count('FAIL') > 0\
-                    or result_count['pre_idx'].count('N/T') > 0 or result_count['pre_idx'].count('N/A') > 0:
+                else:
                     self.qbuttons[self.pre_idx].setStyleSheet("background-color: #f0e442") # 노랑
+                    other_cnt = int(self.other_lbl_cnt.text().replace("건", "")) + 1
+                    self.other_lbl_cnt.setText(f"{str(other_cnt)}건")
+
+                null_cnt = int(self.null_lbl_cnt.text().replace("건", "")) - 1
+                self.null_lbl_cnt.setText(f"{str(null_cnt)}건")
                 LogManager.HLOG.info("이전 버튼에 대한 색상 처리 완료")
 
         self.idx = idx
@@ -723,6 +747,13 @@ class MainWindow(QMainWindow):
                 # 이미지 버튼 추가
                 self.qbuttons = {}
                 self.icons = {}
+                pass_cnt = 0
+                fail_cnt = 0
+                na_cnt = 0
+                nt_cnt = 0
+                other_cnt = 0
+                null_cnt = 0
+
                 for index, filename in enumerate(self.imgList):
                     sql_testList = []
                     # 평가결과를 저장할 dictionary: self.result 세팅
@@ -756,25 +787,40 @@ class MainWindow(QMainWindow):
                     
                     if len(self.testList) == sql_testList.count("PASS"):
                         button.setStyleSheet("background-color: #0072b2") # 블루
+                        pass_cnt = int(self.pass_lbl_cnt.text().replace("건", "")) + 1
 
                     elif len(self.testList) == sql_testList.count('FAIL'):
                         button.setStyleSheet("background-color: rgb(211,44,98);") # 레드
+                        fail_cnt = int(self.fail_lbl_cnt.text().replace("건", "")) + 1
 
                     elif len(self.testList) == sql_testList.count('N/A'):
                         button.setStyleSheet("background-color: #e69f00") # 그레이
+                        na_cnt = int(self.na_lbl_cnt.text().replace("건", "")) + 1
 
                     elif len(self.testList) == sql_testList.count('N/T'):
                         button.setStyleSheet("background-color: #009e73") # 민트
+                        nt_cnt = int(self.nt_lbl_cnt.text().replace("건", "")) + 1
 
+                    # elif sql_testList.count('PASS') > 0 or sql_testList.count('FAIL') > 0 \
+                    #     or sql_testList.count('N/T') > 0 or sql_testList.count('N/A') > 0:
                     elif sql_testList.count('PASS') > 0 or sql_testList.count('FAIL') > 0 \
-                        or sql_testList.count('N/T') > 0 or sql_testList.count('N/A') > 0:
+                        or sql_testList.count('N/T') > 0 or sql_testList.count('N/A') > 0 and sql_testList.count('NULL') == 0:
                         button.setStyleSheet("background-color: #f0e442") # 노랑 
+                        other_cnt = int(self.other_lbl_cnt.text().replace("건", "")) + 1
 
                     button.clicked.connect(partial(self.qbutton_clicked, index, button))
                             
                     self.img_VBoxLayout.addWidget(button)
                     self.qbuttons[index] = button
                     QApplication.processEvents()
+                
+                self.pass_lbl_cnt.setText(f"{str(pass_cnt)}건")
+                self.fail_lbl_cnt.setText(f"{str(fail_cnt)}건")
+                self.na_lbl_cnt.setText(f"{str(na_cnt)}건")
+                self.nt_lbl_cnt.setText(f"{str(nt_cnt)}건")
+                self.other_lbl_cnt.setText(f"{str(other_cnt)}건")
+                null_cnt = len(self.imgList) - pass_cnt - fail_cnt - na_cnt - nt_cnt - other_cnt
+                self.null_lbl_cnt.setText(f"{str(null_cnt)}건")
 
                 LogManager.HLOG.info(f"self.result:{self.result}")
                 self.setEnabled(True)
@@ -1040,6 +1086,27 @@ class QPushButtonIcon(QPushButton):
 #     imgList_singnal = pyqtSignal()
 #     def run(self):
 #         self.imgList_singnal.emit()
+
+# class Calculator(QThread):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+#         self.result = parent.result
+
+#     def run(self):
+#         for i, val in self.result.items():
+#             cnt_result = []
+
+#             if len(self.testList) == cnt_result.count("PASS"):
+#                 self.qbuttons[i].setStyleSheet("background-color: #0072b2") # 블루
+#             elif len(self.testList) == cnt_result.count('FAIL'):
+#                 self.qbuttons[i].setStyleSheet("background-color: rgb(211,44,98);") # 레드
+#             elif len(self.testList) == cnt_result.count('N/A'):
+#                 self.qbuttons[i].setStyleSheet("background-color: #e69f00") # 그레이
+#             elif len(self.testList) == cnt_result.count('N/T'):
+#                 self.qbuttons[i].setStyleSheet("background-color: #009e73") # 민트
+#             elif cnt_result.count("PASS") > 0 or cnt_result.count('FAIL') > 0 or\
+#                 cnt_result.count('N/A') > 0 or cnt_result.count('N/T') > 0:
+#                 self.qbuttons[i].setStyleSheet("background-color: #f0e442") # 노랑  
 
 def Init():
     LogManager.Init()
