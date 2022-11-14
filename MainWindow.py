@@ -374,8 +374,8 @@ class MainWindow(QMainWindow):
                         self.qbuttons[i].setStyleSheet("background-color: #e69f00") # 그레이
                     elif len(self.testList) == cnt_result.count('N/T'):
                         self.qbuttons[i].setStyleSheet("background-color: #009e73") # 민트
-                    elif cnt_result.count("PASS") > 0 or cnt_result.count('FAIL') > 0 or\
-                        cnt_result.count('N/A') > 0 or cnt_result.count('N/T') > 0:
+                    elif (cnt_result.count("PASS") > 0 or cnt_result.count('FAIL') > 0 or\
+                        cnt_result.count('N/A') > 0 or cnt_result.count('N/T') > 0) and cnt_result.count('') == 0:
                         self.qbuttons[i].setStyleSheet("background-color: #f0e442") # 노랑 
             
                 self.result = new_result
@@ -560,34 +560,34 @@ class MainWindow(QMainWindow):
 
                 if len(self.testList) == result_count['pre_idx'].count('PASS'):
                     self.qbuttons[self.pre_idx].setStyleSheet("background-color: #0072b2") # 블루
-                    pass_cnt = int(self.pass_lbl_cnt.text().replace("건", "")) + 1
-                    self.pass_lbl_cnt.setText(f"{str(pass_cnt)}건")
+                    # pass_cnt = int(self.pass_lbl_cnt.text().replace("건", "")) + 1
+                    # self.pass_lbl_cnt.setText(f"{str(pass_cnt)}건")
 
                 elif len(self.testList) == result_count['pre_idx'].count('FAIL'):
                     self.qbuttons[self.pre_idx].setStyleSheet("background-color: rgb(211,44,98);") # 레드
-                    fail_cnt = int(self.fail_lbl_cnt.text().replace("건", "")) + 1
-                    self.fail_lbl_cnt.setText(f"{str(fail_cnt)}건")
+                    # fail_cnt = int(self.fail_lbl_cnt.text().replace("건", "")) + 1
+                    # self.fail_lbl_cnt.setText(f"{str(fail_cnt)}건")
 
                 elif len(self.testList) == result_count['pre_idx'].count('N/A'):
                     self.qbuttons[self.pre_idx].setStyleSheet("background-color: #e69f00") # 오렌지
-                    na_cnt = int(self.na_lbl_cnt.text().replace("건", "")) + 1
-                    self.na_lbl_cnt.setText(f"{str(na_cnt)}건")
+                    # na_cnt = int(self.na_lbl_cnt.text().replace("건", "")) + 1
+                    # self.na_lbl_cnt.setText(f"{str(na_cnt)}건")
 
                 elif len(self.testList) == result_count['pre_idx'].count('N/T'):
                     self.qbuttons[self.pre_idx].setStyleSheet("background-color: #009e73") # 민트
-                    nt_cnt = int(self.nt_lbl_cnt.text().replace("건", "")) + 1
-                    self.nt_lbl_cnt.setText(f"{str(nt_cnt)}건")
+                    # nt_cnt = int(self.nt_lbl_cnt.text().replace("건", "")) + 1
+                    # self.nt_lbl_cnt.setText(f"{str(nt_cnt)}건")
 
-                elif len(self.testList) == str(self.result[self.pre_idx]).count(''):
+                elif len(self.testList) == result_count['pre_idx'].count(''):
                     self.qbuttons[self.pre_idx].setStyleSheet("") # 초기화
 
                 else:
                     self.qbuttons[self.pre_idx].setStyleSheet("background-color: #f0e442") # 노랑
-                    other_cnt = int(self.other_lbl_cnt.text().replace("건", "")) + 1
-                    self.other_lbl_cnt.setText(f"{str(other_cnt)}건")
+                    # other_cnt = int(self.other_lbl_cnt.text().replace("건", "")) + 1
+                    # self.other_lbl_cnt.setText(f"{str(other_cnt)}건")
 
-                null_cnt = int(self.null_lbl_cnt.text().replace("건", "")) - 1
-                self.null_lbl_cnt.setText(f"{str(null_cnt)}건")
+                # null_cnt = int(self.null_lbl_cnt.text().replace("건", "")) - 1
+                # self.null_lbl_cnt.setText(f"{str(null_cnt)}건")
                 LogManager.HLOG.info("이전 버튼에 대한 색상 처리 완료")
 
         self.idx = idx
@@ -607,6 +607,8 @@ class MainWindow(QMainWindow):
 
         # 다른 이미지 버튼 누를 때 액션
         if self.pre_idx != idx or self.first_index_in_sql:
+            # refreshed_cnt = Calculator(self)
+            # refreshed_cnt.start()
             if not self.first_index_in_sql:
                 # self.result에 값 저장하고 기존 데이타 삭제하기
                 result_data = self.insert_result(option=True)
@@ -801,10 +803,8 @@ class MainWindow(QMainWindow):
                         button.setStyleSheet("background-color: #009e73") # 민트
                         nt_cnt = int(self.nt_lbl_cnt.text().replace("건", "")) + 1
 
-                    # elif sql_testList.count('PASS') > 0 or sql_testList.count('FAIL') > 0 \
-                    #     or sql_testList.count('N/T') > 0 or sql_testList.count('N/A') > 0:
-                    elif sql_testList.count('PASS') > 0 or sql_testList.count('FAIL') > 0 \
-                        or sql_testList.count('N/T') > 0 or sql_testList.count('N/A') > 0 and sql_testList.count('NULL') == 0:
+                    elif (sql_testList.count('PASS') > 0 or sql_testList.count('FAIL') > 0 \
+                        or sql_testList.count('N/T') > 0 or sql_testList.count('N/A') > 0) and sql_testList.count('') == 0:
                         button.setStyleSheet("background-color: #f0e442") # 노랑 
                         other_cnt = int(self.other_lbl_cnt.text().replace("건", "")) + 1
 
@@ -1087,26 +1087,30 @@ class QPushButtonIcon(QPushButton):
 #     def run(self):
 #         self.imgList_singnal.emit()
 
-# class Calculator(QThread):
-#     def __init__(self, parent=None):
-#         super().__init__(parent)
-#         self.result = parent.result
+class Calculator(QThread):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.result = parent.result
+        self.testList = parent.testList
 
-#     def run(self):
-#         for i, val in self.result.items():
-#             cnt_result = []
+    def run(self):
+        for i, val in self.result.items():
+            cnt_result = []
+            for key in val.keys():
+                if key in self.testList:
+                    cnt_result.append(val[key])
 
-#             if len(self.testList) == cnt_result.count("PASS"):
-#                 self.qbuttons[i].setStyleSheet("background-color: #0072b2") # 블루
-#             elif len(self.testList) == cnt_result.count('FAIL'):
-#                 self.qbuttons[i].setStyleSheet("background-color: rgb(211,44,98);") # 레드
-#             elif len(self.testList) == cnt_result.count('N/A'):
-#                 self.qbuttons[i].setStyleSheet("background-color: #e69f00") # 그레이
-#             elif len(self.testList) == cnt_result.count('N/T'):
-#                 self.qbuttons[i].setStyleSheet("background-color: #009e73") # 민트
-#             elif cnt_result.count("PASS") > 0 or cnt_result.count('FAIL') > 0 or\
-#                 cnt_result.count('N/A') > 0 or cnt_result.count('N/T') > 0:
-#                 self.qbuttons[i].setStyleSheet("background-color: #f0e442") # 노랑  
+            if len(self.testList) == cnt_result.count("PASS"):
+                self.qbuttons[i].setStyleSheet("background-color: #0072b2") # 블루
+            elif len(self.testList) == cnt_result.count('FAIL'):
+                self.qbuttons[i].setStyleSheet("background-color: rgb(211,44,98);") # 레드
+            elif len(self.testList) == cnt_result.count('N/A'):
+                self.qbuttons[i].setStyleSheet("background-color: #e69f00") # 그레이
+            elif len(self.testList) == cnt_result.count('N/T'):
+                self.qbuttons[i].setStyleSheet("background-color: #009e73") # 민트
+            elif cnt_result.count("PASS") > 0 or cnt_result.count('FAIL') > 0 or\
+                cnt_result.count('N/A') > 0 or cnt_result.count('N/T') > 0:
+                self.qbuttons[i].setStyleSheet("background-color: #f0e442") # 노랑  
 
 def Init():
     LogManager.Init()

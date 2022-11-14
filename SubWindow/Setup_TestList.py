@@ -115,6 +115,7 @@ class Setup_TestList(QDialog):
                     self.db.c.execute(f"SELECT * FROM ({sql_table})")
                     sql_col_set = set([col_tuple[0] for col_tuple in self.db.c.description])
                     col_intersection = tuple(sql_col_set & newColumnsSet)
+                    col_subtraction = tuple(newColumnsSet - set(col_intersection))
                     
                     # 컬럼 편집(BACKUP 테이블 만듬 > 기존 테이블 내용을 BACKUP에 옮김 > BACKUP 테이블명 변경)
                     try:
@@ -146,6 +147,16 @@ class Setup_TestList(QDialog):
                     LogManager.HLOG.info(query_insert)
                     self.db.c.execute(query_insert)
                     self.db.dbConn.commit()
+
+                    if col_subtraction != ():
+                        query_update = f"UPDATE BACKUP SET "
+                        for col in col_subtraction:
+                            query_update += f"'{col}' = '',"
+                        query_update = query_update[:-1]
+                        LogManager.HLOG.info(query_update)
+                        self.db.c.execute(query_update)
+                        self.db.dbConn.commit()
+
                     self.db.c.execute(f"DROP TABLE {sql_table}")
                     self.db.c.execute(f"ALTER TABLE BACKUP RENAME TO {sql_table}")
                     
