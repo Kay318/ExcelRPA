@@ -187,6 +187,10 @@ class MainWindow(QMainWindow):
         result_groupbox = QGroupBox("진행 상황")
         result_groupbox.setFixedHeight(self.bottom_groupbox_fixedHeight)
         result_Layout = QGridLayout()
+        self.all_lbl = QLabel("전체/진행율:")
+        self.all_lbl_cnt = QLabel("0건/0%")
+        self.all_lbl.setFont(QFont("", weight=QFont.Bold))
+        self.all_lbl_cnt.setFont(QFont("", weight=QFont.Bold))
         self.null_lbl = QLabel("미평가:")
         self.null_lbl_cnt = QLabel("0건")
         self.pass_lbl = QLabel("ALL PASS:")
@@ -199,8 +203,10 @@ class MainWindow(QMainWindow):
         self.na_lbl_cnt = QLabel("0건")
         self.other_lbl = QLabel("Other:")
         self.other_lbl_cnt = QLabel("0건")
-        result_Layout.addWidget(self.null_lbl, 0, 0)
-        result_Layout.addWidget(self.null_lbl_cnt, 0, 1)
+        result_Layout.addWidget(self.all_lbl, 0, 0)
+        result_Layout.addWidget(self.all_lbl_cnt, 0, 1)
+        result_Layout.addWidget(self.null_lbl)
+        result_Layout.addWidget(self.null_lbl_cnt)
         result_Layout.addWidget(self.pass_lbl)
         result_Layout.addWidget(self.pass_lbl_cnt)
         result_Layout.addWidget(self.fail_lbl)
@@ -738,6 +744,8 @@ class MainWindow(QMainWindow):
                 # 이미지 버튼 추가
                 self.qbuttons = {}
                 self.icons = {}
+                all_cnt = 0
+                all_percent = 0
                 pass_cnt = 0
                 fail_cnt = 0
                 na_cnt = 0
@@ -810,6 +818,9 @@ class MainWindow(QMainWindow):
                 self.other_lbl_cnt.setText(f"{str(other_cnt)}건")
                 null_cnt = len(self.imgList) - pass_cnt - fail_cnt - na_cnt - nt_cnt - other_cnt
                 self.null_lbl_cnt.setText(f"{str(null_cnt)}건")
+                all_cnt = len(self.imgList)
+                all_percent = round((all_cnt - null_cnt) / all_cnt * 100, 2)
+                self.all_lbl_cnt.setText(f"{str(all_cnt)}건/{str(all_percent)}%")
 
                 LogManager.HLOG.info(f"self.result:{self.result}")
                 self.setEnabled(True)
@@ -960,7 +971,8 @@ class MainWindow(QMainWindow):
                 self.db.dbConn.commit()
             except RuntimeError:
                 continue
-        
+        refreshed_cnt = Calculator(self)
+        refreshed_cnt.start()
         self.setEnabled(True)
 
     @AutomationFunctionDecorator
@@ -1081,8 +1093,11 @@ class Calculator(QThread):
         self.nt_lbl_cnt = parent.nt_lbl_cnt
         self.other_lbl_cnt = parent.other_lbl_cnt
         self.null_lbl_cnt = parent.null_lbl_cnt
+        self.all_lbl_cnt = parent.all_lbl_cnt
 
     def run(self):
+        all_cnt = 0
+        all_percent = 0
         pass_cnt = 0
         fail_cnt = 0
         nt_cnt = 0
@@ -1113,6 +1128,9 @@ class Calculator(QThread):
         self.other_lbl_cnt.setText(f"{str(other_cnt)}건")
         null_cnt = len(self.imgList) - pass_cnt - fail_cnt - na_cnt - nt_cnt - other_cnt
         self.null_lbl_cnt.setText(f"{str(null_cnt)}건")
+        all_cnt = len(self.imgList)
+        all_percent = round((all_cnt - null_cnt) / all_cnt * 100, 2)
+        self.all_lbl_cnt.setText(f"{str(all_cnt)}건/{str(all_percent)}%")
 
 
 def Init():
