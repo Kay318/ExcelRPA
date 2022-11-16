@@ -10,6 +10,7 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+import time
 from functools import partial
 import traceback
 from PIL import Image
@@ -54,6 +55,7 @@ class MainWindow(QMainWindow):
     @AutomationFunctionDecorator
     def setupUi(self):
         widget = QWidget()
+        self.loadingScreen = LoadingMask(widget, "./loadingGIF/loading-unscreen.gif")
 
         # 해상도 받아옴
         screen = QDesktopWidget().screenGeometry()
@@ -727,7 +729,8 @@ class MainWindow(QMainWindow):
                 if self.pre_subMenu is not None:
                     self.pre_subMenu.setChecked(False)
                 subMenu.setChecked(True)
-                self.setEnabled(False)
+                # self.setEnabled(False)
+                self.loadingScreen.show()
 
                 # 평가결과 기록 삭제
                 self.result.clear()
@@ -823,13 +826,14 @@ class MainWindow(QMainWindow):
                 self.all_lbl_cnt.setText(f"{str(all_cnt)}건/{str(all_percent)}%")
 
                 LogManager.HLOG.info(f"self.result:{self.result}")
-                self.setEnabled(True)
+                # self.setEnabled(True)
                 self.qbuttons[0].click()
                 if len(self.imgList) > 1:
                     self.right_imgBtn.setEnabled(True)
                 LogManager.HLOG.info(f"이미지 불러온 후 첫번째 버튼 클릭")
                 
                 self.setEnabled_bottom()
+                self.loadingScreen.close()
                 self.pre_lang = lang
                 self.pre_subMenu = subMenu
 
@@ -1025,51 +1029,75 @@ class QPushButtonIcon(QPushButton):
         super().__init__(parent)
         self.setIconSize(QSize(40, 40))
 
-# class LoadingMask(QMainWindow):
-#     def __init__(self, parent, gif=None, tip=None):
-#         super(LoadingMask, self).__init__(parent)
+# class LoadingScreen(QWidget):
+    
+#     def __init__(self,parent):
+#         super(loading,self).__init__(parent)    
+#         self.setupUi(self) 
+#         self.center()
+#         self.show()
+        
+#         # 동적 이미지 추가
+#         self.movie = QMovie('./loadingGIF/loading-unscreen.gif', QByteArray(), self)
+#         self.movie.setCacheMode(QMovie.CacheAll)
+#         # QLabel에 동적 이미지 삽입
+#         self.label.setMovie(self.movie)
+#         self.movie.start()
+#         # 윈도우 해더 숨기기
+#         self.setWindowFlags(Qt.FramelessWindowHint)
+    
+#     # 위젯 정중앙 위치
+#     def center(self):
+#         size=self.size()
+#         ph = self.parent().geometry().height()
+#         pw = self.parent().geometry().width()
+#         self.move(int(pw/2 - size.width()/2), int(ph/2 - size.height()/2))
 
-#         parent.installEventFilter(self)
+# class LoadingScreen(QWidget):
+    
+#     def __init__(self):
+#         super().__init__()    
+#         self.setFixedSize(200, 200) 
+#         # self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
+#         self.setWindowFlags(Qt.FramelessWindowHint)
 
-#         self.label = QLabel()
+#         self.label_animation = QLabel(self)
+#         self.movie = QMovie('./loadingGIF/loading-unscreen.gif')
+#         self.label_animation.setMovie(self.movie)
 
-#         if not tip is None:
-#             self.label.setText(tip)
-#             font = QFont('Microsoft YaHei', 10, QFont.Normal)
-#             font_metrics = QFontMetrics(font)
-#             self.label.setFont(font)
-#             self.label.setFixedSize(font_metrics.width(tip, len(tip))+10, font_metrics.height()+5)
-#             self.label.setAlignment(Qt.AlignCenter)
-#             self.label.setStyleSheet(
-#                 'QLabel{background-color: rgba(0,0,0,70%);border-radius: 4px; color: white; padding: 5px;}')
+#         # timer = QTimer(self)
+#         # self.startAnimation()
+#         # timer.singleShot(300, self.stopAnimation)
 
-#         if not gif is None:
-#             self.movie = QMovie(gif)
-#             self.label.setMovie(self.movie)
-#             self.label.setFixedSize(QSize(160, 160))
-#             self.label.setScaledContents(True)
-#             self.movie.start()
+#         # self.center()
+#         # self.show()
+        
+#         # 동적 이미지 추가
+#         # self.movie = QMovie('./loadingGIF/loading.gif')
+#         # self.movie.setCacheMode(QMovie.CacheAll)
+#         # # QLabel에 동적 이미지 삽입
+#         # # self.label.setMovie(self.movie)
+#         # self.movie.start()
+#         # # 윈도우 해더 숨기기
+#         # self.setWindowFlags(Qt.FramelessWindowHint)
 
-#         layout = QHBoxLayout()
-#         widget = QWidget()
-#         widget.setLayout(layout)
-#         layout.addWidget(self.label)
+#     def startAnimation(self):
+#         opacity_effect = QGraphicsOpacityEffect(self)
+#         opacity_effect.setOpacity(0.1)
+#         # self.label_animation.setStyleSheet("background-color: red")
+#         self.movie.start()
+#         self.show()
 
-#         self.setCentralWidget(widget)
-#         self.setWindowOpacity(0.8)
-#         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Dialog)
-#         self.hide()
-
-#     def eventFilter(self, widget, event):
-#         if widget == self.parent() and type(event) == QMoveEvent:
-#             self.moveWithParent()
-#             return True
-#         return super(LoadingMask, self).eventFilter(widget, event)
-
-#     def moveWithParent(self):
-#         if self.isVisible():
-#             self.move(self.parent().geometry().x(), self.parent().geometry().y())
-#             self.setFixedSize(QSize(self.parent().geometry().width(), self.parent().geometry().height()))
+#     def stopAnimation(self):
+#         self.movie.stop()
+#         self.close()
+    
+    # # 위젯 정중앙 위치
+    # def center(self):
+    #     size=self.size()
+    #     ph = self.parent().geometry().height()
+    #     pw = self.parent().geometry().width()
+    #     self.move(int(pw/2 - size.width()/2), int(ph/2 - size.height()/2))
             
 # class LoadingThread(QThread):
 #     loading_singnal = pyqtSignal()
@@ -1080,6 +1108,96 @@ class QPushButtonIcon(QPushButton):
 #     imgList_singnal = pyqtSignal()
 #     def run(self):
 #         self.imgList_singnal.emit()
+
+class LoadingMask(QMainWindow):
+    def __init__(self, parent, gif=None, tip=None, min=0):
+        """
+        gif优先级高于 tip，两者同时赋值优先使用 gif
+        :param parent:
+        :param gif:
+        :param tip:
+        :param min:
+        """
+        super(LoadingMask, self).__init__(parent)
+
+        self.min = min
+        self.show_time = 0
+
+        parent.installEventFilter(self)
+
+        self.label = QLabel()
+
+        if not tip is None:
+            self.label.setText(tip)
+            font = QFont('Microsoft YaHei', 10, QFont.Normal)
+            font_metrics = QFontMetrics(font)
+            self.label.setFont(font)
+            self.label.setFixedSize(font_metrics.width(tip, len(tip))+10, font_metrics.height()+5)
+            self.label.setAlignment(Qt.AlignCenter)
+            self.label.setStyleSheet(
+                'QLabel{background-color: rgba(0,0,0,70%);border-radius: 4px; color: white; padding: 5px;}')
+
+        if not gif is None:
+            self.movie = QMovie(gif)
+            self.label.setMovie(self.movie)
+            self.label.setAttribute(Qt.WA_TranslucentBackground)
+            self.label.setFixedSize(QSize(160, 160))
+            self.label.setScaledContents(True)
+            self.movie.start()
+
+        layout = QHBoxLayout()
+        widget = QWidget()
+        widget.setObjectName('background')
+        # widget.setAttribute(Qt.WA_TranslucentBackground)
+        widget.setStyleSheet('QWidget#background{background-color: rgba(255, 255, 255, 40%);}')
+        widget.setLayout(layout)
+        layout.addWidget(self.label)
+
+        self.setCentralWidget(widget)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.Tool)
+        self.hide()
+
+    def eventFilter(self, widget, event):
+        events = {QMoveEvent, QResizeEvent, QPaintEvent}
+        if widget == self.parent():
+            if type(event) == QCloseEvent:
+                self.close()
+                return True
+            elif type(event) in events:
+                self.moveWithParent()
+                return True
+        return super(LoadingMask, self).eventFilter(widget, event)
+
+    def moveWithParent(self):
+        if self.parent().isVisible():
+            self.move(self.parent().geometry().x(), self.parent().geometry().y())
+            self.setFixedSize(QSize(self.parent().geometry().width(), self.parent().geometry().height()))
+    
+    def show(self):
+        super(LoadingMask, self).show()
+        self.show_time = time.time()
+        self.moveWithParent()
+
+    def close(self):
+        # 显示时间不够最小显示时间 设置Timer延时删除
+        if (time.time() - self.show_time) * 1000 < self.min:
+            QTimer().singleShot((time.time() - self.show_time)*1000+10, self.close)
+        else:
+            super(LoadingMask, self).hide()
+            super(LoadingMask, self).deleteLater()
+    
+    @staticmethod
+    def showToast(window, tip='加载中...', duration=500, appended_task=None):
+        mask = LoadingMask(window, tip=tip)
+        mask.show()
+
+        def task():
+            mask.deleteLater()
+            if callable(appended_task):
+                appended_task()
+        # 一段时间后移除组件
+        QTimer().singleShot(duration, task)
 
 class Calculator(QThread):
     def __init__(self, parent=None):
