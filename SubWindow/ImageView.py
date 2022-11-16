@@ -1,11 +1,8 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from functools import partial
 from PIL import Image
 import sys
-import time
-import os
 
 class ImageViewer(QWidget):
     def __init__(self, img_dir):
@@ -19,11 +16,11 @@ class ImageViewer(QWidget):
         vbox = QVBoxLayout()
         vbox.addWidget(label)
         if pixmap.width() <= screen.width() and pixmap.height() <= screen.height():
-            self.move((screen.width()-pixmap.width())/2, (screen.height()-pixmap.height())/2)
+            self.move(round((screen.width()-pixmap.width())/2), round((screen.height()-pixmap.height())/2))
         elif pixmap.width() >= screen.width() and pixmap.height() <= screen.height():
-            self.move(0, (screen.height()-pixmap.height())/2)
+            self.move(0, round((screen.height()-pixmap.height())/2))
         elif pixmap.width() <= screen.width() and pixmap.height() >= screen.height():
-            self.move((screen.width()-pixmap.width())/2, 0)
+            self.move(round((screen.width()-pixmap.width())/2), 0)
         else:
             self.move(0,0)
         self.setLayout(vbox)

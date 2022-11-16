@@ -819,7 +819,7 @@ class MainWindow(QMainWindow):
                 null_cnt = len(self.imgList) - pass_cnt - fail_cnt - na_cnt - nt_cnt - other_cnt
                 self.null_lbl_cnt.setText(f"{str(null_cnt)}건")
                 all_cnt = len(self.imgList)
-                all_percent = round((all_cnt - null_cnt) / all_cnt * 100, 2)
+                all_percent = round((all_cnt - null_cnt) / all_cnt * 100, 1)
                 self.all_lbl_cnt.setText(f"{str(all_cnt)}건/{str(all_percent)}%")
 
                 LogManager.HLOG.info(f"self.result:{self.result}")
@@ -1129,9 +1129,8 @@ class Calculator(QThread):
         null_cnt = len(self.imgList) - pass_cnt - fail_cnt - na_cnt - nt_cnt - other_cnt
         self.null_lbl_cnt.setText(f"{str(null_cnt)}건")
         all_cnt = len(self.imgList)
-        all_percent = round((all_cnt - null_cnt) / all_cnt * 100, 2)
+        all_percent = round((all_cnt - null_cnt) / all_cnt * 100, 1)
         self.all_lbl_cnt.setText(f"{str(all_cnt)}건/{str(all_percent)}%")
-
 
 def Init():
     LogManager.Init()

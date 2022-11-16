@@ -1,7 +1,4 @@
-import builtins
 import logging
-import traceback
-import atexit
 import os
 from pathlib import Path
 from datetime import datetime
@@ -40,11 +37,11 @@ def __init_logger():
     streamHandler.setFormatter(formatter)
     logger.addHandler(streamHandler)
     logfile = f"{getTimeStamp()}.log" # 저장할 로그 이름
-    # logpath = f"{Path(__file__).parents[1]}\\log\\kraken" # 저장할 로그 경로
     logpath =  f"{Path(__file__).parent}\\log_files" # 저장할 로그 경로
 
     if os.path.isdir(logpath) != True:
         os.makedirs(logpath)
+    removeLog(logpath)      # 로그파일 최대 10개 남김
 
     fileHandler = logging.FileHandler(logpath + '\\' + logfile, encoding='utf-8')
     fileHandler.setFormatter(formatter)
@@ -54,6 +51,13 @@ def __init_logger():
 
     HLOG = logger
     HLOG.setLevel(logging.DEBUG)
+
+def removeLog(logpath):
+    file_list = os.listdir(logpath)
+    file_list.sort()
+    if len(file_list) > 9:
+        for file in file_list[:-9]:
+            os.remove(logpath + '\\' + file)
 
 # # Try Exception
 # class Interupt(Exception):
