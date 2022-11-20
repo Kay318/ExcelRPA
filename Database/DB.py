@@ -1,4 +1,5 @@
 import os
+import glob
 import sqlite3
 
 class DBManager:
@@ -14,6 +15,17 @@ class DBManager:
         self.dbConn.executescript(
             TEXT
         )
+        
+    def remove_db(self):
+        self.close()
+        os.remove(self.dbpath)
+        
+    def find_db(self):
+        file = glob.glob(self.dbpath)
+        if file != []:
+            return True
+        else:
+            return False
 
 if __name__ == "__main__":
     db = DBManager()
