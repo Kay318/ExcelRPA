@@ -331,7 +331,6 @@ class MainWindow(QMainWindow):
 
             for i in range(self.field_gridLayout.count()):
                 self.field_gridLayout.itemAt(i).widget().deleteLater()
-            LogManager.HLOG.info("기존 필드리스트 삭제")
 
             if fieldList != ["OK"]:
                 self.fieldList = fieldList
@@ -812,6 +811,16 @@ class MainWindow(QMainWindow):
                     self.img_VBoxLayout.addWidget(button)
                     self.qbuttons[index] = button
                     QApplication.processEvents()
+                    
+                # 필드 재설정
+                for i in range(self.field_gridLayout.count()):
+                    self.field_gridLayout.itemAt(i).widget().deleteLater()
+                self.set_field_gridLayout()
+                
+                # 평가결과 재설정
+                for i in range(self.testList_groupbox_layout.count()):
+                    self.testList_groupbox_layout.itemAt(i).widget().deleteLater()
+                self.set_testList_hboxLayout()
                 
                 self.pass_lbl_cnt.setText(f"{str(pass_cnt)}건")
                 self.fail_lbl_cnt.setText(f"{str(fail_cnt)}건")
