@@ -715,7 +715,7 @@ class MainWindow(QMainWindow):
                 self.pre_idx = 0                         # 이전 이미지 버튼 index
                 self.clicked_lang = lang
                 if self.check_sql_result():
-                    reply = QMessageBox.question(self, '알림', f'"{self.clicked_lang}"에 이전에 평가한 결과가 있습니다.\n적용 시키겠습니까?',
+                    reply = QMessageBox.question(self, '알림', f'"{self.clicked_lang}"에 이전에 평가한 결과가 있습니다.\n결과 같이 불러오시겠습니까?',
                                     QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
                     if reply == QMessageBox.Ok:
                         self.db.c.execute(f"SELECT * FROM '{self.clicked_lang}'")

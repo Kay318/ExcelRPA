@@ -38,7 +38,7 @@ def __init_logger():
     streamHandler.setFormatter(formatter)
     logger.addHandler(streamHandler)
     logfile = f"{getTimeStamp()}.log" # 저장할 로그 이름
-    logpath =  f"{Path(__file__).parent}\\log_files" # 저장할 로그 경로
+    logpath =  "./Log"  # 저장할 로그 경로
 
     if os.path.isdir(logpath) != True:
         os.makedirs(logpath)
