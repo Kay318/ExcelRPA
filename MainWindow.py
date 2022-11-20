@@ -10,7 +10,6 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-import time
 from functools import partial
 import traceback
 from PIL import Image
@@ -21,7 +20,7 @@ from SubWindow.Setup_Language import Setup_Language
 from SubWindow.Setup_Field import Setup_Field
 from SubWindow.Setup_TestList import Setup_TestList
 from Helper import *
-from Database.DB import DBManager
+from DataBase.DB import DBManager
 from Log import LogManager
 from Settings import Setup as sp
 
@@ -47,8 +46,7 @@ class MainWindow(QMainWindow):
         self.pre_subMenu = None                  # 메뉴바에서 그전에 선택된 언어 subMenu
         self.nextImg_bool = True                 # 다음 이미지로 넘어갈지 판단
         self.first_index_in_sql = None           # DB에 첫번째 이미지 결과가 있는지 판단
-        # self.loadingThread = LoadingThread()
-        # self.loadingThread.loading_singnal.connect(self.start_loading)
+        self.save_result_no = None               # 평가결과 저장 안함 버튼
         self.sp = sp.Settings()
         self.db = DBManager()
         self.setupUi()
@@ -230,7 +228,8 @@ class MainWindow(QMainWindow):
         self.menubar = self.menuBar()
         self.menu = self.menubar.addMenu("&Menu")
         self.actionNewProject = QAction("New Project", self)
-        self.actionNewProject.triggered.connect(self.clear_db)
+        self.actionNewProject.setShortcut("Ctrl+N")
+        self.actionNewProject.triggered.connect(self.remove_db)
         self.menuOpen = self.menu.addMenu("Open")
         langList, langPath = self.sp.read_setup(table = "Language")
         for lang, path in zip(langList, langPath):
@@ -272,11 +271,12 @@ class MainWindow(QMainWindow):
         self.statusbar_label = QLabel()
         statusbar.addPermanentWidget(self.statusbar_label)
         
-    def clear_db(self):
+    def remove_db(self):
         if self.db.find_db():
             reply = QMessageBox.question(self, '알림', '이전에 저장한 결과가 전부 삭제됩니다.\n계속하시겠습니까?',
                                 QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
             if reply == QMessageBox.Ok:
+                self.db.close()
                 self.db.remove_db()
 
     @AutomationFunctionDecorator
@@ -603,10 +603,10 @@ class MainWindow(QMainWindow):
         LogManager.HLOG.info(f"우측에 이미지 표시:{self.img_dir}")
 
         # 다른 이미지 버튼 누를 때 액션
-        if self.pre_idx != idx or self.first_index_in_sql:
+        if self.pre_idx != idx or self.first_index_in_sql or self.save_result_no:
             refreshed_cnt = Calculator(self)
             refreshed_cnt.start()
-            if not self.first_index_in_sql:
+            if not self.first_index_in_sql and not self.save_result_no:
                 # self.result에 값 저장하고 기존 데이타 삭제하기
                 result_data = self.insert_result(option=True)
                 self.result[self.pre_idx] = result_data
@@ -629,6 +629,7 @@ class MainWindow(QMainWindow):
                 globals()[f'desc_LineEdit{i}'].setText(self.result[idx][data])
 
             self.first_index_in_sql = False
+            self.save_result_no = False
 
         set_color()
         self.pre_idx = idx
@@ -693,7 +694,7 @@ class MainWindow(QMainWindow):
                 if reply == QMessageBox.Ok:
                     self.save_result()
                 elif reply == QMessageBox.No:
-                    pass
+                    self.save_result_no = True
                 else:
                     subMenu.setChecked(False)
                     return
@@ -715,7 +716,7 @@ class MainWindow(QMainWindow):
                 self.pre_idx = 0                         # 이전 이미지 버튼 index
                 self.clicked_lang = lang
                 if self.check_sql_result():
-                    reply = QMessageBox.question(self, '알림', '이전에 저장된 결과가 있습니다.\n불러오시겠습니까?',
+                    reply = QMessageBox.question(self, '알림', f'"{self.clicked_lang}"에 이전에 평가한 결과가 있습니다.\n적용 시키겠습니까?',
                                     QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
                     if reply == QMessageBox.Ok:
                         self.db.c.execute(f"SELECT * FROM '{self.clicked_lang}'")
@@ -1004,6 +1005,9 @@ class MainWindow(QMainWindow):
                     e.ignore()
         
     def check_result(self):
+        if self.result != {}:
+            result_data = self.insert_result()
+            self.result[self.idx] = result_data
         try:
             self.db = DBManager()
             self.db.c.execute(f"SELECT * FROM '{self.clicked_lang}'")
