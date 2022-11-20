@@ -36,6 +36,7 @@ class MainWindow(QMainWindow):
         self.na_RadioList = []                   # 모든 N/A 버튼
         self.nl_RadioList = []                   # 모든 NULL 버튼
         self.imgList = []                        # 선택된 경로의 이미지 리스트
+        self.pre_imgList = []                    # 이전 경로에서 선택된 이미지 리스트
         self.idx = ""                            # 좌측 이미지 버튼 index
         self.button = ""                         # 좌측 이미지 버튼
         self.img_dir = ""                        # 이미지 경로
@@ -228,6 +229,8 @@ class MainWindow(QMainWindow):
         # 메뉴바
         self.menubar = self.menuBar()
         self.menu = self.menubar.addMenu("&Menu")
+        self.actionNewProject = QAction("New Project", self)
+        self.actionNewProject.triggered.connect(self.clear_db)
         self.menuOpen = self.menu.addMenu("Open")
         langList, langPath = self.sp.read_setup(table = "Language")
         for lang, path in zip(langList, langPath):
@@ -239,14 +242,12 @@ class MainWindow(QMainWindow):
         self.actionSave = QAction("Save", self)
         self.actionSave.setShortcut("Ctrl+S")
         self.actionCreateExcel = QAction("Create Excel", self)
-        self.actionClose = QAction("Close", self)
+        self.menu.addAction(self.actionNewProject)
         self.menu.addMenu(self.menuOpen)
         self.menu.addAction(self.actionSave)
         self.menu.addAction(self.actionCreateExcel)
-        self.menu.addAction(self.actionClose)
         self.actionSave.triggered.connect(self.save_result)
         self.actionSave.setEnabled(False)
-        self.actionClose.triggered.connect(self.closeEvent)
 
         self.setup = self.menubar.addMenu("&Setup")
         self.actionLanguage = QAction("Language", self)
@@ -270,6 +271,13 @@ class MainWindow(QMainWindow):
         self.setStatusBar(statusbar)
         self.statusbar_label = QLabel()
         statusbar.addPermanentWidget(self.statusbar_label)
+        
+    def clear_db(self):
+        if self.db.find_db():
+            reply = QMessageBox.question(self, '알림', '이전에 저장한 결과가 전부 삭제됩니다.\n계속하시겠습니까?',
+                                QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
+            if reply == QMessageBox.Ok:
+                self.db.remove_db()
 
     @AutomationFunctionDecorator
     def show_setup_Language(self, litter=None):
@@ -491,11 +499,6 @@ class MainWindow(QMainWindow):
             globals()[f'gb{i}_na'] = QRadioButton("N/A")
             globals()[f'gb{i}_nl'] = QRadioButton("NULL")
             
-            # globals()[f'gb{i}_pass'].clicked.connect(self.radioButton_clicked)
-            # globals()[f'gb{i}_fail'].clicked.connect(self.radioButton_clicked)
-            # globals()[f'gb{i}_nt'].clicked.connect(self.radioButton_clicked)
-            # globals()[f'gb{i}_na'].clicked.connect(self.radioButton_clicked)
-            
             self.pass_RadioList.append(globals()[f'gb{i}_pass'])
             self.fail_RadioList.append(globals()[f'gb{i}_fail'])
             self.nt_RadioList.append(globals()[f'gb{i}_nt'])
@@ -682,7 +685,6 @@ class MainWindow(QMainWindow):
         Args:
             lang : 현재 선택된 언어
         """
-        self.pre_idx = 0
         
         if lang != self.pre_lang:
             if self.check_result() and self.pre_lang != "":
@@ -708,7 +710,9 @@ class MainWindow(QMainWindow):
             if self.imgList == []:
                 QMessageBox.warning(self, "주의", "선택하신 경로에 이미지 파일이 없습니다.")
                 subMenu.setChecked(False)
+                self.imgList = self.pre_imgList
             else:
+                self.pre_idx = 0                         # 이전 이미지 버튼 index
                 self.clicked_lang = lang
                 if self.check_sql_result():
                     reply = QMessageBox.question(self, '알림', '이전에 저장된 결과가 있습니다.\n불러오시겠습니까?',
@@ -831,6 +835,7 @@ class MainWindow(QMainWindow):
 
                 self.pre_lang = lang
                 self.pre_subMenu = subMenu
+                self.pre_imgList = self.imgList
 
         else:
             subMenu.setChecked(True)

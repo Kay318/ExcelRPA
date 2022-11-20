@@ -1,5 +1,6 @@
 import logging
 import os
+import glob
 from pathlib import Path
 from datetime import datetime
 
@@ -53,11 +54,11 @@ def __init_logger():
     HLOG.setLevel(logging.DEBUG)
 
 def removeLog(logpath):
-    file_list = os.listdir(logpath)
+    file_list = glob.glob(f"{logpath}/*.log")
     file_list.sort()
     if len(file_list) > 9:
         for file in file_list[:-9]:
-            os.remove(logpath + '\\' + file)
+            os.remove(file)
 
 # # Try Exception
 # class Interupt(Exception):
