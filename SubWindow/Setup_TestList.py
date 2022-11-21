@@ -143,7 +143,7 @@ class Setup_TestList(QDialog):
                             query_insert += f'"{col}" as "{col_noSpace}",'
                             continue
                         query_insert += f'"{col}",'
-                    query_insert = f"{query_insert[:-1]} FROM {sql_table}"
+                    query_insert = f"{query_insert[:-1]} FROM '{sql_table}'"
                     LogManager.HLOG.info(query_insert)
                     self.db.c.execute(query_insert)
                     self.db.dbConn.commit()
@@ -157,8 +157,8 @@ class Setup_TestList(QDialog):
                         self.db.c.execute(query_update)
                         self.db.dbConn.commit()
 
-                    self.db.c.execute(f"DROP TABLE {sql_table}")
-                    self.db.c.execute(f"ALTER TABLE BACKUP RENAME TO {sql_table}")
+                    self.db.c.execute(f"DROP TABLE '{sql_table}'")
+                    self.db.c.execute(f"ALTER TABLE BACKUP RENAME TO '{sql_table}'")
                 self.db.close()
                     
             else:
