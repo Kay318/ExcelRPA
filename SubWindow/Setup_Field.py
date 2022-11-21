@@ -122,7 +122,7 @@ class Setup_Field(QDialog):
                 sql_tables = self.db.c.fetchall()
                 sql_tables_list = [table[0] for table in sql_tables]
                 for sql_table in sql_tables_list:
-                    self.db.c.execute(f"SELECT * FROM ({sql_table})")
+                    self.db.c.execute(f"SELECT * FROM '{sql_table}'")
                     sql_col_set = set([col_tuple[0] for col_tuple in self.db.c.description])
                     col_intersection = tuple(sql_col_set & newColumnsSet)
                     col_subtraction = tuple(newColumnsSet - set(col_intersection))
@@ -165,7 +165,8 @@ class Setup_Field(QDialog):
                         
                     self.db.c.execute(f"DROP TABLE {sql_table}")
                     self.db.c.execute(f"ALTER TABLE BACKUP RENAME TO {sql_table}")
-                    
+
+                self.db.close()
             else:
                 return
         else:
