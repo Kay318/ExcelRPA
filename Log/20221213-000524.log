@@ -1,0 +1,31 @@
+[2022-12-13 00:05:24.254][D][LogManager.py(Init):10] LogManager Init function called !!!
+[2022-12-13 00:05:24.345][I][AutoBaseFunction.py(wrapper):11] __main__ : setupUi 실행 시작
+[2022-12-13 00:05:24.345][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-13 00:05:24.350][I][AutoBaseFunction.py(wrapper):11] __main__ : set_field_gridLayout 실행 시작
+[2022-12-13 00:05:24.350][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-13 00:05:24.404][I][AutoBaseFunction.py(wrapper):16] __main__ : set_field_gridLayout 실행 종료
+[2022-12-13 00:05:24.406][I][AutoBaseFunction.py(wrapper):11] __main__ : set_testList_hboxLayout 실행 시작
+[2022-12-13 00:05:24.406][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-13 00:05:24.738][I][AutoBaseFunction.py(wrapper):16] __main__ : set_testList_hboxLayout 실행 종료
+[2022-12-13 00:05:24.742][I][AutoBaseFunction.py(wrapper):16] __main__ : setupUi 실행 종료
+[2022-12-13 00:05:26.353][I][AutoBaseFunction.py(wrapper):11] __main__ : show_menu_CreateExcel 실행 시작
+[2022-12-13 00:05:26.353][I][AutoBaseFunction.py(wrapper):12] Parameter : False
+[2022-12-13 00:05:26.354][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : setupUI_CreateExcel 실행 시작
+[2022-12-13 00:05:26.354][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-13 00:05:26.358][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : new_excel_func 실행 시작
+[2022-12-13 00:05:26.358][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-13 00:05:26.359][I][AutoBaseFunction.py(wrapper):16] SubWindow.Menu_CreateExcel : new_excel_func 실행 종료
+[2022-12-13 00:05:26.359][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : set_excel_func 실행 시작
+[2022-12-13 00:05:26.359][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-13 00:05:26.360][I][AutoBaseFunction.py(wrapper):16] SubWindow.Menu_CreateExcel : set_excel_func 실행 종료
+[2022-12-13 00:05:26.362][I][AutoBaseFunction.py(wrapper):16] SubWindow.Menu_CreateExcel : setupUI_CreateExcel 실행 종료
+[2022-12-13 00:05:26.378][I][MainWindow.py(show_menu_CreateExcel):295] 엑셀 생성 팝업 열림
+[2022-12-13 00:05:26.379][I][AutoBaseFunction.py(wrapper):16] __main__ : show_menu_CreateExcel 실행 종료
+[2022-12-13 00:05:28.040][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : func_set_excel_groupBox 실행 시작
+[2022-12-13 00:05:28.041][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-13 00:05:28.041][I][AutoBaseFunction.py(wrapper):16] SubWindow.Menu_CreateExcel : func_set_excel_groupBox 실행 종료
+[2022-12-13 00:05:28.723][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : langList_toolButton_clicked 실행 시작
+[2022-12-13 00:05:28.724][I][AutoBaseFunction.py(wrapper):12] Parameter : <PyQt5.QtWidgets.QLineEdit object at 0x0000018F195B3F40>, False
+[2022-12-13 00:05:32.145][I][AutoBaseFunction.py(wrapper):16] SubWindow.Menu_CreateExcel : langList_toolButton_clicked 실행 종료
+[2022-12-13 00:05:33.001][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : func_check_run 실행 시작
+[2022-12-13 00:05:33.001][I][AutoBaseFunction.py(wrapper):12] Parameter : False

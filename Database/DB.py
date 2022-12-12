@@ -65,6 +65,12 @@ def db_tables(cmd: str):
     HDB.c.execute(cmd)
     result = set([col_tuple[0] for col_tuple in HDB.c.description])
     return result
+
+@DBDecorator
+def db_columns(cmd: str):
+    HDB.c.execute(cmd)
+    result = [col_tuple[0] for col_tuple in HDB.c.description]
+    return result
     
 # def db_select(cmd: str):
 #     HDB = DBManager()

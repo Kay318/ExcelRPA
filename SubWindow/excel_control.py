@@ -1,4 +1,5 @@
 from csv import excel
+import xlwings as xw
 from openpyxl.styles import Alignment
 from openpyxl.styles import Border, Side
 from openpyxl.styles import PatternFill
@@ -75,64 +76,126 @@ class ExcelRun(QThread):
             self.progressBarValue.emit(100)
             self.signal_done.emit(1)
         else:
-            TITLE_TERGET = 1
-            del_lastCell = False
-            self.fail_checkList = ["FAIL", "N/A", "N/T", " ", None, ""]
-
-            excel = win32.Dispatch("Excel.Application")
-            excel.Visible = False
-            excel.DisplayAlerts=False
-            self.wb = excel.Workbooks.Open(self.path_file)
-            print(f'self.lang_List : {self.lang_List}')
-            for jdx, lang in enumerate(self.lang_List):
-                self.historyUpdate_rows = 2
-                self.start_percent = jdx/len(self.lang_List)
-                self.split_percent = 1/len(self.lang_List)
-
-                print(f'self.start_percent : {self.start_percent}')
-                print(f'self.split_percent : {self.split_percent}')
-                if (lang == self.lang_List[len(self.lang_List) - 1]):
-                    del_lastCell = True
-
-                self.update_sheet_history(lang, del_lastCell, TITLE_TERGET)
-                ws = None
-                try:
-                    ws = self.wb.Worksheets(f"{lang}")
-                    ws.Delete()
-                except Exception as e:
-                    print(e)
-
-                ws = self.wb.Worksheets.Add()
-                ws.Name = lang
-
-                kr_list = [] # 현재 엑셀 데이터
-                idx = 1
-
-                while(ws.Cells(TITLE_TERGET, idx).Value != None):
-                    value = "" if "" == ws.Cells(TITLE_TERGET, idx).Value else ws.Cells(TITLE_TERGET, idx).Value
+            try:
+                # self.wb2 = xw.Book(self.path)
+                self.wb2 = xw.Book(r"C:\Users\82109\Desktop\다국어자동화.xlsx")
+                sheets = self.wb2.sheets
+                sheets_li = [s.name for s in sheets]
+                
+                for idx, lang in enumerate(self.lang_List):
+                    CHR_COL = 65
+                    # 시트 있으면 삭제 후 생성
+                    if lang in sheets_li:
+                        self.wb2.sheets(lang).delete()
+                    ws = self.wb2.sheets.add(lang)
+                    ws.range("A1:Z1").rows.autofit()
                     
-                    kr_list.append(value)
-                    idx = idx + 1
+                    # DB 데이터 불러오기
+                    dataList = db.db_select(f"SELECT * FROM '{lang}'")
+                    sql_col_list = db.db_columns(f"SELECT * FROM '{lang}'")
+                    testList, _ = self.sp.read_setup(table = "Test_List")
+                    
+                    # 맨 첫줄 타이틀 쓰기
+                    for col_name in sql_col_list:
+                        ws[f'{chr(CHR_COL)}1'].value = col_name
+                        if col_name == "이미지":
+                            # ws[f'{chr(CHR_COL)}1'].column_width = self.IMG_WIDTHSIZE
+                            ws[f'{chr(CHR_COL)}1'].column_width = 100
+                        elif col_name in testList:
+                            # ws[f'{chr(CHR_COL)}1'].column_width = self.SHEET_WIDTHSIZE
+                            ws[f'{chr(CHR_COL)}1'].column_width = 50
+                        else:
+                            # ws[f'{chr(CHR_COL)}1'].column_width = self.SHEET_EvaluationListSIZE
+                            ws[f'{chr(CHR_COL)}1'].column_width = 25
+                            
+                        CHR_COL += 1
+                    
+                    # 데이터 입력
+                    for i, data in enumerate(dataList):
+                        ws.range(f'A{i+2}').value=data
+                        ws.range(f'A{i+2}').row_height = self.IMG_HEIGHTSIZE
+                        img_path = data[0].replace("/", "\\")
+                        if os.path.isfile(img_path):
+                            ws.pictures.add(img_path, 
+                                            left=ws.range(f"A{i+2}").left,
+                                            top=ws.range(f"A{i+2}").top,
+                                            width=self.IMG_WIDTHSIZE,
+                                            height=self.IMG_HEIGHTSIZE)
+                        else:
+                            ws[f'A{i+2}'].value="파일 없음"
 
-                self.__equalsVerification__(kr_list=kr_list, ws = self.wb.Worksheets(lang), lang = lang, terget=TITLE_TERGET)
-                QApplication.processEvents()
-        
-            # 시트 순서 적용
-
-            print("Save:전")
-            self.wb.Save()
-            # 시트 전체 이름 조회 필요
-            self.wb.Worksheets("SUMMARY").Move(self.wb.Worksheets(1))
-            print("Save:전2")
-            self.wb.Save()
-            print("Save:후")
-            self.wb.Close(True)
-            print("wb close")
-            excel.Quit()
-            print("excel close")
+                # self.wb2.save(r"C:\Users\9350816\Desktop\다국어자동화(4).xlsx")
+                self.wb2.save()
+                self.wb2.close()
+                
+            except:
+                self.wb2.close()
             
             self.progressBarValue.emit(100)
             self.signal_done.emit(1)
+
+
+
+
+
+            # TITLE_TERGET = 1
+            # del_lastCell = False
+            # self.fail_checkList = ["FAIL", "N/A", "N/T", " ", None, ""]
+
+            # excel = win32.Dispatch("Excel.Application")
+            # excel.Visible = False
+            # excel.DisplayAlerts=False
+            # self.wb = excel.Workbooks.Open(self.path_file)
+            # print(f'self.lang_List : {self.lang_List}')
+            # for jdx, lang in enumerate(self.lang_List):
+            #     self.historyUpdate_rows = 2
+            #     self.start_percent = jdx/len(self.lang_List)
+            #     self.split_percent = 1/len(self.lang_List)
+
+            #     print(f'self.start_percent : {self.start_percent}')
+            #     print(f'self.split_percent : {self.split_percent}')
+            #     if (lang == self.lang_List[len(self.lang_List) - 1]):
+            #         del_lastCell = True
+
+            #     self.update_sheet_history(lang, del_lastCell, TITLE_TERGET)
+            #     ws = None
+            #     try:
+            #         ws = self.wb.Worksheets(f"{lang}")
+            #         ws.Delete()
+            #     except Exception as e:
+            #         print(e)
+
+            #     ws = self.wb.Worksheets.Add()
+            #     ws.Name = lang
+
+            #     kr_list = [] # 현재 엑셀 데이터
+            #     idx = 1
+
+            #     while(ws.Cells(TITLE_TERGET, idx).Value != None):
+            #         value = "" if "" == ws.Cells(TITLE_TERGET, idx).Value else ws.Cells(TITLE_TERGET, idx).Value
+                    
+            #         kr_list.append(value)
+            #         idx = idx + 1
+
+            #     self.__equalsVerification__(kr_list=kr_list, ws = self.wb.Worksheets(lang), lang = lang, terget=TITLE_TERGET)
+            #     QApplication.processEvents()
+        
+            # # 시트 순서 적용
+
+            # print("Save:전")
+            # self.wb.Save()
+            # # 시트 전체 이름 조회 필요
+            # self.wb.Worksheets("SUMMARY").Move(self.wb.Worksheets(1))
+            # print("Save:전2")
+            # self.wb.Save()
+            # print("Save:후")
+            # self.wb.Close(True)
+            # print("wb close")
+            # excel.Quit()
+            # print("excel close")
+            
+            # self.progressBarValue.emit(100)
+            # self.signal_done.emit(1)
 
     def stop(self):
         self.terminate()
