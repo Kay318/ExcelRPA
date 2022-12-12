@@ -177,8 +177,9 @@ class Setup_Language(QDialog):
             cnt: 변수명
         """
         folderPath = QFileDialog.getExistingDirectory(self, 'Select Folder')
-        lineEdit.setText(folderPath)
-        LogManager.HLOG.info(f"이미지 폴더:{lineEdit.text()} 설정")
+        if bool(folderPath):
+            lineEdit.setText(folderPath)
+            LogManager.HLOG.info(f"이미지 폴더:{lineEdit.text()} 설정")
 
     @AutomationFunctionDecorator
     def ok_Button_clicked(self, litter):

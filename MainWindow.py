@@ -19,8 +19,10 @@ from SubWindow.ImageView import ImageViewer
 from SubWindow.Setup_Language import Setup_Language
 from SubWindow.Setup_Field import Setup_Field
 from SubWindow.Setup_TestList import Setup_TestList
+from SubWindow.Setup_ExcelSetting import Setup_ExcelSetting
+from SubWindow.Menu_CreateExcel import UI_CreateExcel
 from Helper import *
-from DataBase.DB import DBManager
+from DataBase import DB as db
 from Log import LogManager
 from Settings import Setup as sp
 
@@ -43,12 +45,12 @@ class MainWindow(QMainWindow):
         self.result = {}                         # 매 이미지에 대한 결과값 저장
         self.clicked_lang = ""                   # 선택된 언어
         self.pre_lang = ""                       # 그전에 선택된 언어
+        self.pre_langPath = ""                   # 그전에 선택된 언어
         self.pre_subMenu = None                  # 메뉴바에서 그전에 선택된 언어 subMenu
         self.nextImg_bool = True                 # 다음 이미지로 넘어갈지 판단
         self.first_index_in_sql = None           # DB에 첫번째 이미지 결과가 있는지 판단
         self.save_result_no = None               # 평가결과 저장 안함 버튼
         self.sp = sp.Settings()
-        self.db = DBManager()
         self.setupUi()
         
     @AutomationFunctionDecorator
@@ -82,16 +84,16 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(widget)
 
         # 좌측 이미지 리스트
-        img_scrollArea = QScrollArea()
-        img_scrollArea.setWidgetResizable(True)
-        img_scrollArea.setFixedWidth(img_scrollArea_width)
+        self.img_scrollArea = QScrollArea()
+        self.img_scrollArea.setWidgetResizable(True)
+        self.img_scrollArea.setFixedWidth(img_scrollArea_width)
     
         img_scrollAreaWidgetContents = QWidget()
         self.img_VBoxLayout = QVBoxLayout(img_scrollAreaWidgetContents)
         self.img_VBoxLayout.setAlignment(Qt.AlignTop)
 
-        img_scrollArea.setWidget(img_scrollAreaWidgetContents)
-        horizontalLayout.addWidget(img_scrollArea)
+        self.img_scrollArea.setWidget(img_scrollAreaWidgetContents)
+        horizontalLayout.addWidget(self.img_scrollArea)
 
         # 우측 큰 이미지
         right_VBoxLayout = QVBoxLayout()
@@ -134,7 +136,7 @@ class MainWindow(QMainWindow):
         self.bottom_gridLayout = QGridLayout()
         self.testList, _ = self.sp.read_setup(table = "Test_List")
         self.set_testList_hboxLayout()
-        
+
         # ALL PASS, ALL FAIL, ALL N/T, ALL N/A
         all_groupbox = QGroupBox("ALL")
         all_groupbox.setFixedHeight(self.bottom_groupbox_fixedHeight)
@@ -241,10 +243,12 @@ class MainWindow(QMainWindow):
         self.actionSave = QAction("Save", self)
         self.actionSave.setShortcut("Ctrl+S")
         self.actionCreateExcel = QAction("Create Excel", self)
+        self.actionCreateExcel.setShortcut("Ctrl+E")
         self.menu.addAction(self.actionNewProject)
         self.menu.addMenu(self.menuOpen)
         self.menu.addAction(self.actionSave)
         self.menu.addAction(self.actionCreateExcel)
+        self.actionCreateExcel.triggered.connect(self.show_menu_CreateExcel)
         self.actionSave.triggered.connect(self.save_result)
         self.actionSave.setEnabled(False)
 
@@ -264,20 +268,31 @@ class MainWindow(QMainWindow):
         self.actionLanguage.triggered.connect(self.show_setup_Language)
         self.actionField.triggered.connect(self.show_setup_Field)
         self.actionTest_List.triggered.connect(self.show_setup_TestList)
+        self.actionExcel_Setting.triggered.connect(self.show_setup_ExcelSetting) # updateList
         
         # 상태바
         statusbar = QStatusBar()
         self.setStatusBar(statusbar)
         self.statusbar_label = QLabel()
         statusbar.addPermanentWidget(self.statusbar_label)
-        
+
     def remove_db(self):
-        if self.db.find_db():
+        # self.db = db.DBManager()
+        if db.find_db():
             reply = QMessageBox.question(self, '알림', '이전에 저장한 결과가 전부 삭제됩니다.\n계속하시겠습니까?',
                                 QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
             if reply == QMessageBox.Ok:
-                self.db.close()
-                self.db.remove_db()
+                # self.db.close()
+                # self.db.remove_db()
+                db.remove_db()
+
+    @AutomationFunctionDecorator
+    def show_menu_CreateExcel(self, litter=None):
+        self.setEnabled(False)
+        ce = UI_CreateExcel()
+        ce.signal.connect(lambda:self.setEnabled(True))
+        ce.show()
+        LogManager.HLOG.info(f"엑셀 생성 팝업 열림")
 
     @AutomationFunctionDecorator
     def show_setup_Language(self, litter=None):
@@ -290,7 +305,7 @@ class MainWindow(QMainWindow):
     @AutomationFunctionDecorator
     def show_setup_Field(self, litter):
         self.setEnabled(False)
-        self.db.close()
+        # self.db.close()
         sf = Setup_Field(self)
         sf.signal.connect(self.sf_emit)
         sf.show()
@@ -299,11 +314,23 @@ class MainWindow(QMainWindow):
     @AutomationFunctionDecorator
     def show_setup_TestList(self, litter):
         self.setEnabled(False)
-        self.db.close()
+        # self.db.close()
         tl = Setup_TestList(self)
         tl.signal.connect(self.tl_emit)
         tl.show()
         LogManager.HLOG.info("평가 목록 설정 팝업 열림")
+
+    @AutomationFunctionDecorator
+    def show_setup_ExcelSetting(self, litter): # updateList
+        self.setEnabled(False)
+        ts = Setup_ExcelSetting(self)
+        ts.signal.connect(self.ts_emit)
+        ts.show()
+        LogManager.HLOG.info("엑셀 설정 팝업 열림")
+
+    # def ce_emit(self):
+    #     self.setEnabled(True)
+    #     LogManager.HLOG.info("엑셀 생성 팝업 닫힘으로 메인창 활성화")
 
     def sl_emit(self, langPath):
         if langPath != []:
@@ -402,6 +429,10 @@ class MainWindow(QMainWindow):
 
         self.setEnabled(True)
         LogManager.HLOG.info("평가 목록 설정 팝업 닫힘으로 메인창 활성화")
+
+    def ts_emit(self): # updateList
+        self.setEnabled(True)
+        LogManager.HLOG.info("엑셀 설정 팝업 닫힘으로 메인창 활성화")
         
     @AutomationFunctionDecorator
     def __allPass_clicked(self, litter):
@@ -588,6 +619,7 @@ class MainWindow(QMainWindow):
 
         self.idx = idx
         self.button = button
+        self.img_scrollArea.ensureVisible(button.x(), button.y())
         
         self.set_left_right_button_state()
 
@@ -686,7 +718,7 @@ class MainWindow(QMainWindow):
             lang : 현재 선택된 언어
         """
         
-        if lang != self.pre_lang:
+        if lang != self.pre_lang and langPath != self.pre_langPath:
             if self.check_result() and self.pre_lang != "":
                 reply = QMessageBox.question(self, '알림', '평가결과가 저장되지 않았습니다.\n평가결과를 저장하시겠습니까?',
                                     QMessageBox.Ok | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Ok)
@@ -718,8 +750,9 @@ class MainWindow(QMainWindow):
                     reply = QMessageBox.question(self, '알림', f'"{self.clicked_lang}"에 이전에 평가한 결과가 있습니다.\n결과 같이 불러오시겠습니까?',
                                     QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
                     if reply == QMessageBox.Ok:
-                        self.db.c.execute(f"SELECT * FROM '{self.clicked_lang}'")
-                        sql_all = self.db.c.fetchall()
+                        # self.db.c.execute(f"SELECT * FROM '{self.clicked_lang}'")
+                        # sql_all = self.db.c.fetchall()
+                        sql_all = db.db_select(f"SELECT * FROM '{self.clicked_lang}'")
                         sql_img = [str(file[0]) for file in sql_all]
 
                 self.actionSave.setEnabled(True)
@@ -805,7 +838,7 @@ class MainWindow(QMainWindow):
                         or sql_testList.count('N/T') > 0 or sql_testList.count('N/A') > 0) and sql_testList.count('') == 0:
                         button.setStyleSheet("background-color: #f0e442") # 노랑 
                         other_cnt = int(self.other_lbl_cnt.text().replace("건", "")) + 1
-
+                        
                     button.clicked.connect(partial(self.qbutton_clicked, index, button))
                             
                     self.img_VBoxLayout.addWidget(button)
@@ -821,6 +854,8 @@ class MainWindow(QMainWindow):
                 for i in range(self.testList_groupbox_layout.count()):
                     self.testList_groupbox_layout.itemAt(i).widget().deleteLater()
                 self.set_testList_hboxLayout()
+                
+                self.version_textEdit.setText(self.result[0]["버전 정보"])
                 
                 self.pass_lbl_cnt.setText(f"{str(pass_cnt)}건")
                 self.fail_lbl_cnt.setText(f"{str(fail_cnt)}건")
@@ -844,6 +879,7 @@ class MainWindow(QMainWindow):
                 self.setEnabled_bottom()
 
                 self.pre_lang = lang
+                self.pre_langPath = langPath
                 self.pre_subMenu = subMenu
                 self.pre_imgList = self.imgList
 
@@ -954,21 +990,20 @@ class MainWindow(QMainWindow):
         """
         결과값을 DB에 저장
         """
-        # # self.loadingScreen = LoadingScreen(self)
-        # # self.loadingScreen.startAnimation()
         # 현재 이미지에 대한 결과 저장
         result_data = self.insert_result()
         self.result[self.idx] = result_data
+        
+        # if bool(self.version_textEdit.toPlainText()):
+        #     for 
 
         self.startLoading()
         
         # SQLite에 현재 언어 table이 있으면 삭제
-        self.db = DBManager()
-        self.db.c.execute("SELECT name FROM sqlite_master WHERE type='table';")
-        sql_tables = self.db.c.fetchall()
+        sql_tables = db.db_select("SELECT name FROM sqlite_master WHERE type='table';")
         sql_tables_list = [table[0] for table in sql_tables]
         if self.clicked_lang in sql_tables_list:
-            self.db.c.execute(f"DROP TABLE '{self.clicked_lang}'")
+            db.db_edit(f"DROP TABLE '{self.clicked_lang}'")
         LogManager.HLOG.info(f"{self.clicked_lang} 테이블 삭제")
 
         self.setupList = self.testList + self.fieldList
@@ -979,16 +1014,19 @@ class MainWindow(QMainWindow):
         query += "'버전정보' TEXT)"
         LogManager.HLOG.info(f"평가결과 저장 query:{query}")
         
-        self.db.c.execute(query)
+        # self.db.c.execute(query)
+        db.db_edit(query)
 
         question_marks = ", ".join(['?' for _ in range(len(result_data.keys()))])
         LogManager.HLOG.info(f"저장할 평가결과:{self.result}")
         
-        for val in self.result.values():
+        for i, val in self.result.items():
             try:
-                self.db.dbConn.execute(f"INSERT INTO '{self.clicked_lang}' VALUES ({question_marks})", 
+                if bool(self.version_textEdit.toPlainText()):
+                    val["버전 정보"] = self.version_textEdit.toPlainText()
+                    self.result[i]["버전 정보"] = self.version_textEdit.toPlainText()
+                db.db_insert(f"INSERT INTO '{self.clicked_lang}' VALUES ({question_marks})", 
                         (tuple(val.values())))
-                self.db.dbConn.commit()
                 QApplication.processEvents()
             except RuntimeError:
                 continue
@@ -1018,9 +1056,10 @@ class MainWindow(QMainWindow):
             result_data = self.insert_result()
             self.result[self.idx] = result_data
         try:
-            self.db = DBManager()
-            self.db.c.execute(f"SELECT * FROM '{self.clicked_lang}'")
-            sql_result = self.db.c.fetchall()
+            # self.db = DBManager()
+            # self.db.c.execute(f"SELECT * FROM '{self.clicked_lang}'")
+            # sql_result = self.db.c.fetchall()
+            sql_result = db.db_select(f"SELECT * FROM '{self.clicked_lang}'")
         except:
             sql_result = []
         result_list = []
@@ -1038,7 +1077,8 @@ class MainWindow(QMainWindow):
         
     def check_sql_result(self):
         try:
-            self.db.c.execute(f"SELECT * FROM '{self.clicked_lang}'")
+            # self.db.c.execute(f"SELECT * FROM '{self.clicked_lang}'")
+            db.db_select(f"SELECT * FROM '{self.clicked_lang}'")
             return True
         except:
             return False
@@ -1063,7 +1103,7 @@ class LoadingScreen(QWidget):
 
         self.label_animation = QLabel(self)
         self.label_animation.resize(pw, ph)
-        self.movie = QMovie('./IMG_Source/loading-unscreen.gif')
+        self.movie = QMovie('./IMG_Source/loading1.gif')
         self.label_animation.setMovie(self.movie)
         self.label_animation.setAlignment(Qt.AlignCenter)
 
@@ -1138,7 +1178,7 @@ class SplashPanel(QSplashScreen):
         message_font.setBold(True)
         message_font.setPointSize(14)
         self.setFont(message_font)
-        pixmap = QPixmap("./IMG_Source/start.png")
+        pixmap = QPixmap("./IMG_Source/modim.png")
         # pixmap = QPixmap("D:\\github\\bdmaster\\app\\resource\\images\\timg.png")
         self.setPixmap(pixmap)
         # self.showMessage('正在加载文件资源', alignment=Qt.AlignBottom, color=Qt.black)

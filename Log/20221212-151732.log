@@ -1,0 +1,48 @@
+[2022-12-12 15:17:32.564][D][LogManager.py(Init):10] LogManager Init function called !!!
+[2022-12-12 15:17:32.674][I][AutoBaseFunction.py(wrapper):11] __main__ : setupUi 실행 시작
+[2022-12-12 15:17:32.675][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-12 15:17:32.677][I][AutoBaseFunction.py(wrapper):11] __main__ : set_field_gridLayout 실행 시작
+[2022-12-12 15:17:32.678][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-12 15:17:32.735][I][AutoBaseFunction.py(wrapper):16] __main__ : set_field_gridLayout 실행 종료
+[2022-12-12 15:17:32.735][I][AutoBaseFunction.py(wrapper):11] __main__ : set_testList_hboxLayout 실행 시작
+[2022-12-12 15:17:32.735][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-12 15:17:32.960][I][AutoBaseFunction.py(wrapper):16] __main__ : set_testList_hboxLayout 실행 종료
+[2022-12-12 15:17:32.963][I][AutoBaseFunction.py(wrapper):16] __main__ : setupUi 실행 종료
+[2022-12-12 15:17:35.126][I][AutoBaseFunction.py(wrapper):11] __main__ : show_menu_CreateExcel 실행 시작
+[2022-12-12 15:17:35.127][I][AutoBaseFunction.py(wrapper):12] Parameter : False
+[2022-12-12 15:17:35.127][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : setupUI_CreateExcel 실행 시작
+[2022-12-12 15:17:35.127][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-12 15:17:35.127][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : new_excel_func 실행 시작
+[2022-12-12 15:17:35.128][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-12 15:17:35.128][I][AutoBaseFunction.py(wrapper):16] SubWindow.Menu_CreateExcel : new_excel_func 실행 종료
+[2022-12-12 15:17:35.128][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : set_excel_func 실행 시작
+[2022-12-12 15:17:35.128][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-12 15:17:35.128][I][AutoBaseFunction.py(wrapper):16] SubWindow.Menu_CreateExcel : set_excel_func 실행 종료
+[2022-12-12 15:17:35.131][I][AutoBaseFunction.py(wrapper):16] SubWindow.Menu_CreateExcel : setupUI_CreateExcel 실행 종료
+[2022-12-12 15:17:35.146][I][MainWindow.py(show_menu_CreateExcel):295] 엑셀 생성 팝업 열림
+[2022-12-12 15:17:35.146][I][AutoBaseFunction.py(wrapper):16] __main__ : show_menu_CreateExcel 실행 종료
+[2022-12-12 15:17:37.902][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : func_set_excel_groupBox 실행 시작
+[2022-12-12 15:17:37.902][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-12 15:17:37.902][I][AutoBaseFunction.py(wrapper):16] SubWindow.Menu_CreateExcel : func_set_excel_groupBox 실행 종료
+[2022-12-12 15:17:40.598][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : func_set_excel_groupBox 실행 시작
+[2022-12-12 15:17:40.598][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-12 15:17:40.598][I][AutoBaseFunction.py(wrapper):16] SubWindow.Menu_CreateExcel : func_set_excel_groupBox 실행 종료
+[2022-12-12 15:17:41.094][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : func_set_excel_groupBox 실행 시작
+[2022-12-12 15:17:41.094][I][AutoBaseFunction.py(wrapper):12] Parameter : 
+[2022-12-12 15:17:41.094][I][AutoBaseFunction.py(wrapper):16] SubWindow.Menu_CreateExcel : func_set_excel_groupBox 실행 종료
+[2022-12-12 15:17:41.711][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : langList_toolButton_clicked 실행 시작
+[2022-12-12 15:17:41.711][I][AutoBaseFunction.py(wrapper):12] Parameter : <PyQt5.QtWidgets.QLineEdit object at 0x0000025D422C9948>, False
+[2022-12-12 15:17:46.139][I][AutoBaseFunction.py(wrapper):16] SubWindow.Menu_CreateExcel : langList_toolButton_clicked 실행 종료
+[2022-12-12 15:17:46.813][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : func_check_run 실행 시작
+[2022-12-12 15:17:46.813][I][AutoBaseFunction.py(wrapper):12] Parameter : False
+[2022-12-12 15:17:46.828][E][AutoBaseFunction.py(wrapper):19] Traceback (most recent call last):
+  File "d:\test\TestList_CSV\git-practice-main\Helper\AutoBaseFunction.py", line 15, in wrapper
+    func(self, *args)
+  File "d:\test\TestList_CSV\git-practice-main\SubWindow\Menu_CreateExcel.py", line 389, in func_check_run
+    excel.Visible = False
+  File "c:\python\3_7_9x64\lib\site-packages\win32com\client\dynamic.py", line 708, in __setattr__
+    "Property '%s.%s' can not be set." % (self._username_, attr)
+AttributeError: Property 'Excel.Application.Visible' can not be set.
+
+[2022-12-12 15:18:00.117][I][AutoBaseFunction.py(wrapper):11] SubWindow.Menu_CreateExcel : func_check_run 실행 시작
+[2022-12-12 15:18:00.117][I][AutoBaseFunction.py(wrapper):12] Parameter : False
