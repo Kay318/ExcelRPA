@@ -29,7 +29,7 @@ class Setup_ExcelSetting(QDialog):
         self.verticalLayout.addWidget(self.reset_Button)
 
         self.start_settings = ["이미지 넓이", "이미지 높이", "필드 넓이", "평가 목록 넓이"]
-        self.start_settings_val = [400, 155, 50, 15]
+        self.start_settings_val = [15, 5, 40, 15]
         self.value_range = [("310~569"),("100~400"),("10~200"),("10~50")]
         dataList, _ = self.sp.read_setup(table = "Excel_Setting")
 
@@ -111,20 +111,20 @@ class Setup_ExcelSetting(QDialog):
                 try:
                     int(globals()[f'lineEdit{i}'].text())
                 except:
-                    QMessageBox.warning(self, '주의', f'{text} 수치를 숫자형태로 지정해주세요.')
+                    QMessageBox.warning(self, '주의', f'{text} 수치를 정수형태로 지정해주세요.')
                     return
 
-                if 310 > int(globals()[f'lineEdit{0}'].text()) or int(globals()[f'lineEdit{0}'].text()) > 569:
+                if 0 > int(globals()[f'lineEdit{0}'].text()) or int(globals()[f'lineEdit{0}'].text()) > 30:
                     text = globals()[f'label{0}'].text()
-                    QMessageBox.warning(self, '주의', f'{text} 310에서 569 사이여야 합니다.')
+                    QMessageBox.warning(self, '주의', f'{text} 0에서 30 사이여야 합니다.')
                     return
-                elif 100 > int(globals()[f'lineEdit{1}'].text()) or int(globals()[f'lineEdit{1}'].text()) > 400:
+                elif 0 > int(globals()[f'lineEdit{1}'].text()) or int(globals()[f'lineEdit{1}'].text()) > 20:
                     text = globals()[f'label{1}'].text()
-                    QMessageBox.warning(self, '주의', f'{text} 100에서 400 사이여야 합니다.')
+                    QMessageBox.warning(self, '주의', f'{text} 0에서 20 사이여야 합니다.')
                     return
-                elif 10 > int(globals()[f'lineEdit{2}'].text()) or int(globals()[f'lineEdit{2}'].text()) > 200:
+                elif 10 > int(globals()[f'lineEdit{2}'].text()) or int(globals()[f'lineEdit{2}'].text()) > 100:
                     text = globals()[f'label{2}'].text()
-                    QMessageBox.warning(self, '주의', f'{text} 10에서 200 사이여야 합니다.')
+                    QMessageBox.warning(self, '주의', f'{text} 10에서 100 사이여야 합니다.')
                     return
                 elif 10 > int(globals()[f'lineEdit{3}'].text()) or int(globals()[f'lineEdit{3}'].text()) > 50:
                     text = globals()[f'label{3}'].text()

@@ -53,7 +53,6 @@ class ExcelRun(QThread):
         
     def run(self):
 
-        print(f'testBool : {self.testBool}')
         if self.testBool:
             self.fail_checkList = ["FAIL", "N/A", "N/T", ""]
             self.wb = xl.Workbook()
@@ -77,59 +76,73 @@ class ExcelRun(QThread):
             self.signal_done.emit(1)
         else:
             try:
-                # self.wb2 = xw.Book(self.path)
-                self.wb2 = xw.Book(r"C:\Users\9350816\Desktop\다국어자동화(5).xlsx")
-                sheets = self.wb2.sheets
+                # self.app = xw.App(visible=False, add_book=False)
+                # self.wb2 = self.app.books.add()
+                wb = xw.Book(self.path_file)
+                sheets = wb.sheets
                 sheets_li = [s.name for s in sheets]
                 
                 for idx, lang in enumerate(self.lang_List):
-                    CHR_COL = 65
                     # 시트 있으면 삭제 후 생성
                     if lang in sheets_li:
-                        self.wb2.sheets(lang).delete()
-                    ws = self.wb2.sheets.add(lang)
-                    ws.range("A1:Z1").rows.autofit()
+                        wb.sheets(lang).delete()
+                    self.ws2 = wb.sheets.add(lang)
                     
                     # DB 데이터 불러오기
                     dataList = db.db_select(f"SELECT * FROM '{lang}'")
-                    sql_col_list = db.db_columns(f"SELECT * FROM '{lang}'")
-                    testList, _ = self.sp.read_setup(table = "Test_List")
+                    self.sql_col_list = db.db_columns(f"SELECT * FROM '{lang}'")
+                    self.testList, _ = self.sp.read_setup(table = "Test_List")
+
+                    # print(f"IMG_WIDTHSIZE: {self.IMG_WIDTHSIZE}")
+                    # print(f"IMG_HEIGHTSIZE: {self.IMG_HEIGHTSIZE}")
+                    # print(f"IMG_FAINAL_WIDTH: {self.IMG_FAINAL_WIDTH}")
+                    # print(f"IMG_SHEET_HEIGHTSIZE: {self.IMG_SHEET_HEIGHTSIZE}")
                     
                     # 맨 첫줄 타이틀 쓰기
-                    for col_name in sql_col_list:
-                        ws[f'{chr(CHR_COL)}1'].value = col_name
-                        if col_name == "이미지":
-                            # ws[f'{chr(CHR_COL)}1'].column_width = self.IMG_WIDTHSIZE
-                            ws[f'{chr(CHR_COL)}1'].column_width = 100
-                        elif col_name in testList:
-                            # ws[f'{chr(CHR_COL)}1'].column_width = self.SHEET_WIDTHSIZE
-                            ws[f'{chr(CHR_COL)}1'].column_width = 50
-                        else:
-                            # ws[f'{chr(CHR_COL)}1'].column_width = self.SHEET_EvaluationListSIZE
-                            ws[f'{chr(CHR_COL)}1'].column_width = 25
-                            
-                        CHR_COL += 1
+                    self.insertFirstLine()
                     
-                    # 데이터 입력
+                    summaryData = []
                     for i, data in enumerate(dataList):
-                        ws.range(f'A{i+2}').value=data
-                        ws.range(f'A{i+2}').row_height = self.IMG_HEIGHTSIZE
+                        # 데이터 입력
+                        self.ws2.range(f'A{i+2}').value=data
+
+                        # 이미지 삽입
                         img_path = data[0].replace("/", "\\")
                         if os.path.isfile(img_path):
-                            ws.pictures.add(img_path, 
-                                            left=ws.range(f"A{i+2}").left,
-                                            top=ws.range(f"A{i+2}").top,
+                            self.ws2.pictures.add(img_path, 
+                                            left=self.ws2.range(f"A{i+2}").left,
+                                            top=self.ws2.range(f"A{i+2}").top,
                                             width=self.IMG_WIDTHSIZE,
                                             height=self.IMG_HEIGHTSIZE)
                         else:
-                            ws[f'A{i+2}'].value="파일 없음"
+                            self.ws2[f'A{i+2}'].value=f"파일 없음\n{img_path}"
+                        
+                        # 이미지 셀 너비, 높이 설정
+                        self.ws2.range(f'A{i+2}').row_height = self.IMG_HEIGHTSIZE
+                        self.ws2.range(f'A{i+2}').column_width = self.IMG_FAINAL_WIDTH
 
-                # self.wb2.save(r"C:\Users\9350816\Desktop\다국어자동화(4).xlsx")
-                self.wb2.save()
-                self.wb2.close()
+                        # SUMMARY시트에 삽입할 데이터 저장
+                        if data[1:len(self.testList)+1].count('PASS') != len(self.testList):
+                            summaryData.append(data)
+
+                    tableRange = self.ws2.range("A1").expand('table')
+                    self.alignCenter(tableRange)
+                    self.setBorder(tableRange)
+
+                    ws_summary = wb.sheets('SUMMARY')
+                    summary_languageRange = self.ws2.range("A2").expand('down')
+                    
+
+                        
+
+
+                # wb.save(r"C:\Users\9350816\Desktop\다국어자동화(4).xlsx")
+                # wb.save()
+                # wb.close()
                 
-            except:
-                self.wb2.close()
+            except Exception as e:
+                print(e)
+                # wb.close()
             
             self.progressBarValue.emit(100)
             self.signal_done.emit(1)
@@ -197,33 +210,68 @@ class ExcelRun(QThread):
             # self.progressBarValue.emit(100)
             # self.signal_done.emit(1)
 
+    def insertFirstLine(self):
+        """첫줄 타이틀 쓰는 함수
+        """
+
+        for i, col_name in enumerate(self.sql_col_list):
+            self.ws2.cells(1, i+1).value = col_name
+            if col_name in self.testList:
+                self.ws2.cells(1, i+1).column_width = self.SHEET_EvaluationListSIZE
+            else:
+                self.ws2.cells(1, i+1).column_width = self.SHEET_WIDTHSIZE
+                
+        firstRange = self.ws2.range("A1").expand('right')
+        firstRange.rows.autofit()
+        firstRange.api.WrapText = True
+        firstRange.color = xw.utils.rgb_to_int((153,204,000))       # 배경색: 초록색
+
+    def setBorder(self, range):
+        """전체 테두리 추가
+
+        Args:
+            range (_type_): 적용할 range
+        """
+        range.api.Borders.Weight = 2
+        
+    def alignCenter(self, range):
+        """가운데 맞춤
+
+        Args:
+            range (_type_): 적용할 range
+        """
+        range.api.HorizontalAlignment = xw.constants.HAlign.xlHAlignCenter
+        range.api.VerticalAlignment = xw.constants.VAlign.xlVAlignCenter
+
     def stop(self):
         self.terminate()
         
     def excel_setup(self):
         excel_setList, _ = self.sp.read_setup(table = "Excel_Setting")
 
-        self.IMG_WIDTHSIZE = (int(excel_setList[0]) // 10) * 10 # 이미지 넓이
-        self.IMG_HEIGHTSIZE = (int(excel_setList[1]) // 10) * 10 # 이미지 높이
-        self.SHEET_WIDTHSIZE = int(excel_setList[2]) # 필드 넓이
-        self.SHEET_EvaluationListSIZE = int(excel_setList[3]) # 평가 목록 넓이
+        self.IMG_WIDTHSIZE = int(excel_setList[0]) * 15 / 0.53   # 이미지 넓이
+        self.IMG_HEIGHTSIZE = int(excel_setList[1]) * 15 / 0.53  # 이미지 높이
+        self.SHEET_WIDTHSIZE = int(excel_setList[2])             # 필드 넓이
+        self.SHEET_EvaluationListSIZE = int(excel_setList[3])    # 평가 목록 넓이
+        self.IMG_FAINAL_WIDTH = self.IMG_WIDTHSIZE * 70.25 / 425
+        self.IMG_SHEET_HEIGHTSIZE = self.IMG_HEIGHTSIZE
         
-        width = 0
-        if self.IMG_WIDTHSIZE <= 380:
-            width = 400 - self. IMG_WIDTHSIZE
-            width = width // 100 + 0.8
-        # 310 ~ 569
-        elif self.IMG_WIDTHSIZE >= 420:
-            width = self. IMG_WIDTHSIZE - 400 
-            width = width // 120 - 0.9
-            width = - width
+        # width = 0
+        # if self.IMG_WIDTHSIZE <= 380:
+        #     width = 400 - self. IMG_WIDTHSIZE
+        #     width = width // 100 + 0.8
+        # # 310 ~ 569
+        # elif self.IMG_WIDTHSIZE >= 420:
+        #     width = self. IMG_WIDTHSIZE - 400 
+        #     width = width // 120 - 0.9
+        #     width = - width
 
-        self.IMG_FAINAL_WIDTH = self.IMG_WIDTHSIZE // 8 + width # 하기와 같이 수정 필요 제한 크기사항도 필요
-        self.IMG_SHEET_HEIGHTSIZE = self.IMG_HEIGHTSIZE // 5 * 4 # 하기와 같이 수정 필요 제한 크기사항도 필요
+        # self.IMG_FAINAL_WIDTH = self.IMG_WIDTHSIZE // 8 + width # 하기와 같이 수정 필요 제한 크기사항도 필요
+        # self.IMG_SHEET_HEIGHTSIZE = self.IMG_HEIGHTSIZE // 5 * 4 # 하기와 같이 수정 필요 제한 크기사항도 필요
 
-        if int(excel_setList[1]) == 155:
-            self.IMG_HEIGHTSIZE = 155
-            self.IMG_SHEET_HEIGHTSIZE = 115
+        # if int(excel_setList[1]) == 155:
+        #     self.IMG_HEIGHTSIZE = 155
+        #     self.IMG_SHEET_HEIGHTSIZE = 115
             
     def create_sheet_history(self, lang:str, ws:object):
         """
