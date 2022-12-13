@@ -106,7 +106,7 @@ class Setup_TestList(QDialog):
                 newColumns = []
                 newColumns.append("이미지")
                 newColumns = newColumns + testList + self.fieldList
-                newColumns.append("버전정보")
+                newColumns.append("버전 정보")
                 newColumnsSet = set(newColumns)
                 # self.db.c.execute("SELECT name FROM sqlite_master WHERE type='table';")
                 # sql_tables = self.db.c.fetchall()

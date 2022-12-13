@@ -78,7 +78,7 @@ class ExcelRun(QThread):
         else:
             try:
                 # self.wb2 = xw.Book(self.path)
-                self.wb2 = xw.Book(r"C:\Users\82109\Desktop\다국어자동화.xlsx")
+                self.wb2 = xw.Book(r"C:\Users\9350816\Desktop\다국어자동화(5).xlsx")
                 sheets = self.wb2.sheets
                 sheets_li = [s.name for s in sheets]
                 
@@ -509,7 +509,7 @@ class ExcelRun(QThread):
             for val in self.evaluation_len(key="Field"):
                 all_List.append(val)
             
-            all_List.append("버전정보")
+            all_List.append("버전 정보")
 
             tupleBooks.setdefault(key, all_List)
         
@@ -1296,7 +1296,7 @@ class ExcelRun(QThread):
 #             for val in self.evaluation_len(key="Field"):
 #                 all_List.append(val)
             
-#             all_List.append("버전정보")
+#             all_List.append("버전 정보")
 
 #             tupleBooks.setdefault(key, all_List)
         

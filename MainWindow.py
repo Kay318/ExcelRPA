@@ -1011,7 +1011,7 @@ class MainWindow(QMainWindow):
         query = f"CREATE TABLE IF NOT EXISTS '{self.clicked_lang}' ('이미지' TEXT,"
         for i, col in enumerate(self.setupList):
             query += f"'{col}' TEXT,"
-        query += "'버전정보' TEXT)"
+        query += "'버전 정보' TEXT)"
         LogManager.HLOG.info(f"평가결과 저장 query:{query}")
         
         # self.db.c.execute(query)
