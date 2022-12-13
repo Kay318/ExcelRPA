@@ -79,6 +79,7 @@ class ExcelRun(QThread):
                 # self.app = xw.App(visible=False, add_book=False)
                 # self.wb2 = self.app.books.add()
                 wb = xw.Book(self.path_file)
+                ws_summary = wb.sheets('SUMMARY')
                 sheets = wb.sheets
                 sheets_li = [s.name for s in sheets]
                 
@@ -90,7 +91,10 @@ class ExcelRun(QThread):
                     
                     # DB 데이터 불러오기
                     dataList = db.db_select(f"SELECT * FROM '{lang}'")
-                    self.sql_col_list = db.db_columns(f"SELECT * FROM '{lang}'")
+                    sql_col_list = db.db_columns(f"SELECT * FROM '{lang}'")
+                    summary_col_list = sql_col_list[:]
+                    summary_col_list.insert(0, '언어')
+                    # print("summary_col_list", summary_col_list)
                     self.testList, _ = self.sp.read_setup(table = "Test_List")
 
                     # print(f"IMG_WIDTHSIZE: {self.IMG_WIDTHSIZE}")
@@ -99,7 +103,7 @@ class ExcelRun(QThread):
                     # print(f"IMG_SHEET_HEIGHTSIZE: {self.IMG_SHEET_HEIGHTSIZE}")
                     
                     # 맨 첫줄 타이틀 쓰기
-                    self.insertFirstLine()
+                    self.insertFirstLine(sql_col_list)
                     
                     summaryData = []
                     for i, data in enumerate(dataList):
@@ -129,20 +133,63 @@ class ExcelRun(QThread):
                     self.alignCenter(tableRange)
                     self.setBorder(tableRange)
 
-                    ws_summary = wb.sheets('SUMMARY')
-                    summary_languageRange = self.ws2.range("A2").expand('down')
+                    ROW_NUM = 1
                     
-
+                    while True:
+                        summary_languageList = ws_summary.range(f"A{ROW_NUM}").expand("down").value
+                        if not bool(summary_languageList):
+                            break
                         
-
-
+                        if lang in summary_languageList:
+                            ws_summary.range(f'{ROW_NUM}:{ROW_NUM+len(summary_languageList)}').delete()
+                            
+                            if bool(summaryData):
+                                START_ROW = ROW_NUM
+                                ws_summary.range(f'{ROW_NUM}:{ROW_NUM+len(summaryData)+2}').insert()
+                                
+                                print(summary_languageList)
+                                print(summaryData)
+                                for i, title in enumerate(summary_col_list):
+                                    ws_summary.cells(ROW_NUM, i+1).value = title
+                                    if title in self.testList:
+                                        ws_summary.cells(ROW_NUM, i+1).column_width = self.SHEET_EvaluationListSIZE
+                                    elif title == "언어":
+                                        ws_summary.cells(ROW_NUM, i+1).column_width = 14
+                                    else:
+                                        ws_summary.cells(ROW_NUM, i+1).column_width = self.SHEET_WIDTHSIZE
+                                        
+                                titleRange = ws_summary.range(f"A{ROW_NUM}").expand('right')
+                                titleRange.rows.autofit()
+                                titleRange.api.WrapText = True
+                                titleRange.color = xw.utils.rgb_to_int((153,204,000))       # 배경색: 초록색
+                                
+                                ROW_NUM += 1
+                                
+                                for i, data in enumerate(summaryData):
+                                    ws_summary.cells(ROW_NUM, 1).value = lang
+                                    ws_summary.range(f"B{ROW_NUM}").value = data
+                                
+                                    # 이미지 셀 너비, 높이 설정
+                                    ws_summary.range(f'B{ROW_NUM}').row_height = self.IMG_HEIGHTSIZE
+                                    ws_summary.range(f'B{ROW_NUM}').column_width = self.IMG_FAINAL_WIDTH
+                                    
+                                    ROW_NUM += 1
+                                    
+                                tableRange = ws_summary.range(f"A{START_ROW}").expand('table')
+                                print(tableRange)
+                                self.alignCenter(tableRange)
+                                self.setBorder(tableRange)
+                            break
+                                
+                        ROW_NUM = ROW_NUM + len(summary_languageList) + 1
+                    
                 # wb.save(r"C:\Users\9350816\Desktop\다국어자동화(4).xlsx")
-                # wb.save()
-                # wb.close()
+                wb.save()
+                wb.close()
                 
             except Exception as e:
                 print(e)
-                # wb.close()
+                wb.close()
             
             self.progressBarValue.emit(100)
             self.signal_done.emit(1)
@@ -210,11 +257,11 @@ class ExcelRun(QThread):
             # self.progressBarValue.emit(100)
             # self.signal_done.emit(1)
 
-    def insertFirstLine(self):
-        """첫줄 타이틀 쓰는 함수
+    def insertFirstLine(self, sql_col_list):
+        """언어별 타이틀 쓰는 함수
         """
 
-        for i, col_name in enumerate(self.sql_col_list):
+        for i, col_name in enumerate(sql_col_list):
             self.ws2.cells(1, i+1).value = col_name
             if col_name in self.testList:
                 self.ws2.cells(1, i+1).column_width = self.SHEET_EvaluationListSIZE
@@ -225,6 +272,13 @@ class ExcelRun(QThread):
         firstRange.rows.autofit()
         firstRange.api.WrapText = True
         firstRange.color = xw.utils.rgb_to_int((153,204,000))       # 배경색: 초록색
+        
+    # def insert_summaryTitle(self):
+    #     """SUMMARY시트의 타이틀 쓰는 함수
+    #     """
+        # for i, col_name in enumerate(self.summary_col_list):
+            
+        
 
     def setBorder(self, range):
         """전체 테두리 추가
