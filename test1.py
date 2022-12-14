@@ -25,7 +25,7 @@ class DBManager:
     def __init__(self):
         if os.path.isdir('DataBase') != True:
             os.makedirs('DataBase')
-        self.dbpath = "D:/new/DataBase/ExcelRPA.db"
+        self.dbpath = "D:/Skillup/new/DataBase/ExcelRPA.db"
         self.dbConn = sqlite3.connect(self.dbpath, isolation_level = None)
         self.c = self.dbConn.cursor()
 
@@ -84,13 +84,15 @@ def alignCenter(range):
     range.api.VerticalAlignment = xw.constants.VAlign.xlVAlignCenter
     
 
-path = r"C:\Users\82109\Desktop\다국어자동화(4).xlsx"
+path = r"C:\Users\9350816\Desktop\다국어자동화(7).xlsx"
  
-wb = xw.Book(path)
+app = xw.App()
+wb = app.books.open(path)
 print(wb.name)
 
 # 모든 시트명 표시
 sheets = wb.sheets
+print(sheets)
 li_sheets = [s.name for s in sheets]
 print(li_sheets)
 
@@ -101,6 +103,11 @@ for idx, lang in enumerate(langList):
     if lang in li_sheets:
         wb.sheets(lang).delete()
     ws2 = wb.sheets.add(lang)
+    print(ws2)
+    print(sheets[1])
+    ws2.api.Move(Before=sheets[1].api, After=None)
+
+    print(ws2.index)
     
     # DB 데이터 불러오기
     dataList = db_select(f"SELECT * FROM '{lang}'")

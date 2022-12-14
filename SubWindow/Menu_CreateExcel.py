@@ -8,6 +8,7 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from datetime import datetime
 from Settings import Setup as sp
 from functools import partial
 import sys, os
@@ -15,6 +16,7 @@ from DataBase import DB as db
 from progressBar import ProgressApp
 from Log import LogManager
 from Helper import *
+import xlwings as xw
 import win32com.client as win32
 import re
 
@@ -243,13 +245,15 @@ class UI_CreateExcel(QWidget):
         folderPath = QFileDialog.getExistingDirectory(self, 'Find Folder')
 
         if bool(folderPath):
-            path = f'{folderPath}/다국어자동화.xlsx'
-            idx = 1
-            print(f'path_Val : {path}')
-            while(os.path.isfile(path)):
-                path = str(os.path.dirname(path))
-                path = f"{path}/다국어자동화({idx}).xlsx"
-                idx = idx + 1
+            htime = datetime.now().strftime("%y%m%d_%H%M%S")
+            fileName = f"{htime}_다국어자동화.xlsx"
+            path = f'{folderPath}/{fileName}'
+            # idx = 1
+            # print(f'path_Val : {path}')
+            # while(os.path.isfile(path)):
+            #     path = str(os.path.dirname(path))
+            #     path = f"{path}/다국어자동화({idx}).xlsx"
+            #     idx = idx + 1
 
             edit.setText(path)
 
@@ -360,26 +364,39 @@ class UI_CreateExcel(QWidget):
                 # self.close()
             elif (self.set_excel_groupBox.isChecked() == True and self.set_edit_path.text() != ""):
 
-                # target
-                excel = win32.Dispatch("Excel.Application")
-                try:
-                    excel.Visible = False
-                except:
-                    QMessageBox.warning(self, '경고', '엑셀파일이 열려있는지 확인해주세요.')
-                    return
-                excel.DisplayAlerts=False
+                # # target
+                # excel = win32.Dispatch("Excel.Application")
+                # try:
+                #     excel.Visible = False
+                # except:
+                #     QMessageBox.warning(self, '경고', '엑셀파일이 열려있는지 확인해주세요.')
+                #     return
+                # excel.DisplayAlerts=False
 
-                wb = object
-                res = [ele for ele in list(self.set_edit_path.text()) if(ele in ['#','$','%','^','&','[',']','\{','\}',' '])]
-                if  bool(res):
-                    QMessageBox.warning(self, '경고', '파일명에 공백 및 # $ % ^ & [ ] { } 사용하지 말아주세요.')
-                    return
-                else:
-                    wb = excel.Workbooks.Open(self.set_edit_path.text())
+                # wb = object
+                # res = [ele for ele in list(self.set_edit_path.text()) if(ele in ['#','$','%','^','&','[',']','\{','\}',' '])]
+                # if  bool(res):
+                #     QMessageBox.warning(self, '경고', '파일명에 공백 및 # $ % ^ & [ ] { } 사용하지 말아주세요.')
+                #     return
+                # else:
+                #     wb = excel.Workbooks.Open(self.set_edit_path.text())
+                # try:
+                #     ws = wb.Worksheets("SUMMARY")
+                # except Exception as e:
+                #     QMessageBox.warning(self, '주의', '파일을 다시 확인해주세요.')
+                #     return
+
                 try:
-                    ws = wb.Worksheets("SUMMARY")
-                except Exception as e:
-                    QMessageBox.warning(self, '주의', '파일을 다시 확인해주세요.')
+                    app = xw.App(visible=False, add_book=False)
+                    app.display_alerts=False
+                    wb = app.books.open(self.set_edit_path.text())
+                    ws = wb.sheets('SUMMARY')
+                    wb.close()
+                    app.quit()
+                except:
+                    QMessageBox.warning(self, '주의', '파일이 잘못되었습니다.\n재확인 해주세요.')
+                    wb.close()
+                    app.kill()
                     return
                     
                 self.setEnabled(False)

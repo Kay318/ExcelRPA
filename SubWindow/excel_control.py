@@ -1,5 +1,6 @@
 from csv import excel
 import xlwings as xw
+from datetime import datetime
 from openpyxl.styles import Alignment
 from openpyxl.styles import Border, Side
 from openpyxl.styles import PatternFill
@@ -15,9 +16,11 @@ import os
 import sys
 import string
 import time
-from PyQt5.QtCore import QThread, pyqtSignal
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 from pathlib import Path
+from Log import LogManager
 
 sys.path.append(str(Path(__file__).parents[1]))
 from DataBase import DB as db
@@ -28,6 +31,7 @@ class ExcelRun(QThread):
     
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.parent = parent
         self.path = parent.path
         self.lang_List = parent.selected_langList
         self.testBool = parent.testBool
@@ -43,6 +47,7 @@ class ExcelRun(QThread):
         self.start_column = 1
         self.lang_cnt = 1
         self.sp = sp.Settings()
+        self.testList, _ = self.sp.read_setup(table = "Test_List")
         # self.get_lang_List = self.lang_List
         
         self.column = []
@@ -76,123 +81,70 @@ class ExcelRun(QThread):
             self.signal_done.emit(1)
         else:
             try:
-                # self.app = xw.App(visible=False, add_book=False)
-                # self.wb2 = self.app.books.add()
-                wb = xw.Book(self.path_file)
-                ws_summary = wb.sheets('SUMMARY')
+                app = xw.App(visible=False, add_book=False)
+                app.display_alerts=False
+                wb = app.books.open(self.path_file)
+            
+                self.ws_summary = wb.sheets('SUMMARY')
                 sheets = wb.sheets
                 sheets_li = [s.name for s in sheets]
                 
                 for idx, lang in enumerate(self.lang_List):
+                    self.start_percent = idx/len(self.lang_List)
+                    self.split_percent = 1/len(self.lang_List)
+
                     # 시트 있으면 삭제 후 생성
                     if lang in sheets_li:
                         wb.sheets(lang).delete()
                     self.ws2 = wb.sheets.add(lang)
                     
-                    # DB 데이터 불러오기
-                    dataList = db.db_select(f"SELECT * FROM '{lang}'")
-                    sql_col_list = db.db_columns(f"SELECT * FROM '{lang}'")
-                    summary_col_list = sql_col_list[:]
-                    summary_col_list.insert(0, '언어')
-                    # print("summary_col_list", summary_col_list)
-                    self.testList, _ = self.sp.read_setup(table = "Test_List")
+                    # DB에서 필요한 데이터 불러오기
+                    self.select_DB(lang)
 
-                    # print(f"IMG_WIDTHSIZE: {self.IMG_WIDTHSIZE}")
-                    # print(f"IMG_HEIGHTSIZE: {self.IMG_HEIGHTSIZE}")
-                    # print(f"IMG_FAINAL_WIDTH: {self.IMG_FAINAL_WIDTH}")
-                    # print(f"IMG_SHEET_HEIGHTSIZE: {self.IMG_SHEET_HEIGHTSIZE}")
+                    self.insert_FirstLine()
+                    self.insert_langSheetData()
+                    self.set_langSheetStyle()
                     
-                    # 맨 첫줄 타이틀 쓰기
-                    self.insertFirstLine(sql_col_list)
-                    
-                    summaryData = []
-                    for i, data in enumerate(dataList):
-                        # 데이터 입력
-                        self.ws2.range(f'A{i+2}').value=data
-
-                        # 이미지 삽입
-                        img_path = data[0].replace("/", "\\")
-                        if os.path.isfile(img_path):
-                            self.ws2.pictures.add(img_path, 
-                                            left=self.ws2.range(f"A{i+2}").left,
-                                            top=self.ws2.range(f"A{i+2}").top,
-                                            width=self.IMG_WIDTHSIZE,
-                                            height=self.IMG_HEIGHTSIZE)
-                        else:
-                            self.ws2[f'A{i+2}'].value=f"파일 없음\n{img_path}"
-                        
-                        # 이미지 셀 너비, 높이 설정
-                        self.ws2.range(f'A{i+2}').row_height = self.IMG_HEIGHTSIZE
-                        self.ws2.range(f'A{i+2}').column_width = self.IMG_FAINAL_WIDTH
-
-                        # SUMMARY시트에 삽입할 데이터 저장
-                        if data[1:len(self.testList)+1].count('PASS') != len(self.testList):
-                            summaryData.append(data)
-
-                    tableRange = self.ws2.range("A1").expand('table')
-                    self.alignCenter(tableRange)
-                    self.setBorder(tableRange)
-
-                    ROW_NUM = 1
+                    self.ROW_NUM = 1
                     
                     while True:
-                        summary_languageList = ws_summary.range(f"A{ROW_NUM}").expand("down").value
+                        summary_languageList = self.ws_summary.range(f"A{self.ROW_NUM}").expand("down").value
                         if not bool(summary_languageList):
+                            if bool(self.summaryData):
+                                self.insert_summary(lang)
                             break
                         
                         if lang in summary_languageList:
-                            ws_summary.range(f'{ROW_NUM}:{ROW_NUM+len(summary_languageList)}').delete()
-                            
-                            if bool(summaryData):
-                                START_ROW = ROW_NUM
-                                ws_summary.range(f'{ROW_NUM}:{ROW_NUM+len(summaryData)+2}').insert()
-                                
-                                print(summary_languageList)
-                                print(summaryData)
-                                for i, title in enumerate(summary_col_list):
-                                    ws_summary.cells(ROW_NUM, i+1).value = title
-                                    if title in self.testList:
-                                        ws_summary.cells(ROW_NUM, i+1).column_width = self.SHEET_EvaluationListSIZE
-                                    elif title == "언어":
-                                        ws_summary.cells(ROW_NUM, i+1).column_width = 14
-                                    else:
-                                        ws_summary.cells(ROW_NUM, i+1).column_width = self.SHEET_WIDTHSIZE
-                                        
-                                titleRange = ws_summary.range(f"A{ROW_NUM}").expand('right')
-                                titleRange.rows.autofit()
-                                titleRange.api.WrapText = True
-                                titleRange.color = xw.utils.rgb_to_int((153,204,000))       # 배경색: 초록색
-                                
-                                ROW_NUM += 1
-                                
-                                for i, data in enumerate(summaryData):
-                                    ws_summary.cells(ROW_NUM, 1).value = lang
-                                    ws_summary.range(f"B{ROW_NUM}").value = data
-                                
-                                    # 이미지 셀 너비, 높이 설정
-                                    ws_summary.range(f'B{ROW_NUM}').row_height = self.IMG_HEIGHTSIZE
-                                    ws_summary.range(f'B{ROW_NUM}').column_width = self.IMG_FAINAL_WIDTH
-                                    
-                                    ROW_NUM += 1
-                                    
-                                tableRange = ws_summary.range(f"A{START_ROW}").expand('table')
-                                print(tableRange)
-                                self.alignCenter(tableRange)
-                                self.setBorder(tableRange)
+                            self.ws_summary.range(f'{self.ROW_NUM}:{self.ROW_NUM+len(summary_languageList)}').delete()
+                            self.insert_summary(lang)
                             break
                                 
-                        ROW_NUM = ROW_NUM + len(summary_languageList) + 1
+                        self.ROW_NUM = self.ROW_NUM + len(summary_languageList) + 1
+
+                    # 기존 엑셀의 시트 순서대로 배치, 없는 시트는 맨마지막에 배치
+                    if lang in sheets_li:
+                        self.ws2.api.Move(Before=sheets[sheets_li.index(lang)].api, After=None)
+                    else:
+                        self.ws2.api.Move(Before=None, After=sheets[len(sheets_li)].api)
                     
-                # wb.save(r"C:\Users\9350816\Desktop\다국어자동화(4).xlsx")
-                wb.save()
-                wb.close()
+                # SUMMARY 시트를 맨앞으로 당겨감
+                self.ws_summary.api.Move(Before=sheets[0].api, After=None)
+                htime = datetime.now().strftime("%y%m%d_%H%M%S")
+                fileName = f"{htime}_다국어자동화.xlsx"
+                savePath = os.path.join(self.path, fileName)
+                wb.save(savePath)
+                self.progressBarValue.emit(100)
                 
             except Exception as e:
-                print(e)
+                LogManager.HLOG.info(f"기존 엑셀 편집 중 오류", e)
+                QMessageBox.warning(self.parent, '주의', '엑셀 편집이 실패되었습니다.\n파일 끄고 다시 해주세요.')
+            finally:
                 wb.close()
+                app.quit()
+                self.signal_done.emit(1)
             
-            self.progressBarValue.emit(100)
-            self.signal_done.emit(1)
+            # self.progressBarValue.emit(100)
+            # self.signal_done.emit(1)
 
 
 
@@ -257,11 +209,55 @@ class ExcelRun(QThread):
             # self.progressBarValue.emit(100)
             # self.signal_done.emit(1)
 
-    def insertFirstLine(self, sql_col_list):
+    def insert_langSheetData(self):
+        """언어별 시트에 데이터 입력하는 함수
+        """
+
+        self.summaryData = []
+        for i, data in enumerate(self.dataList):
+            # 데이터 입력
+            self.ws2.range(f'A{i+2}').value=data
+
+            # 이미지 삽입
+            img_path = data[0].replace("/", "\\")
+            if os.path.isfile(img_path):
+                self.ws2.pictures.add(img_path, 
+                                left=self.ws2.range(f"A{i+2}").left,
+                                top=self.ws2.range(f"A{i+2}").top,
+                                width=self.IMG_WIDTHSIZE,
+                                height=self.IMG_HEIGHTSIZE)
+            else:
+                self.ws2[f'A{i+2}'].value=f"파일 없음\n{img_path}"
+
+            # 이미지 셀 너비, 높이 설정
+            self.ws2.range(f'A{i+2}').row_height = self.IMG_HEIGHTSIZE
+            self.ws2.range(f'A{i+2}').column_width = self.IMG_FAINAL_WIDTH
+                       
+            # SUMMARY시트에 삽입할 데이터 저장
+            if data[1:len(self.testList)+1].count('PASS') != len(self.testList):
+                self.summaryData.append(data)
+
+            percent_val = round((self.start_percent + ((i+1)/len(self.dataList))*self.split_percent)*100)
+            if percent_val > 97:
+                percent_val = 97
+            self.progressBarValue.emit(percent_val)
+
+    def select_DB(self, lang):
+        """DB 조회하면서 컬럼명, 내용을 세팅하는 함수
+
+        Args:
+            lang (_type_): 현재 편집중인 언어
+        """
+        self.dataList = db.db_select(f"SELECT * FROM '{lang}'")
+        self.sql_col_list = db.db_columns(f"SELECT * FROM '{lang}'")
+        self.summary_col_list = self.sql_col_list[:]
+        self.summary_col_list.insert(0, '언어')
+
+    def insert_FirstLine(self):
         """언어별 타이틀 쓰는 함수
         """
 
-        for i, col_name in enumerate(sql_col_list):
+        for i, col_name in enumerate(self.sql_col_list):
             self.ws2.cells(1, i+1).value = col_name
             if col_name in self.testList:
                 self.ws2.cells(1, i+1).column_width = self.SHEET_EvaluationListSIZE
@@ -272,13 +268,6 @@ class ExcelRun(QThread):
         firstRange.rows.autofit()
         firstRange.api.WrapText = True
         firstRange.color = xw.utils.rgb_to_int((153,204,000))       # 배경색: 초록색
-        
-    # def insert_summaryTitle(self):
-    #     """SUMMARY시트의 타이틀 쓰는 함수
-    #     """
-        # for i, col_name in enumerate(self.summary_col_list):
-            
-        
 
     def setBorder(self, range):
         """전체 테두리 추가
@@ -299,8 +288,81 @@ class ExcelRun(QThread):
 
     def stop(self):
         self.terminate()
+
+    def insert_summary(self, lang):
+        """SUMMARY 입력하는 함수
+
+        Args:
+            lang (_type_): 편집 중인 언어
+        """
+        if bool(self.summaryData):
+            START_ROW = self.ROW_NUM
+            self.ws_summary.range(f'{self.ROW_NUM}:{self.ROW_NUM+len(self.summaryData)+1}').insert()
+            
+            self.insert_summaryTitle()
+            self.ROW_NUM += 1
+            self.insert_summaryData(lang)
+            self.set_summaryStyle(START_ROW)
+
+    def insert_summaryTitle(self):
+        """SUMMARY 타이틀 입력하는 함수
+           - 가운데 맞춤, 배경색, 자동 줄바꿈, 행높이 자동 설정 포함
+        """
+        for i, title in enumerate(self.summary_col_list):
+            self.ws_summary.cells(self.ROW_NUM, i+1).value = title
+            if title in self.testList:
+                self.ws_summary.cells(self.ROW_NUM, i+1).column_width = self.SHEET_EvaluationListSIZE
+            elif title == "언어":
+                self.ws_summary.cells(self.ROW_NUM, i+1).column_width = 14
+            else:
+                self.ws_summary.cells(self.ROW_NUM, i+1).column_width = self.SHEET_WIDTHSIZE
+                
+        titleRange = self.ws_summary.range(f"A{self.ROW_NUM}").expand('right')
+        titleRange.rows.autofit()
+        titleRange.api.WrapText = True
+        titleRange.color = xw.utils.rgb_to_int((153,204,000))       # 배경색: 초록색
+
+    def insert_summaryData(self, lang):
+        """SUMMARY 시트에서 선택한 언어에 대한 데이터 입력하는 함수
+
+        Args:
+            lang (_type_): 선택한 언어
+        """
+        for data in self.summaryData:
+            self.ws_summary.cells(self.ROW_NUM, 1).value = lang
+            self.ws_summary.range(f"B{self.ROW_NUM}").value = data
         
+            # 이미지 셀 너비, 높이 설정
+            self.ws_summary.range(f'B{self.ROW_NUM}').row_height = self.IMG_HEIGHTSIZE
+            self.ws_summary.range(f'B{self.ROW_NUM}').column_width = self.IMG_FAINAL_WIDTH
+            
+            self.ROW_NUM += 1
+
+    def set_summaryStyle(self, START_ROW):
+        """SUMMARY시트에서 해당 언어 영역 스타일(테두리, 자동줄바꿈, 가운데 맞춤) 설정
+
+        Args:
+            START_ROW (_type_): 해당 언어가 시작되는 행
+        """
+        summaryTableRange = self.ws_summary.range(f"A{START_ROW}").expand('table')
+        self.set_style(summaryTableRange)
+
+    def set_langSheetStyle(self):
+        """언어별 시트에서 스타일(테두리, 자동줄바꿈, 가운데 맞춤) 설정
+        """
+        tableRange = self.ws2.range("A1").expand('table')
+        self.set_style(tableRange)
+
+    def set_style(self, range):
+        """테두리, 자동줄바꿈, 가운데 맞춤
+        """
+        self.alignCenter(range)
+        self.setBorder(range)
+        range.api.WrapText = True
+
     def excel_setup(self):
+        """이미지 사이즈, 열너비를 정의하는 함수
+        """
         excel_setList, _ = self.sp.read_setup(table = "Excel_Setting")
 
         self.IMG_WIDTHSIZE = int(excel_setList[0]) * 15 / 0.53   # 이미지 넓이
