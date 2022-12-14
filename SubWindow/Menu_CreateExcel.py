@@ -390,7 +390,7 @@ class UI_CreateExcel(QWidget):
                     app = xw.App(visible=False, add_book=False)
                     app.display_alerts=False
                     wb = app.books.open(self.set_edit_path.text())
-                    ws = wb.sheets('SUMMARY')
+                    wb.sheets('SUMMARY')
                     wb.close()
                     app.quit()
                 except:

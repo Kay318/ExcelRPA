@@ -36,12 +36,15 @@ class ExcelRun(QThread):
         self.lang_List = parent.selected_langList
         self.testBool = parent.testBool
         self.path_file = parent.path_file
+
+        self.app = xw.App(visible=False, add_book=False)
+        self.app.display_alerts=False
         
-        self.IMG_SHEET_HEIGHTSIZE = 115 # 이미지 간격
-        self.IMG_FAINAL_WIDTH = 50
-        self.SHEET_WIDTH_SHORTSIZE = 15 # 시트 열 기본 작은 크기
-        self.TABLE_CELL_COLOR = 43 # 테이블 컬러
-        self.SHEET_EvaluationListSIZE = None # 평가목록 넓이
+        # self.IMG_SHEET_HEIGHTSIZE = 115 # 이미지 간격
+        # self.IMG_FAINAL_WIDTH = 50
+        # self.SHEET_WIDTH_SHORTSIZE = 15 # 시트 열 기본 작은 크기
+        # self.TABLE_CELL_COLOR = 43 # 테이블 컬러
+        # self.SHEET_EvaluationListSIZE = None # 평가목록 넓이
         
         self.set_row = 1
         self.start_column = 1
@@ -59,32 +62,57 @@ class ExcelRun(QThread):
     def run(self):
 
         if self.testBool:
-            self.fail_checkList = ["FAIL", "N/A", "N/T", ""]
-            self.wb = xl.Workbook()
+            try:
+                wb = self.app.books.add()
+                self.ws_summary = wb.sheets.add('SUMMARY')
+                for idx, lang in enumerate(self.lang_List):
+                    self.ws = wb.sheets.add(lang)
+
+                    # DB에서 필요한 데이터 불러오기
+                    self.select_DB(lang)
+
+                    self.insert_FirstLine()
+                    self.insert_langSheetData()
+                    self.set_langSheetStyle()
+
+                    self.ROW_NUM = 1
+                    summary_languageList = self.ws_summary.range(f"A{self.ROW_NUM}").expand("down").value
+                    if bool(self.summaryData):
+                        self.insert_summary(lang)
+
+
+            except Exception as e:
+                LogManager.HLOG.info(f"엑셀 생성 중 오류", e)
+                QMessageBox.warning(self.parent, '주의', '엑셀 생성이 실패되었습니다.\n파일 끄고 다시 해주세요.')
+            finally:
+                wb.close()
+                self.app.quit()
+                self.signal_done.emit(1)
+            # self.fail_checkList = ["FAIL", "N/A", "N/T", ""]
+            # self.wb = xl.Workbook()
             
-            ws = self.wb.active
-            ws.title = "SUMMARY"
-            self.history_rows = 1
+            # ws = self.wb.active
+            # ws.title = "SUMMARY"
+            # self.history_rows = 1
             
-            for idx, lang in enumerate(self.lang_List):
-                self.start_percent = idx/len(self.lang_List)
-                self.split_percent = 1/len(self.lang_List)
+            # for idx, lang in enumerate(self.lang_List):
+            #     self.start_percent = idx/len(self.lang_List)
+            #     self.split_percent = 1/len(self.lang_List)
     
-                self.create_sheet_history(lang=lang, ws= ws)
+            #     self.create_sheet_history(lang=lang, ws= ws)
 
-                active = self.wb.create_sheet(title=lang)
+            #     active = self.wb.create_sheet(title=lang)
 
-                self.excel_data_input(active = active, lang = lang)
+            #     self.excel_data_input(active = active, lang = lang)
 
-            self.wb.save(self.path_file)
-            self.progressBarValue.emit(100)
-            self.signal_done.emit(1)
+            # self.wb.save(self.path_file)
+            # self.progressBarValue.emit(100)
+            # self.signal_done.emit(1)
         else:
             try:
-                app = xw.App(visible=False, add_book=False)
-                app.display_alerts=False
-                wb = app.books.open(self.path_file)
-            
+                # app = xw.App(visible=False, add_book=False)
+                # app.display_alerts=False
+                wb = self.app.books.open(self.path_file)
                 self.ws_summary = wb.sheets('SUMMARY')
                 sheets = wb.sheets
                 sheets_li = [s.name for s in sheets]
@@ -140,7 +168,7 @@ class ExcelRun(QThread):
                 QMessageBox.warning(self.parent, '주의', '엑셀 편집이 실패되었습니다.\n파일 끄고 다시 해주세요.')
             finally:
                 wb.close()
-                app.quit()
+                self.app.quit()
                 self.signal_done.emit(1)
             
             # self.progressBarValue.emit(100)
