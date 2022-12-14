@@ -29,8 +29,8 @@ class Setup_ExcelSetting(QDialog):
         self.verticalLayout.addWidget(self.reset_Button)
 
         self.start_settings = ["이미지 넓이", "이미지 높이", "필드 넓이", "평가 목록 넓이"]
-        self.start_settings_val = [15, 5, 40, 15]
-        self.value_range = [("310~569"),("100~400"),("10~200"),("10~50")]
+        self.start_settings_val = [15, 5, 30, 15]
+        self.value_range = [("5~30"),("1~10"),("10~100"),("10~50")]
         dataList, _ = self.sp.read_setup(table = "Excel_Setting")
 
         for i in range(4):
@@ -114,13 +114,13 @@ class Setup_ExcelSetting(QDialog):
                     QMessageBox.warning(self, '주의', f'{text} 수치를 정수형태로 지정해주세요.')
                     return
 
-                if 0 > int(globals()[f'lineEdit{0}'].text()) or int(globals()[f'lineEdit{0}'].text()) > 30:
+                if 5 > int(globals()[f'lineEdit{0}'].text()) or int(globals()[f'lineEdit{0}'].text()) > 30:
                     text = globals()[f'label{0}'].text()
-                    QMessageBox.warning(self, '주의', f'{text} 0에서 30 사이여야 합니다.')
+                    QMessageBox.warning(self, '주의', f'{text} 5에서 30 사이여야 합니다.')
                     return
-                elif 0 > int(globals()[f'lineEdit{1}'].text()) or int(globals()[f'lineEdit{1}'].text()) > 20:
+                elif 1 > int(globals()[f'lineEdit{1}'].text()) or int(globals()[f'lineEdit{1}'].text()) > 10:
                     text = globals()[f'label{1}'].text()
-                    QMessageBox.warning(self, '주의', f'{text} 0에서 20 사이여야 합니다.')
+                    QMessageBox.warning(self, '주의', f'{text} 1에서 10 사이여야 합니다.')
                     return
                 elif 10 > int(globals()[f'lineEdit{2}'].text()) or int(globals()[f'lineEdit{2}'].text()) > 100:
                     text = globals()[f'label{2}'].text()
