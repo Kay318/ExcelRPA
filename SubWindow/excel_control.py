@@ -1,21 +1,8 @@
-from csv import excel
 import xlwings as xw
 from datetime import datetime
-from openpyxl.styles import Alignment
-from openpyxl.styles import Border, Side
-from openpyxl.styles import PatternFill
-from openpyxl.styles import borders
-from openpyxl.styles.fonts import Font
-from typing import List
-import openpyxl as xl
-import win32com.client as win32
-from openpyxl.drawing.image import Image
-from openpyxl.worksheet.worksheet import Worksheet
 from Settings import Setup as sp
 import os
 import sys
-import string
-import time
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -63,6 +50,7 @@ class ExcelRun(QThread):
                 for idx, lang in enumerate(self.lang_List):
                     self.set_percent(idx)
                     
+                    # 새로 생성하는 시트가 맨뒤에서 생성됨
                     if bool(self.pre_ws):
                         self.ws = wb.sheets.add(lang, after=self.pre_ws)
                     else:
@@ -276,7 +264,7 @@ class ExcelRun(QThread):
 
     def insert_summaryTitle(self):
         """SUMMARY 타이틀 입력하는 함수
-           - 가운데 맞춤, 배경색, 자동 줄바꿈, 행높이 자동 설정 포함
+           : 가운데 맞춤, 배경색, 자동 줄바꿈, 행높이 자동 설정 포함
         """
         for i, title in enumerate(self.summary_col_list):
             self.ws_summary.cells(self.ROW_NUM, i+1).value = title
@@ -330,10 +318,9 @@ class ExcelRun(QThread):
         """
         excel_setList, _ = self.sp.read_setup(table = "Excel_Setting")
 
-        self.IMG_WIDTHSIZE = int(excel_setList[0]) * 15 / 0.53   # 이미지 넓이
-        self.IMG_HEIGHTSIZE = int(excel_setList[1]) * 15 / 0.53  # 이미지 높이
-        self.SHEET_WIDTHSIZE = int(excel_setList[2])             # 필드 넓이
-        self.SHEET_EvaluationListSIZE = int(excel_setList[3])    # 평가 목록 넓이
-        self.IMG_FAINAL_WIDTH = self.IMG_WIDTHSIZE * 70.25 / 425
-        self.IMG_SHEET_HEIGHTSIZE = self.IMG_HEIGHTSIZE
+        self.IMG_WIDTHSIZE = int(excel_setList[0]) * 15 / 0.53      # 이미지 너비
+        self.IMG_HEIGHTSIZE = int(excel_setList[1]) * 15 / 0.53     # 이미지 높이
+        self.SHEET_WIDTHSIZE = int(excel_setList[2])                # 필드 넓이
+        self.SHEET_EvaluationListSIZE = int(excel_setList[3])       # 평가 목록 넓이
+        self.IMG_FAINAL_WIDTH = self.IMG_WIDTHSIZE * 70.25 / 425    # 이미지 시트 너비
         

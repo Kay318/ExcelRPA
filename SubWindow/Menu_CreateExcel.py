@@ -248,13 +248,6 @@ class UI_CreateExcel(QWidget):
             htime = datetime.now().strftime("%y%m%d_%H%M%S")
             fileName = f"{htime}_다국어자동화.xlsx"
             path = f'{folderPath}/{fileName}'
-            # idx = 1
-            # print(f'path_Val : {path}')
-            # while(os.path.isfile(path)):
-            #     path = str(os.path.dirname(path))
-            #     path = f"{path}/다국어자동화({idx}).xlsx"
-            #     idx = idx + 1
-
             edit.setText(path)
 
     @AutomationFunctionDecorator
@@ -360,32 +353,7 @@ class UI_CreateExcel(QWidget):
                 self.setEnabled(False)
                 ProgressApp(self)
                 LogManager.HLOG.info(f"엑셀 생성 누름 열림")
-                        
-                # self.close()
             elif (self.set_excel_groupBox.isChecked() == True and self.set_edit_path.text() != ""):
-
-                # # target
-                # excel = win32.Dispatch("Excel.Application")
-                # try:
-                #     excel.Visible = False
-                # except:
-                #     QMessageBox.warning(self, '경고', '엑셀파일이 열려있는지 확인해주세요.')
-                #     return
-                # excel.DisplayAlerts=False
-
-                # wb = object
-                # res = [ele for ele in list(self.set_edit_path.text()) if(ele in ['#','$','%','^','&','[',']','\{','\}',' '])]
-                # if  bool(res):
-                #     QMessageBox.warning(self, '경고', '파일명에 공백 및 # $ % ^ & [ ] { } 사용하지 말아주세요.')
-                #     return
-                # else:
-                #     wb = excel.Workbooks.Open(self.set_edit_path.text())
-                # try:
-                #     ws = wb.Worksheets("SUMMARY")
-                # except Exception as e:
-                #     QMessageBox.warning(self, '주의', '파일을 다시 확인해주세요.')
-                #     return
-
                 try:
                     app = xw.App(visible=False, add_book=False)
                     app.display_alerts=False
@@ -402,11 +370,6 @@ class UI_CreateExcel(QWidget):
                 self.setEnabled(False)
                 ProgressApp(self)
                 LogManager.HLOG.info(f"엑셀 생성 누름 열림")
-                
-                    
-                # self.lang_choice_list.clear()
-                
-                # self.close()
             else:
                 QMessageBox.warning(self, '주의', '경로를 지정해주세요.')
         else:
