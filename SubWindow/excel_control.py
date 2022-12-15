@@ -30,12 +30,7 @@ class ExcelRun(QThread):
         self.lang_cnt = 1
         self.sp = sp.Settings()
         self.testList, _ = self.sp.read_setup(table = "Test_List")
-        
-        self.column = []
         self.excel_setup()
-        
-        for i in range(65, 91):
-            self.column.append(chr(i))
         
     def run(self):
         app = xw.App(visible=False, add_book=False)
