@@ -17,8 +17,6 @@ from progressBar import ProgressApp
 from Log import LogManager
 from Helper import *
 import xlwings as xw
-import win32com.client as win32
-import re
 
 class UI_CreateExcel(QWidget):
     signal = pyqtSignal()
@@ -31,7 +29,7 @@ class UI_CreateExcel(QWidget):
     @AutomationFunctionDecorator
     def setupUI_CreateExcel(self):
 
-        self.setFixedSize(400, 420)
+        self.setFixedSize(430, 420)
         self.setWindowTitle("엑셀 생성")
 
         # 전체 화면 배치
@@ -58,14 +56,12 @@ class UI_CreateExcel(QWidget):
         new_excel_label.setFont(font)
         new_excel_label.setAlignment(Qt.AlignTop)
         new_excel_label.setAlignment(Qt.AlignLeft)
-        new_excel_label.setText(" 신규 엑셀 생성\n"
-        " 현재 데이터를 기반으로 엑셀 파일을 새로 생성해\n"
-        " 작성됩니다.")
+        new_excel_label.setText(
+        "\n\n저장한 데이터를 기반으로 엑셀을 새로 생성합니다.")
         set_excel_label = QLabel()
         set_excel_label.setFont(font)
-        set_excel_label.setText(" 기존 엑셀 편집\n"
-        " 기존 데이터를 기반으로 현재 데이터로 편집되어\n"
-        " 작성됩니다.")
+        set_excel_label.setText(
+        "\n\n기존 엑셀 기반으로 편집되어 작성됩니다.")
         set_excel_label.setFixedHeight(80)
         set_excel_label.setAlignment(Qt.AlignTop)
         set_excel_label.setAlignment(Qt.AlignLeft)
@@ -117,7 +113,7 @@ class UI_CreateExcel(QWidget):
         sql_tables = db.db_select("SELECT name FROM sqlite_master WHERE type='table';")
         dataList = [table[0] for table in sql_tables]
 
-        self.lang_scroll.setFixedSize(80,380)
+        self.lang_scroll.setFixedSize(110,380)
         self.lang_scroll.setWidgetResizable(True)
         self.lang_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.lang_data_vbox.setAlignment(Qt.AlignTop)

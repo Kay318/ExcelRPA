@@ -619,7 +619,10 @@ class MainWindow(QMainWindow):
 
         self.idx = idx
         self.button = button
-        self.img_scrollArea.ensureVisible(button.x(), button.y())
+        if idx == 0:
+            self.img_scrollArea.ensureVisible(button.x(), 9)
+        else:
+            self.img_scrollArea.ensureVisible(button.x(), button.y())
         
         self.set_left_right_button_state()
 
