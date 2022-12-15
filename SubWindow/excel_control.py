@@ -33,12 +33,12 @@ class ExcelRun(QThread):
         self.excel_setup()
         
     def run(self):
-        app = xw.App(visible=False, add_book=False)
-        app.display_alerts=False
+        self.app = xw.App(visible=False, add_book=False)
+        self.app.display_alerts=False
 
         if self.testBool:
             try:
-                wb = app.books.add()
+                wb = self.app.books.add()
                 wb.sheets[0].name = "SUMMARY"
                 self.ws_summary = wb.sheets('SUMMARY')
                 
@@ -79,12 +79,12 @@ class ExcelRun(QThread):
                 QMessageBox.warning(self.parent, '주의', '엑셀 생성이 실패되었습니다.\n파일 끄고 다시 해주세요.')
             finally:
                 wb.close()
-                app.quit()
+                self.app.quit()
                 self.signal_done.emit(1)
                 
         else:
             try:
-                wb = app.books.open(self.path_file)
+                wb = self.app.books.open(self.path_file)
                 self.ws_summary = wb.sheets('SUMMARY')
                 sheets = wb.sheets
                 sheets_li = [s.name for s in sheets]
@@ -135,7 +135,7 @@ class ExcelRun(QThread):
                 QMessageBox.warning(self.parent, '주의', '엑셀 편집이 실패되었습니다.\n파일 끄고 다시 해주세요.')
             finally:
                 wb.close()
-                app.quit()
+                self.app.quit()
                 self.signal_done.emit(1)
             
     def set_langSheet(self, lang):
@@ -240,6 +240,7 @@ class ExcelRun(QThread):
         range.api.VerticalAlignment = xw.constants.VAlign.xlVAlignCenter
 
     def stop(self):
+        self.app.kill()
         self.terminate()
 
     def insert_summary(self, lang):
