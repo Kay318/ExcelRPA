@@ -351,6 +351,8 @@ class UI_CreateExcel(QWidget):
                 LogManager.HLOG.info(f"엑셀 생성 누름 열림")
             elif (self.set_excel_groupBox.isChecked() == True and self.set_edit_path.text() != ""):
                 try:
+                    self.setEnabled(False)
+                    QApplication.processEvents()
                     app = xw.App(visible=False, add_book=False)
                     app.display_alerts=False
                     wb = app.books.open(self.set_edit_path.text())
@@ -361,9 +363,9 @@ class UI_CreateExcel(QWidget):
                     QMessageBox.warning(self, '주의', '파일이 잘못되었습니다.\n재확인 해주세요.')
                     wb.close()
                     app.kill()
+                    self.setEnabled(True)
                     return
-                    
-                self.setEnabled(False)
+
                 ProgressApp(self)
                 LogManager.HLOG.info(f"엑셀 생성 누름 열림")
             else:
