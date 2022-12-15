@@ -32,6 +32,7 @@ class ProgressApp(QDialog):
         self.th_excel.start()
 
     def initUI(self):
+        self.setWindowTitle("엑셀 편집 중")
         self.vbox = QVBoxLayout(self)
         self.hbox = QHBoxLayout(self)
         self.hbox.setAlignment(Qt.AlignCenter)
@@ -48,6 +49,13 @@ class ProgressApp(QDialog):
         self.btn.clicked.connect(self.close)
         self.hbox.addWidget(self.btn)
         self.vbox.addLayout(self.hbox)
+
+        self.setWindowFlags(
+        Qt.Window |
+        Qt.CustomizeWindowHint |
+        Qt.WindowCloseButtonHint |
+        Qt.WindowStaysOnTopHint
+        )
 
     def callback(self, i):
         self.pbar.setValue(i)

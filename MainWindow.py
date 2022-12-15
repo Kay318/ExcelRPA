@@ -50,6 +50,7 @@ class MainWindow(QMainWindow):
         self.nextImg_bool = True                 # 다음 이미지로 넘어갈지 판단
         self.first_index_in_sql = None           # DB에 첫번째 이미지 결과가 있는지 판단
         self.save_result_no = None               # 평가결과 저장 안함 버튼
+        self.ce = None                           # Menu>CreateExcel 창
         self.sp = sp.Settings()
         self.setupUi()
         
@@ -289,9 +290,9 @@ class MainWindow(QMainWindow):
     @AutomationFunctionDecorator
     def show_menu_CreateExcel(self, litter=None):
         self.setEnabled(False)
-        ce = UI_CreateExcel()
-        ce.signal.connect(lambda:self.setEnabled(True))
-        ce.show()
+        self.ce = UI_CreateExcel()
+        self.ce.signal.connect(lambda:self.setEnabled(True))
+        self.ce.show()
         LogManager.HLOG.info(f"엑셀 생성 팝업 열림")
 
     @AutomationFunctionDecorator
@@ -1039,6 +1040,8 @@ class MainWindow(QMainWindow):
 
     @AutomationFunctionDecorator
     def closeEvent(self, e) -> None:
+        if bool(self.ce):
+            self.ce.close()
         if self.imgList != []:
             result_data = self.insert_result()
             self.result[self.idx] = result_data
