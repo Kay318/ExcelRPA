@@ -29,7 +29,7 @@ class Setup_ExcelSetting(QDialog):
         self.verticalLayout.addWidget(self.reset_Button)
 
         self.start_settings = ["이미지 너비", "이미지 높이", "필드 너비", "평가 목록 너비"]
-        self.start_settings_val = [15, 5, 30, 15]
+        self.start_settings_val = [15, 5, 40, 15]
         self.value_range = [("5~30"),("1~10"),("10~100"),("10~50")]
         dataList, _ = self.sp.read_setup(table = "Excel_Setting")
 
