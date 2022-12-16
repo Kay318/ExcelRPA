@@ -23,6 +23,13 @@ class Setup_TestList(QDialog):
     def setupUI_TestList(self):
         self.setWindowTitle("평가목록 설정")
 
+        self.setWindowFlags(
+        Qt.Window |
+        Qt.CustomizeWindowHint |
+        Qt.WindowCloseButtonHint |
+        Qt.WindowStaysOnTopHint
+        )
+
         # 전체 화면 배치
         self.verticalLayout = QVBoxLayout(self)
 

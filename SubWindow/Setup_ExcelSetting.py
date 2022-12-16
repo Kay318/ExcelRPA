@@ -21,6 +21,13 @@ class Setup_ExcelSetting(QDialog):
     def setupUI_Excel_Setting(self):
         self.setWindowTitle("엑셀 설정")
 
+        self.setWindowFlags(
+        Qt.Window |
+        Qt.CustomizeWindowHint |
+        Qt.WindowCloseButtonHint |
+        Qt.WindowStaysOnTopHint
+        )
+
         # 전체 화면 배치
         self.verticalLayout = QVBoxLayout(self)
 

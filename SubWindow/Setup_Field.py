@@ -33,6 +33,13 @@ class Setup_Field(QDialog):
     def setupUI_Field(self):
         self.setWindowTitle("엑셀필드 설정")
 
+        self.setWindowFlags(
+        Qt.Window |
+        Qt.CustomizeWindowHint |
+        Qt.WindowCloseButtonHint |
+        Qt.WindowStaysOnTopHint
+        )
+
         # 전체 화면 배치
         self.verticalLayout = QVBoxLayout(self)
 
