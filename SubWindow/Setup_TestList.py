@@ -9,6 +9,7 @@ from Helper import *
 from Log import LogManager
 from DataBase import DB as db
 from Settings import Setup as sp
+from SubWindow.LoadingScreen import LoadingScreen
 
 class Setup_TestList(QDialog):
     signal = pyqtSignal(list, list)
@@ -110,6 +111,8 @@ class Setup_TestList(QDialog):
             reply = QMessageBox.question(self, '알림', '모든 언어에서 평가 목록이 변경됩니다.\n계속하시겠습니까?',
                                         QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
             if reply == QMessageBox.Ok:
+                self.loadingScreen =LoadingScreen(self)
+                self.startLoading()
                 newColumns = []
                 newColumns.append("이미지")
                 newColumns = newColumns + testList + self.fieldList
@@ -166,13 +169,14 @@ class Setup_TestList(QDialog):
                         # self.db.c.execute(query_update)
                         # self.db.dbConn.commit()
                         db.db_edit(query_update)
+                    QApplication.processEvents()
 
                 #     self.db.c.execute(f"DROP TABLE '{sql_table}'")
                     # self.db.c.execute(f"ALTER TABLE BACKUP RENAME TO '{sql_table}'")
                     db.db_edit(f"DROP TABLE '{sql_table}'")
                     db.db_edit(f"ALTER TABLE BACKUP RENAME TO '{sql_table}'")
                 # self.db.close()
-                    
+                
             else:
                 return
         else:
@@ -207,6 +211,10 @@ class Setup_TestList(QDialog):
             return True
         else:
             return False
+
+    def startLoading(self):
+        self.setEnabled(False)
+        self.loadingScreen.startAnimation()
         
     @AutomationFunctionDecorator
     def closeEvent(self, event) -> None:

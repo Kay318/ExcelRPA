@@ -21,6 +21,7 @@ from SubWindow.Setup_Field import Setup_Field
 from SubWindow.Setup_TestList import Setup_TestList
 from SubWindow.Setup_ExcelSetting import Setup_ExcelSetting
 from SubWindow.Menu_CreateExcel import UI_CreateExcel
+from SubWindow.LoadingScreen import LoadingScreen
 from Helper import *
 from DataBase import DB as db
 from Log import LogManager
@@ -1095,33 +1096,33 @@ class QPushButtonIcon(QPushButton):
         super().__init__(parent)
         self.setIconSize(QSize(40, 40))
 
-class LoadingScreen(QWidget):
+# class LoadingScreen(QWidget):
     
-    def __init__(self, parent):
-        super().__init__(parent)    
-        ph = self.parent().geometry().height()
-        pw = self.parent().geometry().width()
-        self.setFixedSize(pw, ph) 
-        size = self.size()
-        self.move(int(pw/2 - size.width()/2), int(ph/2 - size.height()/2))
-        # self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
-        self.setWindowFlags(Qt.FramelessWindowHint)
+#     def __init__(self, parent):
+#         super().__init__(parent)    
+#         ph = self.parent().geometry().height()
+#         pw = self.parent().geometry().width()
+#         self.setFixedSize(pw, ph) 
+#         size = self.size()
+#         self.move(int(pw/2 - size.width()/2), int(ph/2 - size.height()/2))
+#         # self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.CustomizeWindowHint)
+#         self.setWindowFlags(Qt.FramelessWindowHint)
 
-        self.label_animation = QLabel(self)
-        self.label_animation.resize(pw, ph)
-        self.movie = QMovie('./IMG_Source/loading1.gif')
-        self.label_animation.setMovie(self.movie)
-        self.label_animation.setAlignment(Qt.AlignCenter)
+#         self.label_animation = QLabel(self)
+#         self.label_animation.resize(pw, ph)
+#         self.movie = QMovie('./IMG_Source/loading1.gif')
+#         self.label_animation.setMovie(self.movie)
+#         self.label_animation.setAlignment(Qt.AlignCenter)
 
-    def startAnimation(self):
-        opacity_effect = QGraphicsOpacityEffect(self)
-        opacity_effect.setOpacity(0.1)
-        self.movie.start()
-        self.show()
+#     def startAnimation(self):
+#         opacity_effect = QGraphicsOpacityEffect(self)
+#         opacity_effect.setOpacity(0.1)
+#         self.movie.start()
+#         self.show()
 
-    def stopAnimation(self):
-        self.movie.stop()
-        self.close()
+#     def stopAnimation(self):
+#         self.movie.stop()
+#         self.close()
     
 class Calculator(QThread):
     def __init__(self, parent=None):

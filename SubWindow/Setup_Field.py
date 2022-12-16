@@ -18,6 +18,7 @@ from Helper import *
 from Log import LogManager
 from DataBase import DB as db
 from Settings import Setup as sp
+from SubWindow.LoadingScreen import LoadingScreen
         
 class Setup_Field(QDialog):
     signal = pyqtSignal(list, list)
@@ -121,6 +122,8 @@ class Setup_Field(QDialog):
             reply = QMessageBox.question(self, '알림', '모든 언어에서 필드값이 변경됩니다.\n계속하시겠습니까?',
                                         QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
             if reply == QMessageBox.Ok:
+                self.loadingScreen =LoadingScreen(self)
+                self.startLoading()
                 newColumns.append("이미지")
                 newColumns = newColumns + self.testList + fieldList
                 newColumns.append("버전 정보")
@@ -213,6 +216,10 @@ class Setup_Field(QDialog):
                 event.ignore()
         else:
             self.signal.emit([], [])
+
+    def startLoading(self):
+        self.setEnabled(False)
+        self.loadingScreen.startAnimation()
             
     def check_changedData(self):
         """변경사항이 있는지 체크하는 함수
