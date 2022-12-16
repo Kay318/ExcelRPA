@@ -69,8 +69,8 @@ class MainWindow(QMainWindow):
         main_top = round((screen.height() - main_height) / 2)      # 메인창 y좌표
         img_scrollArea_width = round(main_width / 15)              # 좌측 이미지 스크롤 영역 너비
         left_right_imgBtn_width = round(main_width / 20)           # [<], [>] 버튼 너비
-        allButton_spacing = 10                              # all 버튼 간격
-        self.bottom_groupbox_fixedHeight = 210                   # bottom 영역 높이값
+        allButton_spacing = 10                                     # all 버튼 간격
+        self.bottom_groupbox_fixedHeight = 210                     # bottom 영역 높이값
 
         if main_width > 1344:
             main_width = 1344
@@ -279,12 +279,10 @@ class MainWindow(QMainWindow):
         statusbar.addPermanentWidget(self.statusbar_label)
 
     def remove_db(self):
-        # self.db = db.DBManager()
         if db.find_db():
             reply = QMessageBox.question(self, '알림', '이전에 저장한 결과가 전부 삭제됩니다.\n계속하시겠습니까?',
                                 QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
             if reply == QMessageBox.Ok:
-                # self.db.close()
                 # self.db.remove_db()
                 db.remove_db()
 
@@ -764,6 +762,7 @@ class MainWindow(QMainWindow):
                 if self.pre_subMenu is not None:
                     self.pre_subMenu.setChecked(False)
                 subMenu.setChecked(True)
+                self.actionNewProject.setEnabled(False)
 
                 self.loadingScreen = LoadingScreen(self)
                 self.startLoading()
