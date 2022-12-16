@@ -107,7 +107,7 @@ class Setup_Field(QDialog):
                 if globals()[f'lineEdit{i}'].text() not in fieldList:
                     fieldList.append(globals()[f'lineEdit{i}'].text())
                 else:
-                    QMessageBox.about(self, '주의', '중복 라인이 있습니다.')
+                    QMessageBox.warning(self, '주의', '중복 라인이 있습니다.')
                     LogManager.HLOG.info("필드 설정 팝업에서 중복 라인 알림 표시")
                     return
 
