@@ -93,7 +93,7 @@ class Setup_Field(QDialog):
 
         # 중복 및 특수문자 체크
         for i in range(6):
-            if globals()[f'lineEdit{i}'].text() in ["%", "'", "{", "}", ":", ";"]:
+            if any(elem in list(globals()[f'lineEdit{i}'].text()) for elem in ["%", "'", "{", "}", ":", ";"]):
                 QMessageBox.warning(self, '주의', '["%", "\'", "\{", "\}", ":", ";"] 특수문자는 사용할 수 없습니다.')
                 LogManager.HLOG.info(f'필드 설정 팝업에서 특수문자 알림 표시')
                 return
@@ -107,7 +107,7 @@ class Setup_Field(QDialog):
                 if globals()[f'lineEdit{i}'].text() not in fieldList:
                     fieldList.append(globals()[f'lineEdit{i}'].text())
                 else:
-                    QMessageBox.warning(self, '주의', '중복 라인이 있습니다.')
+                    QMessageBox.about(self, '주의', '중복 라인이 있습니다.')
                     LogManager.HLOG.info("필드 설정 팝업에서 중복 라인 알림 표시")
                     return
 
