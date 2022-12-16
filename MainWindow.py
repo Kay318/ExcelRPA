@@ -62,12 +62,12 @@ class MainWindow(QMainWindow):
         screen = QDesktopWidget().screenGeometry()
 
         # 해상도에 따라 창 크기 설정
-        main_width = round(screen.width() * 0.7)                   # 메인창 넓이
+        main_width = round(screen.width() * 0.7)                   # 메인창 너비
         main_height = round(screen.height() * 0.7)                 # 메인창 높이
         main_left = round((screen.width() - main_width) / 2)       # 메인창 x좌표
         main_top = round((screen.height() - main_height) / 2)      # 메인창 y좌표
-        img_scrollArea_width = round(main_width / 15)              # 좌측 이미지 스크롤 영역 넓이
-        left_right_imgBtn_width = round(main_width / 20)           # [<], [>] 버튼 넓이
+        img_scrollArea_width = round(main_width / 15)              # 좌측 이미지 스크롤 영역 너비
+        left_right_imgBtn_width = round(main_width / 20)           # [<], [>] 버튼 너비
         allButton_spacing = 10                              # all 버튼 간격
         self.bottom_groupbox_fixedHeight = 210                   # bottom 영역 높이값
 

@@ -34,7 +34,7 @@ class Setup_Language(QDialog):
         screen = QDesktopWidget().screenGeometry()
 
         # 해상도에 따라 창 크기 설정
-        main_width = round(screen.width() * 0.5)                   # 메인창 넓이
+        main_width = round(screen.width() * 0.5)                   # 메인창 너비
         main_height = round(screen.height() * 0.5)                 # 메인창 높이
         main_left = round((screen.width() - main_width) / 2)       # 메인창 x좌표
         main_top = round((screen.height() - main_height) / 2)      # 메인창 y좌표

@@ -316,7 +316,7 @@ class ExcelRun(QThread):
 
         self.IMG_WIDTHSIZE = int(excel_setList[0]) * 15 / 0.53      # 이미지 너비
         self.IMG_HEIGHTSIZE = int(excel_setList[1]) * 15 / 0.53     # 이미지 높이
-        self.SHEET_WIDTHSIZE = int(excel_setList[2])                # 필드 넓이
-        self.SHEET_EvaluationListSIZE = int(excel_setList[3])       # 평가 목록 넓이
+        self.SHEET_WIDTHSIZE = int(excel_setList[2])                # 필드 너비
+        self.SHEET_EvaluationListSIZE = int(excel_setList[3])       # 평가 목록 너비
         self.IMG_FAINAL_WIDTH = self.IMG_WIDTHSIZE * 70.25 / 425    # 이미지 시트 너비
         
