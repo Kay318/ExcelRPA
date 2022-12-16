@@ -107,13 +107,13 @@ class Setup_TestList(QDialog):
                     LogManager.HLOG.info(f'평가 목록 팝업과 필드 설정 팝업에서 "{x}" 겹침 알림 표시')
                     return
 
+        newColumns = []
         if self.check_changedData():
             reply = QMessageBox.question(self, '알림', '모든 언어에서 평가 목록이 변경됩니다.\n계속하시겠습니까?',
                                         QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
             if reply == QMessageBox.Ok:
                 self.loadingScreen =LoadingScreen(self)
                 self.startLoading()
-                newColumns = []
                 newColumns.append("이미지")
                 newColumns = newColumns + testList + self.fieldList
                 newColumns.append("버전 정보")
@@ -169,12 +169,12 @@ class Setup_TestList(QDialog):
                         # self.db.c.execute(query_update)
                         # self.db.dbConn.commit()
                         db.db_edit(query_update)
-                    QApplication.processEvents()
 
                 #     self.db.c.execute(f"DROP TABLE '{sql_table}'")
                     # self.db.c.execute(f"ALTER TABLE BACKUP RENAME TO '{sql_table}'")
                     db.db_edit(f"DROP TABLE '{sql_table}'")
                     db.db_edit(f"ALTER TABLE BACKUP RENAME TO '{sql_table}'")
+                    QApplication.processEvents()
                 # self.db.close()
                 
             else:

@@ -176,6 +176,7 @@ class Setup_Field(QDialog):
                         
                     db.db_edit(f"DROP TABLE '{sql_table}'")
                     db.db_edit(f"ALTER TABLE BACKUP RENAME TO '{sql_table}'")
+                    QApplication.processEvents()
 
                 # self.db.close()
             else:
