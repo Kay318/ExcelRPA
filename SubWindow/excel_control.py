@@ -117,7 +117,7 @@ class ExcelRun(QThread):
 
                     # 기존 엑셀의 시트 순서대로 배치, 없는 시트는 맨마지막에 배치
                     if lang in sheets_li:
-                        self.ws.api.Move(Before=sheets[sheets_li.index(lang)].api, After=None)
+                        self.ws.api.Move(Before=None, After=sheets[sheets_li.index(lang)].api)
                     else:
                         self.ws.api.Move(Before=None, After=sheets[len(sheets_li)].api)
                     
@@ -191,8 +191,8 @@ class ExcelRun(QThread):
                 self.summaryData.append(data)
 
             percent_val = round((self.start_percent + ((i+1)/len(self.dataList))*self.split_percent)*100)
-            if percent_val > 97:
-                percent_val = 97
+            if percent_val > 99:
+                percent_val = 99
             self.progressBarValue.emit(percent_val)
 
     def select_DB(self, lang):

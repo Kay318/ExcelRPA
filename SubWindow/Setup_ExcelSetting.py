@@ -95,7 +95,7 @@ class Setup_ExcelSetting(QDialog):
     def reset_Button_clicked(self, litter):
         LogManager.HLOG.info("엑셀 설정 팝업 확인 버튼 선택")
         reply = QMessageBox.question(self, '알림', '초기화 하시겠습니까?',
-                                    QMessageBox.Ok | QMessageBox.No, QMessageBox.No)
+                                    QMessageBox.Ok | QMessageBox.No, QMessageBox.Ok)
 
         if reply == QMessageBox.Ok:
             LogManager.HLOG.info("엑셀 설정 초기화 선택")
