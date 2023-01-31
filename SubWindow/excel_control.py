@@ -167,6 +167,13 @@ class ExcelRun(QThread):
         """
 
         self.summaryData = []
+
+        LogManager.HLOG.info(f"이미지 너비:",  self.IMG_WIDTHSIZE)
+        LogManager.HLOG.info(f"이미지 높이:",  self.IMG_HEIGHTSIZE)
+        LogManager.HLOG.info(f"필드 너비:",  self.SHEET_WIDTHSIZE)
+        LogManager.HLOG.info(f"평가 목록 너비:",  self.SHEET_EvaluationListSIZE)
+        LogManager.HLOG.info(f"이미지셀 너비:",  self.IMG_FAINAL_WIDTH)
+
         for i, data in enumerate(self.dataList):
             # 데이터 입력
             self.ws.range(f'A{i+2}').value=data
@@ -318,5 +325,8 @@ class ExcelRun(QThread):
         self.IMG_HEIGHTSIZE = int(excel_setList[1]) * 15 / 0.53     # 이미지 높이
         self.SHEET_WIDTHSIZE = int(excel_setList[2])                # 필드 너비
         self.SHEET_EvaluationListSIZE = int(excel_setList[3])       # 평가 목록 너비
-        self.IMG_FAINAL_WIDTH = self.IMG_WIDTHSIZE * 70.25 / 425    # 이미지 시트 너비
         
+        if excel_setList[5] == 'False':
+            self.IMG_FAINAL_WIDTH = int(excel_setList[4])
+        else:
+            self.IMG_FAINAL_WIDTH = self.IMG_WIDTHSIZE * 70.25 / 425    # 이미지 시트 너비

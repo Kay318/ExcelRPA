@@ -35,10 +35,28 @@ class Setup_ExcelSetting(QDialog):
         self.reset_Button = QPushButton("초기화")
         self.verticalLayout.addWidget(self.reset_Button)
 
+        self.img_cell_width_horizontal = QHBoxLayout()
+        self.img_cell_width_label = QLabel("이미지 열 너비")
+        self.img_cell_width_checkbox = QCheckBox("Auto")
+        self.img_cell_width_lineEdit = QLineEdit()
+        self.img_cell_width_horizontal.addWidget(self.img_cell_width_label)
+        self.img_cell_width_horizontal.addWidget(self.img_cell_width_checkbox)
+        self.img_cell_width_horizontal.addWidget(self.img_cell_width_lineEdit)
+        self.verticalLayout.addLayout(self.img_cell_width_horizontal)
+
         self.start_settings = ["이미지 너비", "이미지 높이", "필드 너비", "평가 목록 너비"]
         self.start_settings_val = [15, 5, 40, 15]
         self.value_range = [("5~30"),("1~10"),("10~100"),("10~50")]
         dataList, _ = self.sp.read_setup(table = "Excel_Setting")
+
+        auto_data = dataList.pop()
+
+        self.img_cell_width_checkbox.setChecked(eval(auto_data))
+
+        if eval(auto_data):
+            self.img_cell_width_lineEdit.setEnabled(False)
+
+        self.img_cell_width_lineEdit.setText(dataList.pop())
 
         for i in range(4):
             globals()[f'horizontalLayout{i}'] = QHBoxLayout()
@@ -70,11 +88,18 @@ class Setup_ExcelSetting(QDialog):
 
         self.tl_ini_set()
 
+    def checkboxStateChanged(self):
+        if self.img_cell_width_checkbox.isChecked() == True:
+            self.img_cell_width_lineEdit.setEnabled(False)
+        else:
+            self.img_cell_width_lineEdit.setEnabled(True)
+
     @AutomationFunctionDecorator
     def tl_set_slot(self):
         self.reset_Button.clicked.connect(self.reset_Button_clicked)
         self.ok_Button.clicked.connect(self.ok_Button_clicked)
         self.cancel_Button.clicked.connect(self.close)
+        self.img_cell_width_checkbox.stateChanged.connect(self.checkboxStateChanged)
 
     @AutomationFunctionDecorator
     def tl_ini_set(self):
@@ -109,6 +134,21 @@ class Setup_ExcelSetting(QDialog):
     @AutomationFunctionDecorator
     def ok_Button_clicked(self, litter):
         LogManager.HLOG.info("엑셀 설정 팝업 확인 버튼 선택")
+        if self.img_cell_width_lineEdit.isEnabled() == True:
+            if self.img_cell_width_lineEdit.text() != "":
+                try:
+                    int(self.img_cell_width_lineEdit.text())
+                except:
+                    QMessageBox.warning(self, '주의', f'{self.img_cell_width_label.text()} 수치를 정수형태로 지정해주세요.')
+                    return
+
+                if 26 > int(self.img_cell_width_lineEdit.text()) or int(self.img_cell_width_lineEdit.text()) > 80:
+                    QMessageBox.warning(self, '주의', f'{self.img_cell_width_label.text()} 26에서 80 사이여야 합니다.')
+                    return
+            else:
+                text1 = self.img_cell_width_lineEdit.text()
+                QMessageBox.warning(self, '주의', f'{text1} 수치가 비어있습니다.')
+                return
 
         # 중복 체크
         for i in range(4):
@@ -148,7 +188,20 @@ class Setup_ExcelSetting(QDialog):
                                 count=i, 
                                 val=globals()[f'lineEdit{i}'].text(),
                                 val2=None)
-            LogManager.HLOG.info(f"{i+1}:평가 목록 팝업에 {globals()[f'lineEdit{i}'].text()} 추가")
+            LogManager.HLOG.info(f"{i+1}:엑셀 세팅 팝업에 {globals()[f'lineEdit{i}'].text()} 추가")
+
+        self.sp.write_setup(table = "Excel_Setting", 
+                            count=4, 
+                            val=self.img_cell_width_lineEdit.text(),
+                            val2=None)
+        LogManager.HLOG.info(f"엑셀 세팅 팝업에 {self.img_cell_width_lineEdit.text()} 추가")
+
+        self.sp.write_setup(table = "Excel_Setting", 
+                            count=5, 
+                            val=str(self.img_cell_width_checkbox.isChecked()),
+                            val2=None)
+        LogManager.HLOG.info(f"엑셀 세팅 팝업에 {str(self.img_cell_width_checkbox.isChecked())} 추가")
+
         self.signal.emit()
         self.destroy()
 
@@ -160,6 +213,8 @@ class Setup_ExcelSetting(QDialog):
         """
         setupList, _ = self.sp.read_setup("Excel_Setting")
         lineList = [globals()[f'lineEdit{i}'].text() for i in range(4)]
+        lineList.append(self.img_cell_width_lineEdit.text())
+        lineList.append(str(self.img_cell_width_checkbox.isChecked()))
         
         if setupList != lineList:
             return True
